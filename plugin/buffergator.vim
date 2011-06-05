@@ -617,11 +617,13 @@ function! s:NewCatalogViewer()
         noremap <buffer> <silent> o     :call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
         noremap <buffer> <silent> ws    :call b:buffergator_catalog_viewer.visit_target(1, 0, "sb")<CR>
         noremap <buffer> <silent> wv    :call b:buffergator_catalog_viewer.visit_target(1, 0, "vert sb")<CR>
+        noremap <buffer> <silent> t     :call b:buffergator_catalog_viewer.visit_target(1, 0, "tab sb")<CR>
 
         " open target line in other window, closing catalog
         noremap <buffer> <silent> O     :call b:buffergator_catalog_viewer.visit_target(0, 0, "")<CR>
         noremap <buffer> <silent> wS    :call b:buffergator_catalog_viewer.visit_target(0, 0, "sb")<CR>
         noremap <buffer> <silent> wV    :call b:buffergator_catalog_viewer.visit_target(0, 0, "vert sb")<CR>
+        noremap <buffer> <silent> T     :call b:buffergator_catalog_viewer.visit_target(0, 0, "tab sb")<CR>
 
     endfunction
 
