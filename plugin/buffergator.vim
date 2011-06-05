@@ -302,7 +302,19 @@ endfunction
 
 " comparison function used for sorting buffers catalog by (full) filepath
 function! s:_compare_dicts_by_filepath(m1, m2)
-    return s:_compare_dicts_by_value(a:m1, a:m2, "filepath")
+    if a:m1["parentdir"] < a:m2["parentdir"]
+        return -1
+    elseif a:m1["parentdir"] > a:m2["parentdir"]
+        return 1
+    else
+        if a:m1["basename"] < a:m2["basename"]
+            return -1
+        elseif a:m1["basename"] > a:m2["basename"]
+            return 1
+        else
+            return 0
+        endif
+    endif
 endfunction
 
 " comparison function used for sorting buffers catalog by basename
@@ -338,7 +350,7 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["split_mode"] = s:_get_split_mode()
     let l:catalog_viewer["buffers_catalog"] = {}
     let l:catalog_viewer["sort_regime"] = "bufnum"
-    let l:catalog_viewer["display_regime"] = "basename" " basename, relname, fullpath
+    let l:catalog_viewer["display_regime"] = "basename"
 
     " Populates the buffer list
     function! l:catalog_viewer.update_buffers_info() dict
@@ -404,6 +416,7 @@ function! s:NewCatalogViewer()
             let l:info["bufname"] = parts[3]
             let l:info["filepath"] = fnamemodify(l:info["bufname"], ":p")
             let l:info["basename"] = fnamemodify(l:info["bufname"], ":t")
+            let l:info["parentdir"] = fnamemodify(l:info["bufname"], ":p:h")
             call add(self.buffers_catalog, l:info)
             " let l:buffers_info[l:info[l:key]] = l:info
         endfor
@@ -646,7 +659,7 @@ function! s:NewCatalogViewer()
             let l:line = "[" . l:bufnum_str . "] "
             if self.display_regime == "basename"
                 let l:line .= s:_format_align_left(l:bufinfo.basename, 30, " ")
-                let l:line .= fnamemodify(l:bufinfo.filepath, ":h")
+                let l:line .= l:bufinfo.parentdir
             elseif self.display_regime == "filepath"
                 let l:line .= l:bufinfo.filepath
             elseif self.display_regime == "bufname"
@@ -921,33 +934,6 @@ function! s:NewCatalogViewer()
             return 0
         else
             return 1
-        endif
-    endfunction
-
-    " Toggles context on/off.
-    function! l:catalog_viewer.toggle_context() dict
-        let self.catalog.show_context = !self.catalog.show_context
-        let l:line = line(".")
-        if has_key(b:buffergator_catalog_viewer.jump_map, l:line)
-            let l:jump_line = b:buffergator_catalog_viewer.jump_map[l:line]
-            if l:jump_line.entry_index > 0
-                let l:entry_index = l:jump_line.entry_index
-            elseif has_key(l:jump_line, "proxy_key")
-                let l:entry_index = l:jump_line.proxy_key
-            else
-                let l:entry_index = ""
-            endif
-        else
-            let l:entry_index = ""
-        endif
-        call self.open(1)
-        if !empty(l:entry_index)
-            let l:rendered_entry_index = self.render_entry_index(l:entry_index)
-            let l:lnum = search('^'.escape(l:rendered_entry_index, '[]'), "e")
-            if l:lnum > 0
-                call setpos(".", [bufnr("%"), l:lnum, 0, 0])
-                execute("normal! zz")
-            endif
         endif
     endfunction
 
