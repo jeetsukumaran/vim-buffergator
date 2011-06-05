@@ -67,6 +67,7 @@ let s:buffergator_viewport_split_modes = {
             \ "B"   : "botright sbuffer",
             \ "b"   : "rightbelow",
             \ }
+let s:buffergator_default_viewport_split_policy = "T"
 " 2}}}
 
 " Catalog Sort Regimes {{{2
@@ -89,9 +90,11 @@ let s:buffergator_catalog_display_regime_desc = {
             \ }
 " 2}}}
 
-" Other Options {{{2
+" Global Options {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let g:buffergator_move_wrap = 1
+if !exists("g:buffergator_move_wrap")
+    let g:buffergator_move_wrap = 1
+endif
 " 2}}}
 
 " 1}}}
@@ -257,7 +260,7 @@ function! s:_get_split_mode(...)
             throw s:_buffergator_messenger.format_exception("Unrecognized split mode: '" . l:policy . "')
         endif
     endif
-    return s:buffergator_viewport_split_modes["L"]
+    return s:buffergator_viewport_split_modes[s:buffergator_default_viewport_split_policy]
 endfunction
 
 " Detect filetype. From the 'taglist' plugin.
