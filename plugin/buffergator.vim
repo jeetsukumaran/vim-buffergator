@@ -235,7 +235,7 @@ function! s:_find_buffers_with_var(varname, expr)
     return l:results
 endfunction
 
-" Returns split mode to use for a new Buffersaurus viewport. If given an
+" Returns split mode to use for a new Buffergator viewport. If given an
 " argument, this should be a single letter indicating the split policy. If
 " no argument is given and `g:buffergator_viewport_split_policy` exists, then it
 " will be used. If `g:buffergator_viewport_split_policy` does not exist, then a
@@ -541,50 +541,18 @@ function! s:NewCatalogViewer()
 
     " Sets buffer syntax.
     function! l:catalog_viewer.setup_buffer_syntax() dict
-        " if has("syntax")
-        "     syntax clear
-        "     if self.catalog.is_show_context()
-        "         syn region BuffersaurusSyntaxFileGroup       matchgroup=BuffersaurusSyntaxFileGroupTitle start='^[^ ]'   keepend       end='\(^[^ ]\)\@=' fold
-        "         syn region BuffersaurusSyntaxContextedEntry  start='^  \['  end='\(^  \[\|^[^ ]\)\@=' fold containedin=BuffersaurusSyntaxFileGroup
-        "         syn region BuffersaurusSyntaxContextedKeyRow start='^  \[\s\{-}.\{-1,}\s\{-}\]' keepend oneline end='$' containedin=BuffersaurusSyntaxContextedEntry
-        "         syn region BuffersaurusSyntaxContextLines    start='^  \s*\d\+ :'  oneline end='$' containedin=BuffersaurusSyntaxContextedEntry
-        "         syn region BuffersaurusSyntaxMatchedLines    start='^  \s*\d\+ >'  oneline end='$'  containedin=BuffersaurusSyntaxContextedEntry
-
-        "         syn match BuffersaurusSyntaxFileGroupTitle            ':: .\+ :::'                          containedin=BuffersaurusSyntaxFileGroup
-        "         syn match BuffersaurusSyntaxKey                       '^  \zs\[\s\{-}.\{-1,}\s\{-}\]\ze'    containedin=BuffersaurusSyntaxcOntextedKeyRow
-        "         syn match BuffersaurusSyntaxContextedKeyFilename      '  \zs".\+"\ze, L\d\+-\d\+:'          containedin=BuffersaurusSyntaxContextedKeyRow
-        "         syn match BuffersaurusSyntaxContextedKeyLines         ', \zsL\d\+-\d\+\ze:'                 containedin=BuffersaurusSyntaxContextedKeyRow
-        "         syn match BuffersaurusSyntaxContextedKeyDesc          ': .*$'                               containedin=BuffersaurusSyntaxContextedKeyRow
-
-        "         syn match BuffersaurusSyntaxContextLineNum            '^  \zs\s*\d\+\s*\ze:'                containedin=BuffersaurusSyntaxContextLines
-        "         syn match BuffersaurusSyntaxContextLineText           ': \zs.*\ze'                          containedin=BuffersaurusSyntaxContextLines
-
-        "         syn match BuffersaurusSyntaxMatchedLineNum            '^  \zs\s*\d\+\s*\ze>'                containedin=BuffersaurusSyntaxMatchedLines
-        "         syn match BuffersaurusSyntaxMatchedLineText           '> \zs.*\ze'                          containedin=BuffersaurusSyntaxMatchedLines
-        "     else
-        "         syn match BuffersaurusSyntaxFileGroupTitle             '^\zs::: .* :::\ze.*$'                   nextgroup=BuffersaurusSyntaxKey
-        "         syn match BuffersaurusSyntaxKey                        '^  \zs\[\s\{-}.\{-1,}\s\{-}\]\ze'       nextgroup=BuffersaurusSyntaxUncontextedLineNum
-        "         syn match BuffersaurusSyntaxUncontextedLineNum         '\s\+\s*\zs\d\+\ze:'                nextgroup=BuffersaurusSyntaxUncontextedLineText
-        "     endif
-        "     highlight! link BuffersaurusSyntaxFileGroupTitle       Title
-        "     highlight! link BuffersaurusSyntaxKey                  Identifier
-        "     highlight! link BuffersaurusSyntaxContextedKeyFilename Comment
-        "     highlight! link BuffersaurusSyntaxContextedKeyLines    Comment
-        "     highlight! link BuffersaurusSyntaxContextedKeyDesc     Comment
-        "     highlight! link BuffersaurusSyntaxContextLineNum       Normal
-        "     highlight! link BuffersaurusSyntaxContextLineText      Normal
-        "     highlight! link BuffersaurusSyntaxMatchedLineNum       Question
-        "     highlight! link BuffersaurusSyntaxMatchedLineText      Question
-        "     highlight! link BuffersaurusSyntaxUncontextedLineNum   Question
-        "     highlight! link BuffersaurusSyntaxUncontextedLineText  Normal
-            highlight! def BuffersaurusCurrentEntry gui=reverse cterm=reverse term=reverse
-        " endif
+        if has("syntax")
+            syn region BuffergatorEntry start='^\[\s\{-}.\{-1,}\s\{-}\]' keepend oneline end='$'
+            syn match BuffergatorSyntaxKey '^\zs\[\s\{-}.\{-1,}\s\{-}\]\ze' containedin=BuffergatorEntry
+            highlight! link BuffergatorSyntaxKey   LineNr
+            highlight! def BuffergatorCurrentEntry gui=reverse cterm=reverse term=reverse
+        endif
     endfunction
 
     " Sets buffer commands.
     function! l:catalog_viewer.setup_buffer_commands() dict
         " command! -bang -nargs=* Bdfilter :call b:buffergator_catalog_viewer.set_filter('<bang>', <q-args>)
-        augroup BuffersaurusCatalogViewer
+        augroup BuffergatorCatalogViewer
             au!
             autocmd CursorHold,CursorHoldI,CursorMoved,CursorMovedI,BufEnter,BufLeave <buffer> call b:buffergator_catalog_viewer.highlight_current_line()
             autocmd BufLeave <buffer> let s:_buffergator_last_catalog_viewed = b:buffergator_catalog_viewer
@@ -637,7 +605,7 @@ function! s:NewCatalogViewer()
         "     setlocal foldmethod=syntax
         "     setlocal foldlevel=4
         "     setlocal foldenable
-        "     setlocal foldtext=BuffersaurusFoldText()
+        "     setlocal foldtext=BuffergatorFoldText()
         "     " setlocal fillchars=fold:\ "
         "     setlocal fillchars=fold:.
         " endif
@@ -645,8 +613,8 @@ function! s:NewCatalogViewer()
 
     " Sets buffer status line.
     function! l:catalog_viewer.setup_buffer_statusline() dict
-        " setlocal statusline=\-buffergator\-\|\ %{BuffersaurusStatusLineCurrentLineInfo()}%<%=\|%{BuffersaurusStatusLineSortRegime()}\|%{BuffersaurusStatusLineFilterRegime()}
-        " setlocal statusline=\-buffergator\-\|\ %{BuffersaurusStatusLineCurrentLineInfo()}%<%=\|%{BuffersaurusStatusLineSortRegime()}
+        " setlocal statusline=\-buffergator\-\|\ %{BuffergatorStatusLineCurrentLineInfo()}%<%=\|%{BuffergatorStatusLineSortRegime()}\|%{BuffergatorStatusLineFilterRegime()}
+        " setlocal statusline=\-buffergator\-\|\ %{BuffergatorStatusLineCurrentLineInfo()}%<%=\|%{BuffergatorStatusLineSortRegime()}
     endfunction
 
     " Populates the buffer with the catalog index.
@@ -704,7 +672,7 @@ function! s:NewCatalogViewer()
             let l:prev_line = b:buffergator_cur_line
             let b:buffergator_cur_line = line(".")
             3match none
-            exec '3match BuffersaurusCurrentEntry /^\%'. b:buffergator_cur_line .'l.*/'
+            exec '3match BuffergatorCurrentEntry /^\%'. b:buffergator_cur_line .'l.*/'
         " endif
     endfunction
 
