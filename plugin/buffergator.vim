@@ -363,7 +363,7 @@ function! s:_get_split_mode(...)
             throw s:_buffergator_messenger.format_exception("Unrecognized split mode: '" . l:policy . "')
         endif
     endif
-    return s:buffergator_viewport_split_modes["B"]
+    return s:buffergator_viewport_split_modes["T"]
 endfunction
 
 " Detect filetype. From the 'taglist' plugin.
