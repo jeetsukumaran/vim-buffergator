@@ -529,7 +529,7 @@ function! s:NewCatalogViewer()
         setlocal nobuflisted
         setlocal nolist
         setlocal noinsertmode
-        " setlocal nonumber
+        setlocal nonumber
         setlocal cursorline
         setlocal nospell
     endfunction
