@@ -971,13 +971,13 @@ function! s:NewCatalogViewer()
             let self.sort_regime = s:buffergator_catalog_sort_regimes[l:cur_regime]
         endif
         call self.open(1)
-        call s:_buffergator_messenger.send_info("sorted " . self.catalog.format_sort_status())
+        let l:sort_desc = get(s:buffergator_catalog_sort_regime_desc, self.sort_regime, ["??", "in unspecified order"])[1]
+        call s:_buffergator_messenger.send_info("sorted " . l:sort_desc)
     endfunction
 
     " Rebuilds catalog.
     function! l:catalog_viewer.rebuild_catalog() dict
         call self.update_buffers_info()
-        call s:_buffergator_messenger.send_info("updated index: found " . self.catalog.format_status_message())
         call self.open(1)
     endfunction
 
