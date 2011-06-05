@@ -553,32 +553,27 @@ function! s:NewCatalogViewer()
         "     highlight! link BuffersaurusSyntaxMatchedLineText      Question
         "     highlight! link BuffersaurusSyntaxUncontextedLineNum   Question
         "     highlight! link BuffersaurusSyntaxUncontextedLineText  Normal
-        "     highlight! def BuffersaurusCurrentEntry gui=reverse cterm=reverse term=reverse
+            highlight! def BuffersaurusCurrentEntry gui=reverse cterm=reverse term=reverse
         " endif
     endfunction
 
     " Sets buffer commands.
     function! l:catalog_viewer.setup_buffer_commands() dict
         " command! -bang -nargs=* Bdfilter :call b:buffergator_catalog_viewer.set_filter('<bang>', <q-args>)
-        " augroup BuffersaurusCatalogViewer
-        "     au!
-        "     autocmd CursorHold,CursorHoldI,CursorMoved,CursorMovedI,BufEnter,BufLeave <buffer> call b:buffergator_catalog_viewer.highlight_current_line()
-        "     autocmd BufLeave <buffer> let s:_buffergator_last_catalog_viewed = b:buffergator_catalog_viewer
-        " augroup END
+        augroup BuffersaurusCatalogViewer
+            au!
+            autocmd CursorHold,CursorHoldI,CursorMoved,CursorMovedI,BufEnter,BufLeave <buffer> call b:buffergator_catalog_viewer.highlight_current_line()
+            autocmd BufLeave <buffer> let s:_buffergator_last_catalog_viewed = b:buffergator_catalog_viewer
+        augroup END
     endfunction
 
     " Sets buffer key maps.
     function! l:catalog_viewer.setup_buffer_keymaps() dict
 
         """" Index buffer management
-        " noremap <buffer> <silent> c       :call b:buffergator_catalog_viewer.toggle_context()<CR>
-        " noremap <buffer> <silent> s       :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
-        " noremap <buffer> <silent> f       :call b:buffergator_catalog_viewer.toggle_filter()<CR>
-        " noremap <buffer> <silent> F       :call b:buffergator_catalog_viewer.prompt_and_apply_filter()<CR>
-        " noremap <buffer> <silent> u       :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
-        " noremap <buffer> <silent> <C-G>   :call b:buffergator_catalog_viewer.catalog.describe()<CR>
-        " noremap <buffer> <silent> g<C-G>  :call b:buffergator_catalog_viewer.catalog.describe_detail()<CR>
-        " noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.quit_view()<CR>
+        noremap <buffer> <silent> s       :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
+        noremap <buffer> <silent> u       :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
+        noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.quit_view()<CR>
 
         """" Movement within buffer
 
@@ -953,7 +948,13 @@ function! s:NewCatalogViewer()
 
     " Cycles sort regime.
     function! l:catalog_viewer.cycle_sort_regime() dict
-        call self.catalog.cycle_sort_regime()
+        let l:cur_regime = index(s:buffergator_catalog_sort_regimes, self.sort_regime)
+        let l:cur_regime += 1
+        if l:cur_regime < 0 || l:cur_regime >= len(s:buffergator_catalog_sort_regimes)
+            let self.sort_regime = s:buffergator_catalog_sort_regimes[0]
+        else
+            let self.sort_regime = s:buffergator_catalog_sort_regimes[l:cur_regime]
+        endif
         call self.open(1)
         call s:_buffergator_messenger.send_info("sorted " . self.catalog.format_sort_status())
     endfunction
