@@ -79,7 +79,6 @@ let s:buffergator_catalog_sort_regime_desc = {
             \ }
 " 2}}}
 
-
 " 1}}}
 
 " Utilities {{{1
@@ -199,48 +198,8 @@ function! s:NewMessenger(name)
 endfunction
 " 2}}}
 
-" Buffer Management {{{2
+" Catalog, Buffer, Windows, Files, etc. Management {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-" Returns a list of all existing buffer numbers, excluding unlisted ones
-" unless `include_unlisted` is non-empty.
-" function! s:_get_bufnums(include_unlisted)
-"     let l:bufnum_list = []
-"     for l:idx in range(1, bufnr("$"))
-"         if bufexists(l:idx) && (empty(a:include_unlisted) || buflisted(l:idx))
-"             call add(l:bufnum_list, l:idx)
-"         endif
-"     endfor
-"     return l:bufnum_list
-" endfunction
-
-" Returns a list of all existing buffer names, excluding unlisted ones
-" unless `include_unlisted` is non-empty.
-" function! s:_get_buf_names(include_unlisted, expand_modifiers)
-"     let l:buf_name_list = []
-"     for l:idx in range(1, bufnr("$"))
-"         if bufexists(l:idx) && (empty(!a:include_unlisted) || buflisted(l:idx))
-"             call add(l:buf_name_list, expand(bufname(l:idx).a:expand_modifiers))
-"         endif
-"     endfor
-"     return l:buf_name_list
-" endfunction
-
-" Searches for all windows that have a window-scoped variable `varname`
-" with value that matches the expression `expr`. Returns list of window
-" numbers that meet the criterion.
-" function! s:_find_windows_with_var(varname, expr)
-"     let l:results = []
-"     for l:wni in range(1, winnr("$"))
-"         let l:wvar = getwinvar(l:wni, "")
-"         if empty(a:varname)
-"             call add(l:results, l:wni)
-"         elseif has_key(l:wvar, a:varname) && l:wvar[a:varname] =~ a:expr
-"             call add(l:results, l:wni)
-"         endif
-"     endfor
-"     return l:results
-" endfunction
 
 " Searches for all buffers that have a buffer-scoped variable `varname`
 " with value that matches the expression `expr`. Returns list of buffer
@@ -259,86 +218,6 @@ function! s:_find_buffers_with_var(varname, expr)
         endif
     endfor
     return l:results
-endfunction
-
-" Returns a dictionary with the buffer number as keys (if `key` is empty)
-" and the parsed information regarding each buffer as values. If `key` is
-" given (e.g. key='bufnum'; key='basename', key='filepath') then that field will
-" be used as the dictionary keys instead.
-function! s:_get_buffers_info(key)
-    if empty(a:key)
-        let l:key = "bufnum"
-    else
-        let l:key = a:key
-    endif
-    redir => buffers_output
-    execute('silent ls')
-    redir END
-    let l:buffers_info = {}
-    let l:buffers_output_rows = split(l:buffers_output, "\n")
-    for l:buffers_output_row in l:buffers_output_rows
-        let l:parts = matchlist(l:buffers_output_row, '^\s*\(\d\+\)\(.....\) "\(.*\)"\s\+line \d\+$')
-        let l:info = {}
-        let l:info["bufnum"] = l:parts[1] + 0
-        if l:parts[2][0] == "u"
-            let l:info["is_unlisted"] = 1
-            let l:info["is_listed"] = 0
-        else
-            let l:info["is_unlisted"] = 0
-            let l:info["is_listed"] = 1
-        endif
-        if l:parts[2][1] == "%"
-            let l:info["is_current"] = 1
-            let l:info["is_alternate"] = 0
-        elseif l:parts[2][1] == "#"
-            let l:info["is_current"] = 0
-            let l:info["is_alternate"] = 1
-        else
-            let l:info["is_current"] = 0
-            let l:info["is_alternate"] = 0
-        endif
-        if l:parts[2][2] == "a"
-            let l:info["is_active"] = 1
-            let l:info["is_loaded"] = 1
-            let l:info["is_visible"] = 1
-        elseif l:parts[2][2] == "h"
-            let l:info["is_active"] = 0
-            let l:info["is_loaded"] = 1
-            let l:info["is_visible"] = 0
-        else
-            let l:info["is_active"] = 0
-            let l:info["is_loaded"] = 0
-            let l:info["is_visible"] = 0
-        endif
-        if l:parts[2][3] == "-"
-            let l:info["is_modifiable"] = 0
-            let l:info["is_readonly"] = 0
-        elseif l:parts[2][3] == "="
-            let l:info["is_modifiable"] = 1
-            let l:info["is_readonly"] = 1
-        else
-            let l:info["is_modifiable"] = 1
-            let l:info["is_readonly"] = 0
-        endif
-        if l:parts[2][4] == "+"
-            let l:info["is_modified"] = 1
-            let l:info["is_readerror"] = 0
-        elseif l:parts[2][4] == "x"
-            let l:info["is_modified"] = 0
-            let l:info["is_readerror"] = 0
-        else
-            let l:info["is_modified"] = 0
-            let l:info["is_readerror"] = 0
-        endif
-        let l:info["bufname"] = parts[3]
-        let l:info["filepath"] = fnamemodify(l:info["bufname"], ":p")
-        let l:info["basename"] = fnamemodify(l:info["bufname"], ":t")
-        if !has_key(l:info, l:key)
-            throw s:_buffergator_messenger.format_exception("Invalid key requested: '" . l:key . "'")
-        endif
-        let l:buffers_info[l:info[l:key]] = l:info
-    endfor
-    return l:buffers_info
 endfunction
 
 " Returns split mode to use for a new Buffersaurus viewport. If given an
@@ -387,6 +266,42 @@ endfunction
 
 " 2}}}
 
+" Sorting {{{2
+" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+" comparison function used for sorting dictionaries by value
+function! s:_compare_dicts_by_value(m1, m2, key)
+    if a:m1[a:key] < a:m2[a:key]
+        return -1
+    elseif a:m1[a:key] > a:m2[a:key]
+        return 1
+    else
+        return 0
+    endif
+endfunction
+
+" comparison function used for sorting buffers catalog by buffer number
+function! s:_compare_dicts_by_bufnum(m1, m2)
+    return s:_compare_dicts_by_value(a:m1, a:m2, "bufnum")
+endfunction
+
+" comparison function used for sorting buffers catalog by buffer name
+function! s:_compare_dicts_by_bufname(m1, m2)
+    return s:_compare_dicts_by_value(a:m1, a:m2, "bufname")
+endfunction
+
+" comparison function used for sorting buffers catalog by (full) filepath
+function! s:_compare_dicts_by_filepath(m1, m2)
+    return s:_compare_dicts_by_value(a:m1, a:m2, "filepath")
+endfunction
+
+" comparison function used for sorting buffers catalog by basename
+function! s:_compare_dicts_by_basename(m1, m2)
+    return s:_compare_dicts_by_value(a:m1, a:m2, "basename")
+endfunction
+
+" 2}}}
+
 " 1}}}
 
 " CatalogViewer {{{1
@@ -417,7 +332,73 @@ function! s:NewCatalogViewer()
 
     " Populates the buffer list
     function! l:catalog_viewer.update_buffers_info() dict
-        let self.buffers_catalog = s:_get_buffers_info(self.sort_regime)
+        let self.buffers_catalog = []
+        redir => buffers_output
+        execute('silent ls')
+        redir END
+        let l:buffers_output_rows = split(l:buffers_output, "\n")
+        for l:buffers_output_row in l:buffers_output_rows
+            let l:parts = matchlist(l:buffers_output_row, '^\s*\(\d\+\)\(.....\) "\(.*\)"\s\+line \d\+$')
+            let l:info = {}
+            let l:info["bufnum"] = l:parts[1] + 0
+            if l:parts[2][0] == "u"
+                let l:info["is_unlisted"] = 1
+                let l:info["is_listed"] = 0
+            else
+                let l:info["is_unlisted"] = 0
+                let l:info["is_listed"] = 1
+            endif
+            if l:parts[2][1] == "%"
+                let l:info["is_current"] = 1
+                let l:info["is_alternate"] = 0
+            elseif l:parts[2][1] == "#"
+                let l:info["is_current"] = 0
+                let l:info["is_alternate"] = 1
+            else
+                let l:info["is_current"] = 0
+                let l:info["is_alternate"] = 0
+            endif
+            if l:parts[2][2] == "a"
+                let l:info["is_active"] = 1
+                let l:info["is_loaded"] = 1
+                let l:info["is_visible"] = 1
+            elseif l:parts[2][2] == "h"
+                let l:info["is_active"] = 0
+                let l:info["is_loaded"] = 1
+                let l:info["is_visible"] = 0
+            else
+                let l:info["is_active"] = 0
+                let l:info["is_loaded"] = 0
+                let l:info["is_visible"] = 0
+            endif
+            if l:parts[2][3] == "-"
+                let l:info["is_modifiable"] = 0
+                let l:info["is_readonly"] = 0
+            elseif l:parts[2][3] == "="
+                let l:info["is_modifiable"] = 1
+                let l:info["is_readonly"] = 1
+            else
+                let l:info["is_modifiable"] = 1
+                let l:info["is_readonly"] = 0
+            endif
+            if l:parts[2][4] == "+"
+                let l:info["is_modified"] = 1
+                let l:info["is_readerror"] = 0
+            elseif l:parts[2][4] == "x"
+                let l:info["is_modified"] = 0
+                let l:info["is_readerror"] = 0
+            else
+                let l:info["is_modified"] = 0
+                let l:info["is_readerror"] = 0
+            endif
+            let l:info["bufname"] = parts[3]
+            let l:info["filepath"] = fnamemodify(l:info["bufname"], ":p")
+            let l:info["basename"] = fnamemodify(l:info["bufname"], ":t")
+            call add(self.buffers_catalog, l:info)
+            " let l:buffers_info[l:info[l:key]] = l:info
+        endfor
+        let l:sort_func = "s:_compare_dicts_by_" . self.sort_regime
+        return sort(self.buffers_catalog, l:sort_func)
     endfunction
 
     " Opens the buffer for viewing, creating it if needed. If non-empty first
@@ -649,9 +630,7 @@ function! s:NewCatalogViewer()
         call self.clear_buffer()
         let self.jump_map = {}
         call self.setup_buffer_syntax()
-        let l:buffer_catalog_keys = sort(keys(self.buffers_catalog))
-        for l:key in l:buffer_catalog_keys
-            let l:bufinfo = self.buffers_catalog[key]
+        for l:bufinfo in self.buffers_catalog
             let l:bufnum_str = s:_format_filled(l:bufinfo.bufnum, 3, 1, 0)
             let l:line = "[" . l:bufnum_str . "] "
             if self.buffer_catalog_display == "basename"
