@@ -89,6 +89,11 @@ let s:buffergator_catalog_display_regime_desc = {
             \ }
 " 2}}}
 
+" Other Options {{{2
+" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+let g:buffergator_move_wrap = 1
+" 2}}}
+
 " 1}}}
 
 " Utilities {{{1
@@ -595,36 +600,28 @@ function! s:NewCatalogViewer()
         noremap <buffer> <silent> u       :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
         noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.close()<CR>
 
-        """" Movement within buffer
-
-        " jump to next/prev key entry
-        " noremap <buffer> <silent> <C-N>  :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 0, 1)<CR>
-        " noremap <buffer> <silent> <C-P>  :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 0, 1)<CR>
-
-        " jump to next/prev file entry
-        " noremap <buffer> <silent> ]f     :<C-U>call b:buffergator_catalog_viewer.goto_file_start("n", 0, 1)<CR>
-        " noremap <buffer> <silent> [f     :<C-U>call b:buffergator_catalog_viewer.goto_file_start("p", 0, 1)<CR>
-
         """" Movement within buffer that updates the other window
 
         " show target line in other window, keeping catalog open and in focus
-        " noremap <buffer> <silent> .           :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
-        " noremap <buffer> <silent> <SPACE>     :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
-        " noremap <buffer> <silent> <C-SPACE>   :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
-        " noremap <buffer> <silent> <C-@>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
+        noremap <buffer> <silent> .           :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
+        noremap <buffer> <silent> <SPACE>     :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
+        noremap <buffer> <silent> <C-SPACE>   :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
+        noremap <buffer> <silent> <C-@>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
+        noremap <buffer> <silent> <C-N>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
+        noremap <buffer> <silent> <C-P>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
 
         """" Movement that moves to the current search target
 
         " go to target line in other window, keeping catalog open
-        " noremap <buffer> <silent> <CR>  :call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
-        " noremap <buffer> <silent> o     :call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
-        " noremap <buffer> <silent> ws    :call b:buffergator_catalog_viewer.visit_target(1, 0, "sb")<CR>
-        " noremap <buffer> <silent> wv    :call b:buffergator_catalog_viewer.visit_target(1, 0, "vert sb")<CR>
+        noremap <buffer> <silent> <CR>  :call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
+        noremap <buffer> <silent> o     :call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
+        noremap <buffer> <silent> ws    :call b:buffergator_catalog_viewer.visit_target(1, 0, "sb")<CR>
+        noremap <buffer> <silent> wv    :call b:buffergator_catalog_viewer.visit_target(1, 0, "vert sb")<CR>
 
         " open target line in other window, closing catalog
-        " noremap <buffer> <silent> O     :call b:buffergator_catalog_viewer.visit_target(0, 0, "")<CR>
-        " noremap <buffer> <silent> wS    :call b:buffergator_catalog_viewer.visit_target(0, 0, "sb")<CR>
-        " noremap <buffer> <silent> wV    :call b:buffergator_catalog_viewer.visit_target(0, 0, "vert sb")<CR>
+        noremap <buffer> <silent> O     :call b:buffergator_catalog_viewer.visit_target(0, 0, "")<CR>
+        noremap <buffer> <silent> wS    :call b:buffergator_catalog_viewer.visit_target(0, 0, "sb")<CR>
+        noremap <buffer> <silent> wV    :call b:buffergator_catalog_viewer.visit_target(0, 0, "vert sb")<CR>
 
     endfunction
 
@@ -862,31 +859,21 @@ function! s:NewCatalogViewer()
             call s:_buffergator_messenger.send_info("Not a valid navigation line")
             return 0
         endif
-        let [l:jump_to_bufnum, l:jump_to_lnum, l:jump_to_col, l:dummy] = self.jump_map[l:cur_line].target
+        let [l:jump_to_bufnum] = self.jump_map[l:cur_line].target
         let l:cur_win_num = winnr()
         if !a:keep_catalog
             call self.close()
         endif
         call self.visit_buffer(l:jump_to_bufnum, a:split_cmd)
-        call setpos('.', [l:jump_to_bufnum, l:jump_to_lnum, l:jump_to_col, l:dummy])
-        execute(s:buffergator_post_move_cmd)
         if a:keep_catalog && a:refocus_catalog && winnr() != l:cur_win_num
             execute(l:cur_win_num."wincmd w")
         endif
-        let l:report = ""
-        if self.jump_map[l:cur_line].entry_index >= 0
-            let l:report .= "(" . string(self.jump_map[l:cur_line].entry_index + 1). " of " . self.catalog.size() . "): "
-            let l:report .= '"' . expand(bufname(l:jump_to_bufnum)) . '", Line ' . l:jump_to_lnum
-        else
-            let l:report .= 'File: "'  . expand(bufname(l:jump_to_bufnum)) . '"'
-        endif
-
-        call s:_buffergator_messenger.send_info(l:report)
+        call s:_buffergator_messenger.send_info(expand(bufname(l:jump_to_bufnum)))
     endfunction
 
     " Finds next line with occurrence of a rendered index
     function! l:catalog_viewer.goto_index_entry(direction, visit_target, refocus_catalog) dict
-        let l:ok = self.goto_pattern("^  \[", a:direction)
+        let l:ok = self.goto_pattern("^\[", a:direction)
         execute("normal! zz")
         if l:ok && a:visit_target
             call self.visit_target(1, a:refocus_catalog, "")
