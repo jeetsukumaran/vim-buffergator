@@ -594,13 +594,16 @@ function! s:NewCatalogViewer()
     " Sets buffer key maps.
     function! l:catalog_viewer.setup_buffer_keymaps() dict
 
-        """" Index buffer management
+        """" Disabling of unused modification keys
+        for key in ["p", "P", "C", "x", "X", "r", "R", "i", "I", "a", "A", "D", "S", "U"]
+            execute "nnoremap " . key . " <NOP>"
+        endfor
+
+        """" Catalog management
         noremap <buffer> <silent> s       :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
         noremap <buffer> <silent> d       :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
         noremap <buffer> <silent> u       :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
         noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.close()<CR>
-
-        """" Movement within buffer that updates the other window
 
         " show target line in other window, keeping catalog open and in focus
         noremap <buffer> <silent> .           :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
