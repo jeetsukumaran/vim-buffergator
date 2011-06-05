@@ -980,24 +980,11 @@ command!  BuffergatorToggle    :call <SID>ToggleBuffergator()
 command!  BuffergatorClose     :call <SID>CloseBuffergator()
 command!  BuffergatorOpen      :call <SID>OpenBuffergator()
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" DEBUGGING/DEVELOPMENT PURPOSES
-try
-    nunmap <Leader>bs
-catch /E31/
-endtry
-try
-    nunmap <Leader>be
-catch /E31/
-endtry
-try
-    nunmap <Leader>bv
-catch /E31/
-endtry
-nnoremap <Leader><Leader> :BuffergatorToggle<CR>
-nnoremap <Leader>b :BuffergatorToggle<CR>
-nnoremap <Leader>B :BuffergatorToggle<CR>
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if !exists('g:buffersaurus_suppress_keymaps') || !g:buffersaurus_suppress_keymaps
+    nnoremap <Leader><Leader> :BuffergatorToggle<CR>
+    nnoremap <Leader>b :BuffergatorOpen<CR>
+    nnoremap <Leader>B :BuffergatorClose<CR>
+endif
 
 " 1}}}
 
