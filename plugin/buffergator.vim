@@ -79,6 +79,16 @@ let s:buffergator_catalog_sort_regime_desc = {
             \ }
 " 2}}}
 
+" Catalog Display Regimes {{{2
+" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+let s:buffergator_catalog_display_regimes = ['basename', 'filepath', 'bufname']
+let s:buffergator_catalog_display_regime_desc = {
+            \ 'basename' : ["basename", "basename"],
+            \ 'filepath' : ["filepath", "full filepath"],
+            \ 'bufname'  : ["bufname", "buffer name"],
+            \ }
+" 2}}}
+
 " 1}}}
 
 " Utilities {{{1
@@ -328,7 +338,7 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["split_mode"] = s:_get_split_mode()
     let l:catalog_viewer["buffers_catalog"] = {}
     let l:catalog_viewer["sort_regime"] = "bufnum"
-    let l:catalog_viewer["buffer_catalog_display"] = "basename" " basename, relname, fullpath
+    let l:catalog_viewer["display_regime"] = "basename" " basename, relname, fullpath
 
     " Populates the buffer list
     function! l:catalog_viewer.update_buffers_info() dict
@@ -568,6 +578,7 @@ function! s:NewCatalogViewer()
 
         """" Index buffer management
         noremap <buffer> <silent> s       :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
+        noremap <buffer> <silent> d       :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
         noremap <buffer> <silent> u       :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
         noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.close()<CR>
 
@@ -633,15 +644,15 @@ function! s:NewCatalogViewer()
         for l:bufinfo in self.buffers_catalog
             let l:bufnum_str = s:_format_filled(l:bufinfo.bufnum, 3, 1, 0)
             let l:line = "[" . l:bufnum_str . "] "
-            if self.buffer_catalog_display == "basename"
+            if self.display_regime == "basename"
                 let l:line .= s:_format_align_left(l:bufinfo.basename, 30, " ")
                 let l:line .= fnamemodify(l:bufinfo.filepath, ":h")
-            elseif self.buffer_catalog_display == "filepath"
+            elseif self.display_regime == "filepath"
                 let l:line .= l:bufinfo.filepath
-            elseif self.buffer_catalog_display == "bufname"
+            elseif self.display_regime == "bufname"
                 let l:line .= l:bufinfo.bufname
             else
-                throw s:_buffergator_messenger.format_exception("Invalid display mode")
+                throw s:_buffergator_messenger.format_exception("Invalid display regime: '" . self.display_regime . "'")
             endif
             call self.append_line(l:line, l:bufinfo.bufnum)
         endfor
@@ -952,6 +963,20 @@ function! s:NewCatalogViewer()
         call self.open(1)
         let l:sort_desc = get(s:buffergator_catalog_sort_regime_desc, self.sort_regime, ["??", "in unspecified order"])[1]
         call s:_buffergator_messenger.send_info("sorted " . l:sort_desc)
+    endfunction
+
+    " Cycles display regime.
+    function! l:catalog_viewer.cycle_display_regime() dict
+        let l:cur_regime = index(s:buffergator_catalog_display_regimes, self.display_regime)
+        let l:cur_regime += 1
+        if l:cur_regime < 0 || l:cur_regime >= len(s:buffergator_catalog_display_regimes)
+            let self.display_regime = s:buffergator_catalog_display_regimes[0]
+        else
+            let self.display_regime = s:buffergator_catalog_display_regimes[l:cur_regime]
+        endif
+        call self.open(1)
+        let l:display_desc = get(s:buffergator_catalog_display_regime_desc, self.display_regime, ["??", "in unspecified order"])[1]
+        call s:_buffergator_messenger.send_info("displaying " . l:display_desc)
     endfunction
 
     " Rebuilds catalog.
