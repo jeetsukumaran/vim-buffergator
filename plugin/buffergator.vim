@@ -257,7 +257,7 @@ function! s:_get_split_mode(...)
             throw s:_buffergator_messenger.format_exception("Unrecognized split mode: '" . l:policy . "')
         endif
     endif
-    return s:buffergator_viewport_split_modes["T"]
+    return s:buffergator_viewport_split_modes["L"]
 endfunction
 
 " Detect filetype. From the 'taglist' plugin.
@@ -356,6 +356,7 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["buffers_catalog"] = {}
     let l:catalog_viewer["sort_regime"] = "bufnum"
     let l:catalog_viewer["display_regime"] = "basename"
+    let l:catalog_viewer["calling_bufnum"] = -1
 
     " Populates the buffer list
     function! l:catalog_viewer.update_buffers_info() dict
@@ -432,6 +433,8 @@ function! s:NewCatalogViewer()
     " Opens the buffer for viewing, creating it if needed. If non-empty first
     " argument is given, forces re-rendering of buffer.
     function! l:catalog_viewer.open(...) dict
+        " store calling buffer
+        let self.calling_bufnum = bufnr("%")
         " populate data
         call self.update_buffers_info()
         " get buffer number of the catalog view buffer, creating it if neccessary
@@ -442,9 +445,13 @@ function! s:NewCatalogViewer()
             " buffer exists: activate a viewport on it according to the
             " spawning mode, re-rendering the buffer with the catalog if needed
             call self.activate_viewport()
-            if (a:0 > 0 && a:1) || b:buffergator_catalog_viewer != self
-                call self.render_buffer()
-            endif
+            call self.render_buffer()
+            " if (a:0 > 0 && a:1) || b:buffergator_catalog_viewer != self
+            "     call self.render_buffer()
+            " else
+            "     " search for calling buffer number in jump map,
+            "     " when found, go to that line
+            " endif
         endif
     endfunction
 
@@ -621,9 +628,13 @@ function! s:NewCatalogViewer()
         setlocal modifiable
         call self.claim_buffer()
         call self.clear_buffer()
-        let self.jump_map = {}
         call self.setup_buffer_syntax()
+        let self.jump_map = {}
+        let l:initial_line = 1
         for l:bufinfo in self.buffers_catalog
+            if self.calling_bufnum == l:bufinfo.bufnum
+                let l:initial_line = line("$")
+            endif
             let l:bufnum_str = s:_format_filled(l:bufinfo.bufnum, 3, 1, 0)
             let l:line = "[" . l:bufnum_str . "] "
             if self.display_regime == "basename"
@@ -645,7 +656,7 @@ function! s:NewCatalogViewer()
         catch //
         endtry
         setlocal nomodifiable
-        call cursor(1, 1)
+        call cursor(l:initial_line, 1)
         " call self.goto_index_entry("n", 0, 1)
     endfunction
 
@@ -940,7 +951,7 @@ endfunction
 " ==============================================================================
 function! BuffergatorStatusLine()
     let l:line = line(".")
-    let l:status_line = "[-buffergator-]"
+    let l:status_line = "[[buffergator]]"
     if has_key(b:buffergator_catalog_viewer.jump_map, l:line)
         let l:status_line .= " Buffer " . string(l:line) . " of " . string(len(b:buffergator_catalog_viewer.buffers_catalog))
     endif
