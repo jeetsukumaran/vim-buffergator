@@ -439,6 +439,21 @@ function! s:NewCatalogViewer()
         endif
     endfunction
 
+    " Opens viewer if closed, closes viewer if open.
+    function! l:catalog_viewer.toggle() dict
+        " get buffer number of the catalog view buffer, creating it if neccessary
+        if self.bufnum < 0 || !bufexists(self.bufnum)
+            call self.open()
+        else
+            let l:bfwn = bufwinnr(self.bufnum)
+            if l:bfwn >= 0
+                call self.close()
+            else
+                call self.open()
+            endif
+        endif
+    endfunction
+
     " Creates a new buffer, renders and opens it.
     function! l:catalog_viewer.create_buffer() dict
         " get a new buf reference
@@ -573,7 +588,7 @@ function! s:NewCatalogViewer()
         """" Index buffer management
         noremap <buffer> <silent> s       :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
         noremap <buffer> <silent> u       :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
-        noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.quit_view()<CR>
+        noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.close()<CR>
 
         """" Movement within buffer
 
@@ -675,7 +690,7 @@ function! s:NewCatalogViewer()
     endfunction
 
     " Close and quit the viewer.
-    function! l:catalog_viewer.quit_view() dict
+    function! l:catalog_viewer.close() dict
         execute("bwipe " . self.bufnum)
     endfunction
 
@@ -847,7 +862,7 @@ function! s:NewCatalogViewer()
         let [l:jump_to_bufnum, l:jump_to_lnum, l:jump_to_col, l:dummy] = self.jump_map[l:cur_line].target
         let l:cur_win_num = winnr()
         if !a:keep_catalog
-            call self.quit_view()
+            call self.close()
         endif
         call self.visit_buffer(l:jump_to_bufnum, a:split_cmd)
         call setpos('.', [l:jump_to_bufnum, l:jump_to_lnum, l:jump_to_col, l:dummy])
@@ -978,19 +993,51 @@ if exists("s:_buffergator_messenger")
     unlet s:_buffergator_messenger
 endif
 let s:_buffergator_messenger = s:NewMessenger("")
+let s:_catalog_viewer = s:NewCatalogViewer()
 " 1}}}
 
 " Functions Supporting Global Commands {{{1
 " ==============================================================================
-function! s:ShowBuffergator(global)
-    let l:catalog_viewer = s:NewCatalogViewer()
-    call l:catalog_viewer.open()
+
+function! s:OpenBuffergator()
+    call s:_catalog_viewer.open()
 endfunction
+
+function! s:CloseBuffergator()
+    call s:_catalog_viewer.close()
+endfunction
+
+function! s:ToggleBuffergator()
+    call s:_catalog_viewer.toggle()
+endfunction
+
 " 1}}}
 
 " Public Command and Key Maps {{{1
 " ==============================================================================
-command! -bang -nargs=*         Buffergator          :call <SID>ShowBuffergator('<bang>')
+command!  BuffergatorToggle    :call <SID>ToggleBuffergator()
+command!  BuffergatorClose     :call <SID>CloseBuffergator()
+command!  BuffergatorOpen      :call <SID>OpenBuffergator()
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" DEBUGGING/DEVELOPMENT PURPOSES
+try
+    nunmap <Leader>bs
+catch /E31/
+endtry
+try
+    nunmap <Leader>be
+catch /E31/
+endtry
+try
+    nunmap <Leader>bv
+catch /E31/
+endtry
+nnoremap <Leader><Leader> :BuffergatorToggle<CR>
+nnoremap <Leader>b :BuffergatorToggle<CR>
+nnoremap <Leader>B :BuffergatorToggle<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " 1}}}
 
 " Restore State {{{1
