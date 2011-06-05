@@ -613,8 +613,7 @@ function! s:NewCatalogViewer()
 
     " Sets buffer status line.
     function! l:catalog_viewer.setup_buffer_statusline() dict
-        " setlocal statusline=\-buffergator\-\|\ %{BuffergatorStatusLineCurrentLineInfo()}%<%=\|%{BuffergatorStatusLineSortRegime()}\|%{BuffergatorStatusLineFilterRegime()}
-        " setlocal statusline=\-buffergator\-\|\ %{BuffergatorStatusLineCurrentLineInfo()}%<%=\|%{BuffergatorStatusLineSortRegime()}
+        setlocal statusline=%{BuffergatorStatusLine()}
     endfunction
 
     " Populates the buffer with the catalog index.
@@ -937,6 +936,18 @@ function! s:NewCatalogViewer()
 endfunction
 " 1}}}
 
+" Global Functions {{{1
+" ==============================================================================
+function! BuffergatorStatusLine()
+    let l:line = line(".")
+    let l:status_line = "[-buffergator-]"
+    if has_key(b:buffergator_catalog_viewer.jump_map, l:line)
+        let l:status_line .= " Buffer " . string(l:line) . " of " . string(len(b:buffergator_catalog_viewer.buffers_catalog))
+    endif
+    return l:status_line
+endfunction
+" 1}}}
+
 " Global Initialization {{{1
 " ==============================================================================
 if exists("s:_buffergator_messenger")
@@ -946,7 +957,7 @@ let s:_buffergator_messenger = s:NewMessenger("")
 let s:_catalog_viewer = s:NewCatalogViewer()
 " 1}}}
 
-" Functions Supporting Global Commands {{{1
+" Functions Supporting User Commands {{{1
 " ==============================================================================
 
 function! s:OpenBuffergator()
