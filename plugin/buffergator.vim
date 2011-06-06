@@ -514,16 +514,16 @@ function! s:NewCatalogViewer()
             execute("silent keepalt keepjumps " . self.split_mode . " " . self.bufnum)
             if has("gui_running") && g:buffergator_autoexpand_on_split && g:buffergator_split_size
                 if g:buffergator_viewport_split_policy =~ '[RL]'
-                    let old_size = &columns
+                    let self.pre_expand_columns = &columns
                     let &columns += g:buffergator_split_size
-                    let self.columns_expanded = &columns - old_size
+                    let self.columns_expanded = &columns - self.pre_expand_columns
                 else
                     let self.columns_expanded = 0
                 endif
                 if g:buffergator_viewport_split_policy =~ '[TB]'
-                    let old_size = &lines
+                    let self.pre_expand_lines = &lines
                     let &lines += g:buffergator_split_size
-                    let self.lines_expanded = &lines - old_size
+                    let self.lines_expanded = &lines - self.pre_expand_lines
                 else
                     let self.lines_expanded = 0
                 endif
@@ -743,11 +743,19 @@ function! s:NewCatalogViewer()
         "     endif
         if self.columns_expanded
                     \ && &columns - self.columns_expanded > 20
-            let &columns = &columns - self.columns_expanded
+            let new_size  = &columns - self.columns_expanded
+            if new_size < self.pre_expand_columns
+                let new_size = self.pre_expand_columns
+            endif
+            let &columns = new_size
         endif
         if self.lines_expanded
                     \ && &lines - self.lines_expanded > 20
-            let &lines = &lines - self.lines_expanded
+            let new_size  = &lines - self.lines_expanded
+            if new_size < self.pre_expand_lines
+                let new_size = self.pre_expand_lines
+            endif
+            let &lines = new_size
         endif
     endfunction
 
@@ -1039,7 +1047,7 @@ function! s:NewCatalogViewer()
                     let l:new_size = g:buffergator_split_size
                 endif
                 if l:new_size > 0
-                    execute("vertical resize " . string(l:new_size))
+                    execute("resize " . string(l:new_size))
                 endif
                 let self.is_zoomed = 0
             endif
