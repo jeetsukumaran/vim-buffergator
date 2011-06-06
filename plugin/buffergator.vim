@@ -574,7 +574,7 @@ function! s:NewCatalogViewer()
 
         """" Disabling of unused modification keys
         for key in ["p", "P", "C", "x", "X", "r", "R", "i", "I", "a", "A", "D", "S", "U"]
-            execute "<buffer> nnoremap " . key . " <NOP>"
+            execute "nnoremap <buffer> " . key . " <NOP>"
         endfor
 
         """" Catalog management
