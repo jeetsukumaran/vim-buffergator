@@ -588,9 +588,16 @@ function! s:NewCatalogViewer()
     " Sets buffer syntax.
     function! l:catalog_viewer.setup_buffer_syntax() dict
         if has("syntax")
-            syn region BuffergatorEntry start='^\[\s\{-}.\{-1,}\s\{-}\]' keepend oneline end='$'
-            syn match BuffergatorSyntaxKey '^\zs\[\s\{-}.\{-1,}\s\{-}\]\ze' containedin=BuffergatorEntry
-            highlight! link BuffergatorSyntaxKey   LineNr
+            syn region BuffergatorModifiedFileLine start='^\[\s\{-}.\{-1,}\s\{-}\] + ' keepend oneline end='$'
+            syn region BuffergatorUnmodifiedFileLine start='^\[\s\{-}.\{-1,}\s\{-}\]   ' keepend oneline end='$'
+            syn match BuffergatorModifiedFileSyntaxKey '^\zs\[\s\{-}.\{-1,}\s\{-}\]\ze' containedin=BuffergatorModifiedFileLine nextgroup=BuffergatorModifiedFilename
+            syn match BuffergatorUnmodifiedFileSyntaxKey '^\zs\[\s\{-}.\{-1,}\s\{-}\]\ze' containedin=BuffergatorUnmodifiedFileLine nextgroup=BuffergatorUnmodifiedFilename
+            syn match BuffergatorModifiedFilename ' + .\+$' containedin=BuffergatorModifiedFilenameEntry
+            syn match BuffergatorUnmodifiedFilename '   .\+$' containedin=BuffergatorUnmodifiedFileLine
+            highlight! link BuffergatorModifiedFileSyntaxKey   LineNr
+            highlight! link BuffergatorUnmodifiedFileSyntaxKey   LineNr
+            highlight! link BuffergatorModifiedFileFlag   WarningMsg
+            highlight! link BuffergatorModifiedFilename   WarningMsg
             highlight! def BuffergatorCurrentEntry gui=reverse cterm=reverse term=reverse
         endif
     endfunction
@@ -685,6 +692,11 @@ function! s:NewCatalogViewer()
             endif
             let l:bufnum_str = s:_format_filled(l:bufinfo.bufnum, 3, 1, 0)
             let l:line = "[" . l:bufnum_str . "] "
+            if l:bufinfo.is_modified
+                let l:line .= "+ "
+            else
+                let l:line .= "  "
+            endif
             if self.display_regime == "basename"
                 let l:line .= s:_format_align_left(l:bufinfo.basename, 30, " ")
                 let l:line .= l:bufinfo.parentdir
