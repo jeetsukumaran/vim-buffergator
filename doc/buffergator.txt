@@ -86,6 +86,12 @@ wV                  Split the previous window vertically and go to the current
 T                   Open the current entry in a new tab page, closing the
                     catalog.
 
+-------------------------------------------------------------------------------
+Window Control~
+
+A                   Zoom/unzoom window, expanding to full height (if
+                    horizontally split) or full width (if vertically split)
+
 ===============================================================================
                                                           *buffergator-options*
 OPTIONS AND SETTINGS~
@@ -95,18 +101,10 @@ The following options can be used to customize the behavior of this plugin.
 g:buffergator_viewport_split_policy~
     Determines how a new Buffergator window will be opened. Can be one of the
     following values:
-        'd'   : user-specified Vim default
-        'D'   : user-specified Vim default
-        'N'   : no split, reuse current buffer
-        'n'   : no split, reuse current buffer
         'L'   : vertical left (full screen height)
-        'l'   : vertical left (within current window)
         'R'   : vertical right (full screen height)
-        'r'   : vertical right (within current window)
         'T'   : horizontal top (full screen width)
-        't'   : horizontal top (within current window)
         'B'   : horizontal bottom (full screen width)
-        'b'   : horizontal bottom (within current window)
 
 g:buffergator_autodismiss_on_select~
     If 1, then selection an entry with <CR> will close the catalog. Otherwise,
