@@ -613,6 +613,7 @@ function! s:NewCatalogViewer()
         """" Catalog management
         noremap <buffer> <silent> s       :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
         noremap <buffer> <silent> d       :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
+        noremap <buffer> <silent> c       :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
         noremap <buffer> <silent> u       :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
         noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.close()<CR>
 
