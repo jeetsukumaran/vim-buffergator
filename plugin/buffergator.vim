@@ -372,6 +372,8 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["is_zoomed"] = 0
     let l:catalog_viewer["preclose_vsplit_size"] = 0
     let l:catalog_viewer["columns_expanded"] = 0
+    let l:catalog_viewer["prezoom_height"] = 0
+    let l:catalog_viewer["prezoom_width"] = 0
 
     " Populates the buffer list
     function! l:catalog_viewer.update_buffers_info() dict
@@ -522,7 +524,8 @@ function! s:NewCatalogViewer()
                         \ && has("gui_running")
                         \ && g:buffergator_autoexpand_on_vsplit
                 let &columns += g:buffergator_vsplit_size
-                let self.columns_expanded = 1
+                let self.columns_expanded = g:buffergator_vsplit_size
+
             else
                 let self.columns_expanded = 0
             endif
@@ -727,9 +730,7 @@ function! s:NewCatalogViewer()
             let self.preclose_vsplit_size = 0
         endif
         execute("bwipe " . self.bufnum)
-        if self.preclose_vsplit_size
-            call self.cleanup()
-        endif
+        call self.cleanup()
     endfunction
 
     " Clean up windows
@@ -738,6 +739,12 @@ function! s:NewCatalogViewer()
                     \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_vsplit_size)
                     \ && g:buffergator_viewport_split_policy =~ '[RL]'
                     \ && self.preclose_vsplit_size > 0
+            if self.is_zoomed
+                self.preclose_vsplit_size = self.columns_expanded
+            elseif self.columns_expanded != self.preclose_vsplit_size
+                " window size has been customized -- do not change columns
+                return
+            endif
             if &columns - self.preclose_vsplit_size > 20
                 let &columns = &columns - self.preclose_vsplit_size
             endif
@@ -1010,9 +1017,18 @@ function! s:NewCatalogViewer()
 
     " Zooms/unzooms window.
     function! l:catalog_viewer.toggle_zoom() dict
+        let l:bfwn = bufwinnr(self.bufnum)
+        if l:bfwn < 0
+            return
+        endif
         if self.is_zoomed
             self.is_zoomed = 0
         else
+            if s:_is_full_width_window(l:bfwn)
+            elseif s:_is_full_height_window(l:bfwn)
+            elseif g:buffergator_viewport_split_policy =~ '[RLrl]'
+            elseif g:buffergator_viewport_split_policy =~ '[TBtb]'
+            endif
             self.is_zoomed = 1
         endif
     endfunction
