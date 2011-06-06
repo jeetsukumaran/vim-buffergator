@@ -30,6 +30,31 @@ let s:save_cpo = &cpo
 set cpo&vim
 " 1}}}
 
+" Global Options {{{1
+" =============================================================================
+if !exists("g:buffergator_viewport_split_policy")
+    let g:buffergator_viewport_split_policy = "L"
+endif
+if !exists("g:buffergator_move_wrap")
+    let g:buffergator_move_wrap = 1
+endif
+if !exists("g:buffergator_autodismiss_on_select")
+    let g:buffergator_autodismiss_on_select = 1
+endif
+if !exists("g:buffergator_autoexpand_on_split")
+    let g:buffergator_autoexpand_on_split = 1
+endif
+if !exists("g:buffergator_split_size")
+    let g:buffergator_split_size = 40
+endif
+if !exists("g:buffergator_sort_regime")
+    let g:buffergator_sort_regime = "bufnum"
+endif
+if !exists("g:buffergator_display_regime")
+    let g:buffergator_display_regime = "basename"
+endif
+" 1}}}
+
 " Script Data and Variables {{{1
 " =============================================================================
 
@@ -87,25 +112,6 @@ let s:buffergator_catalog_display_regime_desc = {
             \ 'bufname'  : ["bufname", "buffer name"],
             \ }
 let s:buffergator_default_display_regime = "basename"
-" 2}}}
-
-" Global Options {{{2
-" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if !exists("g:buffergator_viewport_split_policy")
-    let g:buffergator_viewport_split_policy = "L"
-endif
-if !exists("g:buffergator_move_wrap")
-    let g:buffergator_move_wrap = 1
-endif
-if !exists("g:buffergator_autodismiss_on_select")
-    let g:buffergator_autodismiss_on_select = 1
-endif
-if !exists("g:buffergator_autoexpand_on_split")
-    let g:buffergator_autoexpand_on_split = 1
-endif
-if !exists("g:buffergator_split_size")
-    let g:buffergator_split_size = 40
-endif
 " 2}}}
 
 " 1}}}
@@ -364,8 +370,8 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["jump_map"] = {}
     let l:catalog_viewer["split_mode"] = s:_get_split_mode()
     let l:catalog_viewer["buffers_catalog"] = {}
-    let l:catalog_viewer["sort_regime"] = exists("g:buffergator_sort_regime") ?  g:buffergator_sort_regime : s:buffergator_default_catalog_sort_regime
-    let l:catalog_viewer["display_regime"] = exists("g:buffergator_display_regime") ?  g:buffergator_display_regime : s:buffergator_default_display_regime
+    let l:catalog_viewer["sort_regime"] = g:buffergator_sort_regime
+    let l:catalog_viewer["display_regime"] = g:buffergator_display_regime
     let l:catalog_viewer["calling_bufnum"] = -1
     let l:catalog_viewer["is_zoomed"] = 0
     let l:catalog_viewer["columns_expanded"] = 0
