@@ -615,10 +615,13 @@ function! s:NewCatalogViewer()
 
         """" Catalog management
         noremap <buffer> <silent> s       :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
-        noremap <buffer> <silent> d       :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
         noremap <buffer> <silent> i       :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
         noremap <buffer> <silent> u       :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
         noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.close()<CR>
+        noremap <buffer> <silent> d       :call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
+        noremap <buffer> <silent> D       :call b:buffergator_catalog_viewer.delete_target(0, 1)<CR>
+        noremap <buffer> <silent> x       :call b:buffergator_catalog_viewer.delete_target(1, 0)<CR>
+        noremap <buffer> <silent> X       :call b:buffergator_catalog_viewer.delete_target(1, 1)<CR>
 
         " open target
         noremap <buffer> <silent> <CR>  :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
@@ -920,8 +923,7 @@ function! s:NewCatalogViewer()
         let &switchbuf=l:old_switch_buf
         endfunction
 
-    " Go to the line mapped to by the current line/index of the catalog
-    " viewer.
+    " Go to the selected buffer.
     function! l:catalog_viewer.visit_target(keep_catalog, refocus_catalog, split_cmd) dict
         let l:cur_line = line(".")
         if !has_key(l:self.jump_map, l:cur_line)
@@ -938,6 +940,34 @@ function! s:NewCatalogViewer()
             execute(l:cur_win_num."wincmd w")
         endif
         call s:_buffergator_messenger.send_info(expand(bufname(l:jump_to_bufnum)))
+    endfunction
+
+    function! l:catalog_viewer.delete_target(wipe, force) dict
+        let l:cur_line = line(".")
+        if !has_key(l:self.jump_map, l:cur_line)
+            call s:_buffergator_messenger.send_info("Not a valid buffer")
+            return 0
+        endif
+        let [l:jump_to_bufnum] = self.jump_map[l:cur_line].target
+        let l:cur_win_num = winnr()
+        if a:wipe && a:force
+            let l:message = "unconditionally wipe"
+            let l:cmd = "bw!"
+        elseif a:wipe && !a:force
+            let l:message = "wipe"
+            let l:cmd = "bw"
+        elseif !a:wipe && a:force
+            let l:message = "unconditionally delete"
+            let l:cmd = "bd"
+        elseif !a:wipe && !a:force
+            let l:message = "delete"
+            let l:cmd = "bd!"
+        endif
+        let l:bufname = expand(bufname(l:jump_to_bufnum))
+        execute(l:cmd . string(l:jump_to_bufnum))
+        call self.rebuild_catalog()
+        let l:message = l:bufname . " " . l:message . "d"
+        call s:_buffergator_messenger.send_info(l:message)
     endfunction
 
     " Finds next line with occurrence of a rendered index

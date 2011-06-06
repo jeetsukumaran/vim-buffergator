@@ -41,9 +41,12 @@ following key mappings are available in the catalog view.
 Catalog Management~
 
 s                   Cycle through sort regimes.
-d                   Cycle through display regimes.
 i                   Cycle through display regimes (alternate).
 u                   Update (rebuild/refresh) index.
+d                   Delete the selected buffer.
+D                   Unconditionally delete the selected buffer.
+x                   Wipe the selected buffer.
+X                   Unconditionally wipe the selected buffer.
 q                   Quit the index/catalog window.
 
 -------------------------------------------------------------------------------
