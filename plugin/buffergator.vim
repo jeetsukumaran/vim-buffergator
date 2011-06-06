@@ -95,6 +95,9 @@ let s:buffergator_catalog_display_regime_desc = {
 if !exists("g:buffergator_move_wrap")
     let g:buffergator_move_wrap = 1
 endif
+if !exists("g:buffergator_autodismiss_on_select")
+    let g:buffergator_autodismiss_on_select = 1
+endif
 " 2}}}
 
 " 1}}}
@@ -583,6 +586,9 @@ function! s:NewCatalogViewer()
         noremap <buffer> <silent> u       :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
         noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.close()<CR>
 
+        " open target
+        noremap <buffer> <silent> <CR>  :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
+
         " show target line in other window, keeping catalog open and in focus
         noremap <buffer> <silent> .           :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
         noremap <buffer> <silent> <SPACE>     :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
@@ -594,7 +600,6 @@ function! s:NewCatalogViewer()
         """" Movement that moves to the current search target
 
         " go to target line in other window, keeping catalog open
-        noremap <buffer> <silent> <CR>  :call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
         noremap <buffer> <silent> o     :call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
         noremap <buffer> <silent> ws    :call b:buffergator_catalog_viewer.visit_target(1, 0, "sb")<CR>
         noremap <buffer> <silent> wv    :call b:buffergator_catalog_viewer.visit_target(1, 0, "vert sb")<CR>

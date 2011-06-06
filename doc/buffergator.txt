@@ -42,8 +42,10 @@ u                   Update (rebuild/refresh) index.
 q                   Quit the index/catalog window.
 
 -------------------------------------------------------------------------------
-Movement Within the Catalog~
+Open Selected Buffer~
 
+<CR>                Switch focus to the previous window and go to the current
+                    entry.
 
 -------------------------------------------------------------------------------
 Movement Within the Catalog that Updates the Other Window~
@@ -59,10 +61,9 @@ Movement Within the Catalog that Updates the Other Window~
 -------------------------------------------------------------------------------
 Jumping to the Matched Line Without Closing the Catalog~
 
-<CR>                Switch focus to the previous window and go to the current
-                    entry.
 o                   Switch focus to the previous window and go to the current
-                    entry (same as <CR>).
+                    entry (like <CR> if 'g:buffergator_autodismiss_on_select'
+                    is 0).
 ws                  Split the previous window, switch focus, and go to the
                     current entry.
 wv                  Split the previous window vertically, switch focus, and go
@@ -73,7 +74,8 @@ t                   Open the current entry in a new tab page, keeping the
 -------------------------------------------------------------------------------
 Jumping to the Matched Line, Closing the Catalog~
 
-O                   Close catalog and go to the current entry.
+O                   Close catalog and go to the current entry (like <CR> if
+                    'g:buffergator_autodismiss_on_select' is 1).
 wS                  Split the previous window and go to the current entry.
 wV                  Split the previous window vertically and go to the current
                     entry.
@@ -85,6 +87,10 @@ T                   Open the current entry in a new tab page, closing the
 OPTIONS AND SETTINGS~
 
 The following options can be used to customize the behavior of this plugin.
+
+g:buffergator_autodismiss_on_select
+    If 1, then selection an entry with <CR> will close the catalog. Otherwise,
+    catalog stays open. Default is 1.
 
 g:buffergator_sort_regime
     Sets the default sort regime for buffer listing:
