@@ -1,0 +1,101 @@
+*buffergator.txt*	Buffer indexing and navigation plugin.
+
+===============================================================================
+                                             *buffergator* *buffergator-contents*
+CONTENTS~
+
+    1. Introduction ....................... |buffergator-introduction|
+    2. Commands ........................... |buffergator-commands|
+    3. Key Mappings ....................... |buffergator-keys|
+    4. Options and Settings ............... |buffergator-options|
+~
+===============================================================================
+                                                      *buffergator-introduction*
+INTRODUCTION~
+
+Buffergator is a plugin for listing and navigating open buffers.
+~
+===============================================================================
+                                                          *buffergator-commands*
+COMMANDS~
+
+:BuffergatorOpen
+                    Open the buffer catalog, or go to it if it is already open.
+
+:BuffergatorClose
+                    Close the buffer catalog if it is already open.
+
+:BuffergatorToggle
+                    Open the buffer catalog if it is closed, or close it if
+                    it is already open.
+
+===============================================================================
+                                                             *buffergator-keys*
+KEY MAPPINGS (CATALOG VIEWER)~
+
+-------------------------------------------------------------------------------
+Catalog Management~
+
+s                   Cycle through sort regimes.
+d                   Cycle through display regimes.
+u                   Update (rebuild/refresh) index.
+q                   Quit the index/catalog window.
+
+-------------------------------------------------------------------------------
+Movement Within the Catalog~
+
+
+-------------------------------------------------------------------------------
+Movement Within the Catalog that Updates the Other Window~
+
+.                   Show the current buffer entry in the previous window.
+<SPACE>             Go to the next buffer entry and show it in the previous
+                    window.
+<C-SPACE>           Go to the previous buffer entry and show it in the
+                    previous window.
+<C-N>               Go to and show the next buffer entry.
+<C-P>               Go to and show the previous buffer entry.
+
+-------------------------------------------------------------------------------
+Jumping to the Matched Line Without Closing the Catalog~
+
+<CR>                Switch focus to the previous window and go to the current
+                    entry.
+o                   Switch focus to the previous window and go to the current
+                    entry (same as <CR>).
+ws                  Split the previous window, switch focus, and go to the
+                    current entry.
+wv                  Split the previous window vertically, switch focus, and go
+                    to the current entry.
+t                   Open the current entry in a new tab page, keeping the
+                    catalog open.
+
+-------------------------------------------------------------------------------
+Jumping to the Matched Line, Closing the Catalog~
+
+O                   Close catalog and go to the current entry.
+wS                  Split the previous window and go to the current entry.
+wV                  Split the previous window vertically and go to the current
+                    entry.
+T                   Open the current entry in a new tab page, closing the
+                    catalog.
+
+===============================================================================
+                                                          *buffergator-options*
+OPTIONS AND SETTINGS~
+
+The following options can be used to customize the behavior of this plugin.
+
+g:buffergator_sort_regime
+    Sets the default sort regime for buffer listing:
+        'bufnum' : sort by buffer number [default]
+        'basename': sort by buffer file basename
+        'filepath': sort by full buffer filepath
+
+g:buffergator_display_regime
+    Sets the default sort regime for buffer listing:
+        'basename': display buffer basename first, followed by directory
+        'filepath': display full buffer filepath
+        'bufname': display buffer name
+
+ vim:tw=78:ts=8:ft=help:norl:
