@@ -677,7 +677,10 @@ function! s:NewCatalogViewer()
 
     " Close and quit the viewer.
     function! l:catalog_viewer.close() dict
-        execute("bwipe " . self.bufnum)
+        try
+            execute("bwipe " . self.bufnum)
+        catch //
+        endtry
     endfunction
 
     function! l:catalog_viewer.highlight_current_line()
