@@ -67,7 +67,7 @@ let s:buffergator_viewport_split_modes = {
             \ "B"   : "botright sbuffer",
             \ "b"   : "rightbelow",
             \ }
-let s:buffergator_default_viewport_split_policy = "T"
+let s:buffergator_default_viewport_split_policy = "L"
 " 2}}}
 
 " Catalog Sort Regimes {{{2
@@ -100,8 +100,11 @@ endif
 if !exists("g:buffergator_autodismiss_on_select")
     let g:buffergator_autodismiss_on_select = 1
 endif
-if !exists("g:buffergator_autodismiss_on_select")
-    let g:buffergator_autodismiss_on_select = 1
+if !exists("g:buffergator_autoexpand_on_vsplit")
+    let g:buffergator_autoexpand_on_vsplit = 1
+endif
+if !exists("g:buffergator_vsplit_size")
+    let g:buffergator_vsplit_size = 40
 endif
 " 2}}}
 
@@ -519,7 +522,26 @@ function! s:NewCatalogViewer()
         else
             " create viewport
             let self.split_mode = s:_get_split_mode()
+            " let l:oldea = &equalalways
+            " if has("gui_running")
+            "             \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_vsplit_size)
+            "             \ && self.split_mode =~ '[rRlL]'
+            "     set noequalalways
+            " endif
             execute("silent keepalt keepjumps " . self.split_mode . " " . self.bufnum)
+            if self.split_mode =~ '[rRlL]'
+                if has("gui_running") && g:buffergator_autoexpand_on_vsplit
+                    let &columns += g:buffergator_vsplit_size
+                endif
+                if g:buffergator_vsplit_size
+                    execute("vertical resize " . g:buffergator_vsplit_size)
+                endif
+            endif
+            " if has("gui_running")
+            "             \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_vsplit_size)
+            "             \ && self.split_mode =~ '[rRlL]'
+            "     let &equalalways = l:oldea
+            " endif
         endif
     endfunction
 
