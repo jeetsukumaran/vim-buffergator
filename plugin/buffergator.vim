@@ -67,7 +67,6 @@ let s:buffergator_viewport_split_modes = {
             \ "B"   : "botright sbuffer",
             \ "b"   : "rightbelow",
             \ }
-let s:buffergator_default_viewport_split_policy = "L"
 " 2}}}
 
 " Catalog Sort Regimes {{{2
@@ -94,6 +93,9 @@ let s:buffergator_default_display_regime = "basename"
 
 " Global Options {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if !exists("g:buffergator_viewport_split_policy")
+    let g:buffergator_viewport_split_policy = "L"
+endif
 if !exists("g:buffergator_move_wrap")
     let g:buffergator_move_wrap = 1
 endif
@@ -250,28 +252,13 @@ function! s:_find_buffers_with_var(varname, expr)
 endfunction
 
 " Returns split mode to use for a new Buffergator viewport. If given an
-" argument, this should be a single letter indicating the split policy. If
-" no argument is given and `g:buffergator_viewport_split_policy` exists, then it
-" will be used. If `g:buffergator_viewport_split_policy` does not exist, then a
-" default will be used.
-function! s:_get_split_mode(...)
-    if a:0 == 0
-        if exists("g:buffergator_viewport_split_policy")
-            if has_key(s:buffergator_viewport_split_modes, g:buffergator_viewport_split_policy)
-                return s:buffergator_viewport_split_modes[g:buffergator_viewport_split_policy]
-            else
-                call s:_buffergator_messenger.send_error("Unrecognized split mode specified by 'g:buffergator_viewport_split_policy': " . g:buffergator_viewport_split_policy)
-            endif
-        endif
+" argument
+function! s:_get_split_mode()
+    if has_key(s:buffergator_viewport_split_modes, g:buffergator_viewport_split_policy)
+        return s:buffergator_viewport_split_modes[g:buffergator_viewport_split_policy]
     else
-        let l:policy = a:1
-        if has_key(s:buffergator_viewport_split_modes, l:policy[0])
-            return s:buffergator_viewport_split_modes[l:policy[0]]
-        else
-            throw s:_buffergator_messenger.format_exception("Unrecognized split mode: '" . l:policy . "')
-        endif
+        call s:_buffergator_messenger.send_error("Unrecognized split mode specified by 'g:buffergator_viewport_split_policy': " . g:buffergator_viewport_split_policy)
     endif
-    return s:buffergator_viewport_split_modes[s:buffergator_default_viewport_split_policy]
 endfunction
 
 " Detect filetype. From the 'taglist' plugin.
@@ -293,16 +280,16 @@ function! s:_detect_filetype(fname)
     return ftype
 endfunction
 
-function! s:_is_full_height_window(win_num) dict
-    if winwidth(win_num) == &columns
+function! s:_is_full_width_window(win_num)
+    if winwidth(a:win_num) == &columns
         return 1
     else
         return 0
     endif
 endfunction!
 
-function! s:_is_full_width_window(win_num) dict
-    if winheight(win_num) - &cmdheight - 1 == &lines
+function! s:_is_full_height_window(win_num)
+    if winheight(a:win_num) + &cmdheight + 1 == &lines
         return 1
     else
         return 0
@@ -383,6 +370,8 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["display_regime"] = exists("g:buffergator_display_regime") ?  g:buffergator_display_regime : s:buffergator_default_display_regime
     let l:catalog_viewer["calling_bufnum"] = -1
     let l:catalog_viewer["is_zoomed"] = 0
+    let l:catalog_viewer["preclose_vsplit_size"] = 0
+    let l:catalog_viewer["columns_expanded"] = 0
 
     " Populates the buffer list
     function! l:catalog_viewer.update_buffers_info() dict
@@ -529,13 +518,16 @@ function! s:NewCatalogViewer()
             "     set noequalalways
             " endif
             execute("silent keepalt keepjumps " . self.split_mode . " " . self.bufnum)
-            if self.split_mode =~ '[rRlL]'
-                if has("gui_running") && g:buffergator_autoexpand_on_vsplit
-                    let &columns += g:buffergator_vsplit_size
-                endif
-                if g:buffergator_vsplit_size
-                    execute("vertical resize " . g:buffergator_vsplit_size)
-                endif
+            if g:buffergator_viewport_split_policy =~ '[RL]'
+                        \ && has("gui_running")
+                        \ && g:buffergator_autoexpand_on_vsplit
+                let &columns += g:buffergator_vsplit_size
+                let self.columns_expanded = 1
+            else
+                let self.columns_expanded = 0
+            endif
+            if g:buffergator_viewport_split_policy =~ '[RLrl]' && g:buffergator_vsplit_size
+                execute("vertical resize " . g:buffergator_vsplit_size)
             endif
             " if has("gui_running")
             "             \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_vsplit_size)
@@ -721,10 +713,35 @@ function! s:NewCatalogViewer()
 
     " Close and quit the viewer.
     function! l:catalog_viewer.close() dict
-        try
-            execute("bwipe " . self.bufnum)
-        catch //
-        endtry
+        if self.bufnum < 0 || !bufexists(self.bufnum)
+            return
+        endif
+        let l:bfwn = bufwinnr(self.bufnum)
+        if l:bfwn >= 0
+            if self.columns_expanded && s:_is_full_height_window(l:bfwn)
+                let self.preclose_vsplit_size = winwidth(l:bfwn)
+            else
+                let self.preclose_vsplit_size = 0
+            endif
+        else
+            let self.preclose_vsplit_size = 0
+        endif
+        execute("bwipe " . self.bufnum)
+        if self.preclose_vsplit_size
+            call self.cleanup()
+        endif
+    endfunction
+
+    " Clean up windows
+    function! l:catalog_viewer.cleanup() dict
+        if has("gui_running")
+                    \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_vsplit_size)
+                    \ && g:buffergator_viewport_split_policy =~ '[RL]'
+                    \ && self.preclose_vsplit_size > 0
+            if &columns - self.preclose_vsplit_size > 20
+                let &columns = &columns - self.preclose_vsplit_size
+            endif
+        endif
     endfunction
 
     function! l:catalog_viewer.highlight_current_line()
