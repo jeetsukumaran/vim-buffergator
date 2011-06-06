@@ -105,8 +105,8 @@ endif
 if !exists("g:buffergator_autoexpand_on_vsplit")
     let g:buffergator_autoexpand_on_vsplit = 1
 endif
-if !exists("g:buffergator_vsplit_size")
-    let g:buffergator_vsplit_size = 40
+if !exists("g:buffergator_split_size")
+    let g:buffergator_split_size = 40
 endif
 " 2}}}
 
@@ -372,8 +372,6 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["is_zoomed"] = 0
     let l:catalog_viewer["preclose_vsplit_size"] = 0
     let l:catalog_viewer["columns_expanded"] = 0
-    let l:catalog_viewer["prezoom_height"] = 0
-    let l:catalog_viewer["prezoom_width"] = 0
 
     " Populates the buffer list
     function! l:catalog_viewer.update_buffers_info() dict
@@ -515,7 +513,7 @@ function! s:NewCatalogViewer()
             let self.split_mode = s:_get_split_mode()
             " let l:oldea = &equalalways
             " if has("gui_running")
-            "             \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_vsplit_size)
+            "             \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_split_size)
             "             \ && self.split_mode =~ '[rRlL]'
             "     set noequalalways
             " endif
@@ -523,17 +521,17 @@ function! s:NewCatalogViewer()
             if g:buffergator_viewport_split_policy =~ '[RL]'
                         \ && has("gui_running")
                         \ && g:buffergator_autoexpand_on_vsplit
-                let &columns += g:buffergator_vsplit_size
-                let self.columns_expanded = g:buffergator_vsplit_size
+                let &columns += g:buffergator_split_size
+                let self.columns_expanded = g:buffergator_split_size
 
             else
                 let self.columns_expanded = 0
             endif
-            if g:buffergator_viewport_split_policy =~ '[RLrl]' && g:buffergator_vsplit_size
-                execute("vertical resize " . g:buffergator_vsplit_size)
+            if g:buffergator_viewport_split_policy =~ '[RLrl]' && g:buffergator_split_size
+                execute("vertical resize " . g:buffergator_split_size)
             endif
             " if has("gui_running")
-            "             \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_vsplit_size)
+            "             \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_split_size)
             "             \ && self.split_mode =~ '[rRlL]'
             "     let &equalalways = l:oldea
             " endif
@@ -645,6 +643,9 @@ function! s:NewCatalogViewer()
         noremap <buffer> <silent> wV    :call b:buffergator_catalog_viewer.visit_target(0, 0, "vert sb")<CR>
         noremap <buffer> <silent> T     :call b:buffergator_catalog_viewer.visit_target(0, 0, "tab sb")<CR>
 
+        " other
+        noremap <buffer> <silent> A     :call b:buffergator_catalog_viewer.toggle_zoom()<CR>
+
     endfunction
 
     " Sets buffer folding.
@@ -736,11 +737,11 @@ function! s:NewCatalogViewer()
     " Clean up windows
     function! l:catalog_viewer.cleanup() dict
         if has("gui_running")
-                    \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_vsplit_size)
+                    \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_split_size)
                     \ && g:buffergator_viewport_split_policy =~ '[RL]'
                     \ && self.preclose_vsplit_size > 0
             if self.is_zoomed
-                self.preclose_vsplit_size = self.columns_expanded
+                let self.preclose_vsplit_size = self.columns_expanded
             elseif self.columns_expanded != self.preclose_vsplit_size
                 " window size has been customized -- do not change columns
                 return
@@ -1022,14 +1023,41 @@ function! s:NewCatalogViewer()
             return
         endif
         if self.is_zoomed
-            self.is_zoomed = 0
-        else
-            if s:_is_full_width_window(l:bfwn)
-            elseif s:_is_full_height_window(l:bfwn)
-            elseif g:buffergator_viewport_split_policy =~ '[RLrl]'
-            elseif g:buffergator_viewport_split_policy =~ '[TBtb]'
+            if s:_is_full_height_window(l:bfwn) && !s:_is_full_width_window(l:bfwn)
+                if !g:buffergator_split_size
+                    let l:new_size = &columns / 3
+                else
+                    let l:new_size = g:buffergator_split_size
+                endif
+                if l:new_size > 0
+                    execute("vertical resize " . string(l:new_size))
+                endif
+                let self.is_zoomed = 0
+            elseif s:_is_full_width_window(l:bfwn) && !s:_is_full_height_window(l:bfwn)
+                if !g:buffergator_split_size
+                    let l:new_size = &lines / 3
+                else
+                    let l:new_size = g:buffergator_split_size
+                endif
+                if l:new_size > 0
+                    execute("vertical resize " . string(l:new_size))
+                endif
+                let self.is_zoomed = 0
             endif
-            self.is_zoomed = 1
+        else
+            if s:_is_full_height_window(l:bfwn) && !s:_is_full_width_window(l:bfwn)
+                if &columns > 20
+                    execute("vertical resize " . string(&columns-10))
+                    let self.is_zoomed = 1
+                endif
+            elseif s:_is_full_width_window(l:bfwn) && !s:_is_full_height_window(l:bfwn)
+                if &lines > 20
+                    execute("resize " . string(&lines-10))
+                    let self.is_zoomed = 1
+                endif
+            " elseif g:buffergator_viewport_split_policy =~ '[RLrl]'
+            " elseif g:buffergator_viewport_split_policy =~ '[TBtb]'
+            endif
         endif
     endfunction
 
