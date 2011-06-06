@@ -42,6 +42,7 @@ Catalog Management~
 
 s                   Cycle through sort regimes.
 d                   Cycle through display regimes.
+i                   Cycle through display regimes (alternate).
 u                   Update (rebuild/refresh) index.
 q                   Quit the index/catalog window.
 
