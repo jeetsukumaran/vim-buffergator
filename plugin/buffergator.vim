@@ -531,9 +531,9 @@ function! s:NewCatalogViewer()
                     let self.lines_expanded = 0
                 endif
             endif
-            if g:buffergator_viewport_split_policy =~ '[RLrl]' && g:buffergator_split_size
+            if g:buffergator_viewport_split_policy =~ '[RrLl]' && g:buffergator_split_size
                 execute("vertical resize " . g:buffergator_split_size)
-            elseif g:buffergator_viewport_split_policy =~ '[TBtb]' && g:buffergator_split_size
+            elseif g:buffergator_viewport_split_policy =~ '[TtBb]' && g:buffergator_split_size
                 execute("resize " . g:buffergator_split_size)
             endif
         endif
@@ -1034,7 +1034,8 @@ function! s:NewCatalogViewer()
             return
         endif
         if self.is_zoomed
-            if s:_is_full_height_window(l:bfwn) && !s:_is_full_width_window(l:bfwn)
+            " if s:_is_full_height_window(l:bfwn) && !s:_is_full_width_window(l:bfwn)
+            if g:buffergator_viewport_split_policy =~ '[RrLl]'
                 if !g:buffergator_split_size
                     let l:new_size = &columns / 3
                 else
@@ -1044,7 +1045,8 @@ function! s:NewCatalogViewer()
                     execute("vertical resize " . string(l:new_size))
                 endif
                 let self.is_zoomed = 0
-            elseif s:_is_full_width_window(l:bfwn) && !s:_is_full_height_window(l:bfwn)
+            " elseif s:_is_full_width_window(l:bfwn) && !s:_is_full_height_window(l:bfwn)
+            elseif g:buffergator_viewport_split_policy =~ '[TtBb]'
                 if !g:buffergator_split_size
                     let l:new_size = &lines / 3
                 else
@@ -1056,18 +1058,18 @@ function! s:NewCatalogViewer()
                 let self.is_zoomed = 0
             endif
         else
-            if s:_is_full_height_window(l:bfwn) && !s:_is_full_width_window(l:bfwn)
+            " if s:_is_full_height_window(l:bfwn) && !s:_is_full_width_window(l:bfwn)
+            if g:buffergator_viewport_split_policy =~ '[RrLl]'
                 if &columns > 20
                     execute("vertical resize " . string(&columns-10))
                     let self.is_zoomed = 1
                 endif
-            elseif s:_is_full_width_window(l:bfwn) && !s:_is_full_height_window(l:bfwn)
+            " elseif s:_is_full_width_window(l:bfwn) && !s:_is_full_height_window(l:bfwn)
+            elseif g:buffergator_viewport_split_policy =~ '[TtBb]'
                 if &lines > 20
                     execute("resize " . string(&lines-10))
                     let self.is_zoomed = 1
                 endif
-            " elseif g:buffergator_viewport_split_policy =~ '[RLrl]'
-            " elseif g:buffergator_viewport_split_policy =~ '[TBtb]'
             endif
         endif
     endfunction
