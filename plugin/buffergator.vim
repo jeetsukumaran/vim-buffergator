@@ -78,6 +78,7 @@ let s:buffergator_catalog_sort_regime_desc = {
             \ 'filepath' : ["filepath", "by (full) filepath"],
             \ 'bufnum'  : ["bufnum", "by buffer number"],
             \ }
+let s:buffergator_default_catalog_sort_regime = "bufnum"
 " 2}}}
 
 " Catalog Display Regimes {{{2
@@ -88,6 +89,7 @@ let s:buffergator_catalog_display_regime_desc = {
             \ 'filepath' : ["filepath", "full filepath"],
             \ 'bufname'  : ["bufname", "buffer name"],
             \ }
+let s:buffergator_default_display_regime = "basename"
 " 2}}}
 
 " Global Options {{{2
@@ -341,11 +343,6 @@ endfunction
 " ============================================================================
 function! s:NewCatalogViewer()
 
-    " abort if catalog is empty
-    " if len(a:catalog.matched_lines) == 0
-    "     throw s:_buffergator_messenger.format_exception("CatalogViewer() called on empty catalog")
-    " endif
-
     " initialize
     let l:catalog_viewer = {}
 
@@ -360,8 +357,8 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["jump_map"] = {}
     let l:catalog_viewer["split_mode"] = s:_get_split_mode()
     let l:catalog_viewer["buffers_catalog"] = {}
-    let l:catalog_viewer["sort_regime"] = "bufnum"
-    let l:catalog_viewer["display_regime"] = "basename"
+    let l:catalog_viewer["sort_regime"] = exists("g:buffergator_sort_regime") ?  g:buffergator_sort_regime : s:buffergator_default_sort_regime
+    let l:catalog_viewer["display_regime"] = exists("g:buffergator_display_regime") ?  g:buffergator_display_regime : s:buffergator_default_display_regime
     let l:catalog_viewer["calling_bufnum"] = -1
 
     " Populates the buffer list
