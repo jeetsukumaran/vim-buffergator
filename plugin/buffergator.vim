@@ -287,6 +287,22 @@ function! s:_detect_filetype(fname)
     return ftype
 endfunction
 
+function! s:_is_full_height_window(win_num) dict
+    if winwidth(win_num) == &columns
+        return 1
+    else
+        return 0
+    endif
+endfunction!
+
+function! s:_is_full_width_window(win_num) dict
+    if winheight(win_num) - &cmdheight - 1 == &lines
+        return 1
+    else
+        return 0
+    endif
+endfunction!
+
 " 2}}}
 
 " Sorting {{{2
@@ -360,6 +376,7 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["sort_regime"] = exists("g:buffergator_sort_regime") ?  g:buffergator_sort_regime : s:buffergator_default_catalog_sort_regime
     let l:catalog_viewer["display_regime"] = exists("g:buffergator_display_regime") ?  g:buffergator_display_regime : s:buffergator_default_display_regime
     let l:catalog_viewer["calling_bufnum"] = -1
+    let l:catalog_viewer["is_zoomed"] = 0
 
     " Populates the buffer list
     function! l:catalog_viewer.update_buffers_info() dict
@@ -947,6 +964,15 @@ function! s:NewCatalogViewer()
     function! l:catalog_viewer.rebuild_catalog() dict
         call self.update_buffers_info()
         call self.open(1)
+    endfunction
+
+    " Zooms/unzooms window.
+    function! l:catalog_viewer.toggle_zoom() dict
+        if self.is_zoomed
+            self.is_zoomed = 0
+        else
+            self.is_zoomed = 1
+        endif
     endfunction
 
     " return object
