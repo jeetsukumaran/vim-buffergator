@@ -617,7 +617,10 @@ function! s:NewCatalogViewer()
 
         """" Disabling of unused modification keys
         for key in ["p", "P", "C", "x", "X", "r", "R", "i", "I", "a", "A", "D", "S", "U"]
-            execute "nnoremap <buffer> " . key . " <NOP>"
+            try
+                execute "nnoremap <buffer> " . key . " <NOP>"
+            catch //
+            endtry
         endfor
 
         """" Catalog management
@@ -933,7 +936,7 @@ function! s:NewCatalogViewer()
             execute("silent keepalt keepjumps " . l:split_cmd . " " . a:bufnum)
         endif
         let &switchbuf=l:old_switch_buf
-        endfunction
+    endfunction
 
     " Go to the selected buffer.
     function! l:catalog_viewer.visit_target(keep_catalog, refocus_catalog, split_cmd) dict
@@ -957,29 +960,61 @@ function! s:NewCatalogViewer()
     function! l:catalog_viewer.delete_target(wipe, force) dict
         let l:cur_line = line(".")
         if !has_key(l:self.jump_map, l:cur_line)
-            call s:_buffergator_messenger.send_info("Not a valid buffer")
+            call s:_buffergator_messenger.send_info("Not a valid navigation line")
             return 0
         endif
-        let [l:jump_to_bufnum] = self.jump_map[l:cur_line].target
-        let l:cur_win_num = winnr()
+        let [l:bufnum_to_delete] = self.jump_map[l:cur_line].target
+        if !bufexists(l:bufnum_to_delete)
+            call s:_buffergator_messenger.send_info("Not a valid or existing buffer")
+            return 0
+        endif
         if a:wipe && a:force
-            let l:message = "unconditionally wipe"
+            let l:operation_desc = "unconditionally wipe"
             let l:cmd = "bw!"
         elseif a:wipe && !a:force
-            let l:message = "wipe"
+            let l:operation_desc = "wipe"
             let l:cmd = "bw"
         elseif !a:wipe && a:force
-            let l:message = "unconditionally delete"
-            let l:cmd = "bd"
-        elseif !a:wipe && !a:force
-            let l:message = "delete"
+            let l:operation_desc = "unconditionally delete"
             let l:cmd = "bd!"
+        elseif !a:wipe && !a:force
+            let l:operation_desc = "delete"
+            let l:cmd = "bd"
         endif
-        let l:bufname = expand(bufname(l:jump_to_bufnum))
-        execute(l:cmd . string(l:jump_to_bufnum))
-        call self.rebuild_catalog()
-        let l:message = l:bufname . " " . l:message . "d"
-        call s:_buffergator_messenger.send_info(l:message)
+        let l:alternate_line = 0
+        if l:cur_line == 1 && l:cur_line == line("$")
+            " only one line left in buffer
+            call s:_buffergator_messenger.send_info("Cowardly refusing to " . l:operation_desc . " last listed buffer")
+            return 0
+        elseif l:cur_line == 1
+            let l:alternate_line = 2
+        elseif l:cur_line == line("$")
+            let l:alternate_line = line("$") - 1
+        else
+            let l:alternate_line = l:cur_line - 1
+        endif
+        let l:cur_win_num = winnr()
+        call cursor(l:alternate_line, 0)
+        call self.visit_target(1, 0, "")
+        let l:bufname = expand(bufname(l:bufnum_to_delete))
+        try
+            execute(l:cmd . string(l:bufnum_to_delete))
+            call self.open()
+            let l:message = l:bufname . " " . l:operation_desc . "d"
+            call s:_buffergator_messenger.send_info(l:message)
+        catch /E89/
+            let l:message = 'Failed to ' . l:operation_desc . ' "' . l:bufname . '" because it is modified; use unconditional version of this command to force operation'
+            execute(l:cur_win_num."wincmd w")
+            call cursor(l:cur_line, 0)
+            call self.visit_target(1, 1, "")
+            call s:_buffergator_messenger.send_error(l:message)
+        catch //
+            let l:message = 'Failed to ' . l:operation_desc . ' "' . l:bufname . '"'
+            execute(l:cur_win_num."wincmd w")
+            call cursor(l:cur_line, 0)
+            call self.visit_target(1, 1, "")
+            call s:_buffergator_messenger.send_error(l:message)
+        endtry
     endfunction
 
     " Finds next line with occurrence of a rendered index
