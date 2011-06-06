@@ -94,7 +94,7 @@ let s:buffergator_default_display_regime = "basename"
 " Global Options {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if !exists("g:buffergator_viewport_split_policy")
-    let g:buffergator_viewport_split_policy = "L"
+    let g:buffergator_viewport_split_policy = "T"
 endif
 if !exists("g:buffergator_move_wrap")
     let g:buffergator_move_wrap = 1
@@ -102,8 +102,8 @@ endif
 if !exists("g:buffergator_autodismiss_on_select")
     let g:buffergator_autodismiss_on_select = 1
 endif
-if !exists("g:buffergator_autoexpand_on_vsplit")
-    let g:buffergator_autoexpand_on_vsplit = 1
+if !exists("g:buffergator_autoexpand_on_split")
+    let g:buffergator_autoexpand_on_split = 1
 endif
 if !exists("g:buffergator_split_size")
     let g:buffergator_split_size = 40
@@ -372,6 +372,7 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["is_zoomed"] = 0
     let l:catalog_viewer["preclose_vsplit_size"] = 0
     let l:catalog_viewer["columns_expanded"] = 0
+    let l:catalog_viewer["lines_expanded"] = 0
 
     " Populates the buffer list
     function! l:catalog_viewer.update_buffers_info() dict
@@ -511,30 +512,26 @@ function! s:NewCatalogViewer()
         else
             " create viewport
             let self.split_mode = s:_get_split_mode()
-            " let l:oldea = &equalalways
-            " if has("gui_running")
-            "             \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_split_size)
-            "             \ && self.split_mode =~ '[rRlL]'
-            "     set noequalalways
-            " endif
             execute("silent keepalt keepjumps " . self.split_mode . " " . self.bufnum)
-            if g:buffergator_viewport_split_policy =~ '[RL]'
-                        \ && has("gui_running")
-                        \ && g:buffergator_autoexpand_on_vsplit
-                let &columns += g:buffergator_split_size
-                let self.columns_expanded = g:buffergator_split_size
-
-            else
-                let self.columns_expanded = 0
+            if has("gui_running") && g:buffergator_autoexpand_on_split
+                if g:buffergator_viewport_split_policy =~ '[RL]'
+                    let &columns += g:buffergator_split_size
+                    let self.columns_expanded = g:buffergator_split_size
+                else
+                    let self.columns_expanded = 0
+                endif
+                if g:buffergator_viewport_split_policy =~ '[TB]'
+                    let &lines += g:buffergator_split_size
+                    let self.lines_expanded = g:buffergator_split_size
+                else
+                    let self.lines_expanded = 0
+                endif
             endif
             if g:buffergator_viewport_split_policy =~ '[RLrl]' && g:buffergator_split_size
                 execute("vertical resize " . g:buffergator_split_size)
+            elseif g:buffergator_viewport_split_policy =~ '[RLrl]' && g:buffergator_split_size
+                execute("resize " . g:buffergator_split_size)
             endif
-            " if has("gui_running")
-            "             \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_split_size)
-            "             \ && self.split_mode =~ '[rRlL]'
-            "     let &equalalways = l:oldea
-            " endif
         endif
     endfunction
 
@@ -737,7 +734,7 @@ function! s:NewCatalogViewer()
     " Clean up windows
     function! l:catalog_viewer.cleanup() dict
         if has("gui_running")
-                    \ && ((has("gui_running") && g:buffergator_autoexpand_on_vsplit) || g:buffergator_split_size)
+                    \ && ((has("gui_running") && g:buffergator_autoexpand_on_split) || g:buffergator_split_size)
                     \ && g:buffergator_viewport_split_policy =~ '[RL]'
                     \ && self.preclose_vsplit_size > 0
             if self.is_zoomed
