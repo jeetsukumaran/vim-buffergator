@@ -116,7 +116,7 @@ g:buffergator_autoexpand_on_split~
 
 g:buffergator_split_size~
     If greater than 0, this will be the width of the Buffergator window in any
-    vertical splitting mode.
+    vertical splitting mode, or its height in any horizontal splitting mode.
 
 g:buffergator_sort_regime~
     Sets the default sort regime for buffer listing:
