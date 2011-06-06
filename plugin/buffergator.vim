@@ -100,6 +100,9 @@ endif
 if !exists("g:buffergator_autodismiss_on_select")
     let g:buffergator_autodismiss_on_select = 1
 endif
+if !exists("g:buffergator_autodismiss_on_select")
+    let g:buffergator_autodismiss_on_select = 1
+endif
 " 2}}}
 
 " 1}}}

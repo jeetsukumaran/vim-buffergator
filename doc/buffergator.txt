@@ -92,19 +92,40 @@ OPTIONS AND SETTINGS~
 
 The following options can be used to customize the behavior of this plugin.
 
-g:buffergator_autodismiss_on_select
+g:buffergator_viewport_split_policy~
+    Determines how a new Buffergator window will be opened. Can be one of the
+    following values:
+        'd'   : user-specified Vim default
+        'D'   : user-specified Vim default
+        'N'   : no split, reuse current buffer
+        'n'   : no split, reuse current buffer
+        'L'   : vertical left (full screen height)
+        'l'   : vertical left (within current window)
+        'R'   : vertical right (full screen height)
+        'r'   : vertical right (within current window)
+        'T'   : horizontal top (full screen width)
+        't'   : horizontal top (within current window)
+        'B'   : horizontal bottom (full screen width)
+        'b'   : horizontal bottom (within current window)
+
+g:buffergator_autodismiss_on_select~
     If 1, then selection an entry with <CR> will close the catalog. Otherwise,
     catalog stays open. Default is 1.
 
-g:buffergator_sort_regime
+g:buffergator_autoexpand_on_vsplit~
+    If 1 and running in GUI mode with a vertical split opening policy ('L' or
+    'R'), then will expand the screen.
+
+g:buffergator_sort_regime~
     Sets the default sort regime for buffer listing:
         'bufnum' : sort by buffer number [default]
         'basename': sort by buffer file basename
         'filepath': sort by full buffer filepath
 
-g:buffergator_display_regime
+g:buffergator_display_regime~
     Sets the default sort regime for buffer listing:
-        'basename': display buffer basename first, followed by directory
+        'basename': display buffer basename first,
+                    followed by directory [default]
         'filepath': display full buffer filepath
         'bufname': display buffer name
 
