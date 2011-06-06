@@ -13,7 +13,7 @@ CONTENTS~
                                                       *buffergator-introduction*
 INTRODUCTION~
 
-Buffergator is a plugin for listing and navigating open buffers.
+Buffergator is a plugin for listing and navigating/selecting open buffers.
 ~
 ===============================================================================
                                                           *buffergator-commands*
@@ -33,6 +33,10 @@ COMMANDS~
                                                              *buffergator-keys*
 KEY MAPPINGS (CATALOG VIEWER)~
 
+Invoking this plugin results in the listed buffers being displayed in a
+special Buffergator buffer, which is referred to as a "buffer catalog". The
+following key mappings are available in the catalog view.
+
 -------------------------------------------------------------------------------
 Catalog Management~
 
@@ -50,7 +54,7 @@ Open Selected Buffer~
 -------------------------------------------------------------------------------
 Movement Within the Catalog that Updates the Other Window~
 
-.                   Show the current buffer entry in the previous window.
+p                   Show the current buffer entry in the previous window.
 <SPACE>             Go to the next buffer entry and show it in the previous
                     window.
 <C-SPACE>           Go to the previous buffer entry and show it in the
