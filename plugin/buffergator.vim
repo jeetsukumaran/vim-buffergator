@@ -357,7 +357,7 @@ function! s:NewCatalogViewer()
     let l:catalog_viewer["jump_map"] = {}
     let l:catalog_viewer["split_mode"] = s:_get_split_mode()
     let l:catalog_viewer["buffers_catalog"] = {}
-    let l:catalog_viewer["sort_regime"] = exists("g:buffergator_sort_regime") ?  g:buffergator_sort_regime : s:buffergator_default_sort_regime
+    let l:catalog_viewer["sort_regime"] = exists("g:buffergator_sort_regime") ?  g:buffergator_sort_regime : s:buffergator_default_catalog_sort_regime
     let l:catalog_viewer["display_regime"] = exists("g:buffergator_display_regime") ?  g:buffergator_display_regime : s:buffergator_default_display_regime
     let l:catalog_viewer["calling_bufnum"] = -1
 
