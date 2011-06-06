@@ -30,7 +30,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 " 1}}}
 
-" Global Options {{{1
+" Global Plugin Options {{{1
 " =============================================================================
 if !exists("g:buffergator_viewport_split_policy")
     let g:buffergator_viewport_split_policy = "L"
@@ -255,8 +255,7 @@ function! s:_find_buffers_with_var(varname, expr)
     return l:results
 endfunction
 
-" Returns split mode to use for a new Buffergator viewport. If given an
-" argument
+" Returns split mode to use for a new Buffergator viewport.
 function! s:_get_split_mode()
     if has_key(s:buffergator_viewport_split_modes, g:buffergator_viewport_split_policy)
         return s:buffergator_viewport_split_modes[g:buffergator_viewport_split_policy]
