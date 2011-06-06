@@ -111,8 +111,8 @@ g:buffergator_autodismiss_on_select~
     catalog stays open. Default is 1.
 
 g:buffergator_autoexpand_on_split~
-    If 1 and running in GUI mode with a vertical split opening policy ('L' or
-    'R'), then will expand the screen.
+    If 1 and running in GUI mode, then the application screen will be expanded
+    to accommodate the Buffergator window.
 
 g:buffergator_split_size~
     If greater than 0, this will be the width of the Buffergator window in any
