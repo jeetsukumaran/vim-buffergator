@@ -50,7 +50,8 @@ q                   Quit the index/catalog window.
 Open Selected Buffer~
 
 <CR>                Switch focus to the previous window and go to the current
-                    entry.
+                    entry. If 'g:buffergator_autodismiss_on_select' is 1,
+                    then the catalog is closed; otherwise it is kept open.
 
 -------------------------------------------------------------------------------
 Movement Within the Catalog that Updates the Other Window~
@@ -67,7 +68,7 @@ p                   Show the current buffer entry in the previous window.
 Jumping to the Matched Line Without Closing the Catalog~
 
 o                   Switch focus to the previous window and go to the current
-                    entry (like <CR> if 'g:buffergator_autodismiss_on_select'
+                    entry (as <CR> if 'g:buffergator_autodismiss_on_select'
                     is 0).
 ws                  Split the previous window, switch focus, and go to the
                     current entry.
@@ -79,7 +80,7 @@ t                   Open the current entry in a new tab page, keeping the
 -------------------------------------------------------------------------------
 Jumping to the Matched Line, Closing the Catalog~
 
-O                   Close catalog and go to the current entry (like <CR> if
+O                   Close catalog and go to the current entry (as <CR> if
                     'g:buffergator_autodismiss_on_select' is 1).
 wS                  Split the previous window and go to the current entry.
 wV                  Split the previous window vertically and go to the current
