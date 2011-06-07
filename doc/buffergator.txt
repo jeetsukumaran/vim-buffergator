@@ -13,7 +13,14 @@ CONTENTS~
                                                       *buffergator-introduction*
 INTRODUCTION~
 
-Buffergator is a plugin for listing and navigating/selecting open buffers.
+Buffergator is a plugin for listing, navigating between, and selecting buffers
+to edit. Upon invocation, listed buffers are displayed in a separate window.
+From this 'buffer catalog', a buffer can be selected and opened in an existing
+window, a new split (vertical or horizontal), or a new tab page. Buffers can
+also be selected for 'previewing', i.e., opened in an existing or new window
+without the focus leaving the buffer catalog. Using <SPACE>/<C-N> or
+<C-SPACE>/<C-P>, you can walk down the list of buffers, previewing them
+quickly, without leaving the buffer catalog.
 ~
 ===============================================================================
                                                           *buffergator-commands*
