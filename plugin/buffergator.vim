@@ -1232,8 +1232,8 @@ command!  BuffergatorToggle    :call <SID>ToggleBuffergator()
 command!  BuffergatorClose     :call <SID>CloseBuffergator()
 command!  BuffergatorOpen      :call <SID>OpenBuffergator()
 
-if !exists('g:buffersaurus_suppress_keymaps') || !g:buffersaurus_suppress_keymaps
-    nnoremap <silent> <Leader><Leader> :BuffergatorToggle<CR>
+if !exists('g:buffergator_suppress_keymaps') || !g:buffergator_suppress_keymaps
+    " nnoremap <silent> <Leader><Leader> :BuffergatorToggle<CR>
     nnoremap <silent> <Leader>b :BuffergatorOpen<CR>
     nnoremap <silent> <Leader>B :BuffergatorClose<CR>
 endif

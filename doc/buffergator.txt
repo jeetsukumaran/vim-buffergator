@@ -6,8 +6,9 @@ CONTENTS~
 
     1. Introduction ....................... |buffergator-introduction|
     2. Commands ........................... |buffergator-commands|
-    3. Key Mappings ....................... |buffergator-keys|
-    4. Options and Settings ............... |buffergator-options|
+    3. Key Mappings (Global) .............. |buffergator-global-keys|
+    4. Key Mappings (Catalog Viewer) ...... |buffergator-keys|
+    5. Options and Settings ............... |buffergator-options|
 ~
 ===============================================================================
                                                       *buffergator-introduction*
@@ -16,15 +17,22 @@ INTRODUCTION~
 Buffergator is a plugin for listing, navigating between, and selecting buffers
 to edit. Upon invocation, listed buffers are displayed in a separate window.
 From this 'buffer catalog', a buffer can be selected and opened in an existing
-window, a new split (vertical or horizontal), or a new tab page. Buffers can
-also be selected for 'previewing', i.e., opened in an existing or new window
-without the focus leaving the buffer catalog. Using <SPACE>/<C-N> or
-<C-SPACE>/<C-P>, you can walk down the list of buffers, previewing them
-quickly, without leaving the buffer catalog.
+window, a new window split (vertical or horizontal), or a new tab page.
+Buffers can also be selected for 'previewing', i.e., opened in an existing or
+new window without the focus leaving the buffer catalog. When in the buffer
+catalog <SPACE>/<C-N> or <C-SPACE>/<C-P>, you can walk down the list of
+buffers, previewing them quickly, without leaving the buffer catalog.
+
+By default, Buffergator provides global key maps that invoke its main
+commands: '<Leader>b' to open, '<Leader>B' to close. If you prefer to map
+other keys, or do not want any keys mapped at all, set
+'g:buffergator_suppress_keymaps' to 1 in your $VIMRUNTIME.
 ~
 ===============================================================================
                                                           *buffergator-commands*
 COMMANDS~
+
+These following commands are provided globally by Buffergator:
 
 :BuffergatorOpen
                     Open the buffer catalog, or go to it if it is already open.
@@ -37,12 +45,24 @@ COMMANDS~
                     it is already open.
 
 ===============================================================================
+                                                      *buffergator-global-keys*
+KEY MAPPINGS (GLOBAL)~
+
+Unless 'g:buffergator_suppress_keymaps' is set to 1, then the following
+key mappings are defined:
+
+<Leader>b           Invokes ':BuffergatorOpen': open the buffer catalog, or go
+                    to it if it is already open.
+
+<Leader>B           Invokes ':BuffergatorClose': close the buffer catalog.
+
+===============================================================================
                                                              *buffergator-keys*
 KEY MAPPINGS (CATALOG VIEWER)~
 
-Invoking this plugin results in the listed buffers being displayed in a
+Invoking Buffergator results in the listed buffers being displayed in a
 special Buffergator buffer, which is referred to as a "buffer catalog". The
-following key mappings are available in the catalog view.
+following key mappings are available in the buffer catalog.
 
 -------------------------------------------------------------------------------
 Catalog Management~
@@ -108,9 +128,10 @@ A                   Zoom/unzoom window, expanding to full height (if
                                                           *buffergator-options*
 OPTIONS AND SETTINGS~
 
-The following options can be used to customize the behavior of this plugin.
+The following options can be used to customize the behavior of this plugin:
 
 g:buffergator_viewport_split_policy~
+    Default: 'L'
     Determines how a new Buffergator window will be opened. Can be one of the
     following values:
         'L'   : vertical left (full screen height)
@@ -119,28 +140,38 @@ g:buffergator_viewport_split_policy~
         'B'   : horizontal bottom (full screen width)
 
 g:buffergator_autodismiss_on_select~
+    Default: 1
     If 1, then selection an entry with <CR> will close the catalog. Otherwise,
     catalog stays open. Default is 1.
 
 g:buffergator_autoexpand_on_split~
+    Default: 1
     If 1 and running in GUI mode, then the application screen will be expanded
     to accommodate the Buffergator window.
 
 g:buffergator_split_size~
+    Default: 40
     If greater than 0, this will be the width of the Buffergator window in any
     vertical splitting mode, or its height in any horizontal splitting mode.
 
 g:buffergator_sort_regime~
+    Default: 'bufnum'
     Sets the default sort regime for buffer listing:
         'bufnum' : sort by buffer number [default]
         'basename': sort by buffer file basename
         'filepath': sort by full buffer filepath
 
 g:buffergator_display_regime~
+    Default: 'basename'
     Sets the default sort regime for buffer listing:
         'basename': display buffer basename first,
                     followed by directory [default]
         'filepath': display full buffer filepath
         'bufname': display buffer name
+
+g:buffergator_suppress_keymaps~
+    Default: 0
+    If set to 1, then Buffergator will not automatically map '<Leader>b' to
+    open the Buffergator catalog and '<Leader>B' to close it.
 
  vim:tw=78:ts=8:ft=help:norl:
