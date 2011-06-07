@@ -986,6 +986,9 @@ function! s:NewCatalogViewer()
             let l:cmd = "bd"
         endif
 
+        " store current window number
+        let l:cur_win_num = winnr()
+
         " find alternate buffer to switch to
         let l:alternate_buffer = -1
         for abufnum in range(l:bufnum_to_delete, 1, -1)
@@ -1031,9 +1034,15 @@ function! s:NewCatalogViewer()
                 execute(winnum . "wincmd w")
                 execute("silent keepalt keepjumps buffer " . l:bufnum_to_delete)
             endfor
+            execute(l:cur_win_num . "wincmd w")
             let l:message = 'Failed to ' . l:operation_desc . ' "' . l:bufname . '" because it is modified; use unconditional version of this command to force operation'
             call s:_buffergator_messenger.send_error(l:message)
         catch //
+            for winnum in l:changed_win_bufs
+                execute(winnum . "wincmd w")
+                execute("silent keepalt keepjumps buffer " . l:bufnum_to_delete)
+            endfor
+            execute(l:cur_win_num . "wincmd w")
             let l:message = 'Failed to ' . l:operation_desc . ' "' . l:bufname . '"'
             call s:_buffergator_messenger.send_error(l:message)
         endtry
