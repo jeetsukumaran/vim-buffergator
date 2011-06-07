@@ -155,12 +155,12 @@ g:buffergator_viewport_split_policy~
 
 g:buffergator_autodismiss_on_select~
     Default: 1
-    If 1, then selection an entry with <CR> will close the catalog. Otherwise,
+    If true, then selection an entry with <CR> will close the catalog. Otherwise,
     catalog stays open. Default is 1.
 
 g:buffergator_autoexpand_on_split~
     Default: 1
-    If 1 and running in GUI mode, then the application screen will be expanded
+    If true and running in GUI mode, then the application screen will be expanded
     to accommodate the Buffergator window.
 
 g:buffergator_split_size~
@@ -185,7 +185,7 @@ g:buffergator_display_regime~
 
 g:buffergator_suppress_keymaps~
     Default: 0
-    If set to 1, then Buffergator will not automatically map '<Leader>b' to
+    If true, then Buffergator will not automatically map '<Leader>b' to
     open the Buffergator catalog and '<Leader>B' to close it.
 
  vim:tw=78:ts=8:ft=help:norl:
