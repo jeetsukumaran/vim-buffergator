@@ -907,8 +907,6 @@ function! s:NewCatalogViewer()
                 endif
             catch /^Vim\%((\a\+)\)\=:E37/
                 echo v:exception
-                " call s:putCursorInTreeWin()
-                " throw "NERDTree.FileAlreadyOpenAndModifiedError: ". self.path.str() ." is already open and modified."
             catch /^Vim\%((\a\+)\)\=:/
                 echo v:exception
             endtry
@@ -981,21 +979,41 @@ function! s:NewCatalogViewer()
             let l:operation_desc = "delete"
             let l:cmd = "bd"
         endif
-        let l:alternate_line = 0
-        if l:cur_line == 1 && l:cur_line == line("$")
-            " only one line left in buffer
-            call s:_buffergator_messenger.send_info("Cowardly refusing to " . l:operation_desc . " last listed buffer")
-            return 0
-        elseif l:cur_line == 1
-            let l:alternate_line = 2
-        elseif l:cur_line == line("$")
-            let l:alternate_line = line("$") - 1
-        else
-            let l:alternate_line = l:cur_line - 1
+
+        " find alternate buffer to switch to
+        let l:alternate_buffer = -1
+        for abufnum in range(l:bufnum_to_delete, 1, -1)
+            if bufexists(abufnum) && buflisted(abufnum) && abufnum != l:bufnum_to_delete
+                let l:alternate_buffer = abufnum
+                break
+            endif
+        endfor
+        if l:alternate_buffer == -1 && bufnr("$") > l:bufnum_to_delete
+            for abufnum in range(l:bufnum_to_delete+1, bufnr("$"))
+                if bufexists(abufnum) && buflisted(abufnum) && abufnum != l:bufnum_to_delete
+                    let l:alternate_buffer = abufnum
+                    break
+                endif
+            endfor
         endif
-        let l:cur_win_num = winnr()
-        call cursor(l:alternate_line, 0)
-        call self.visit_target(1, 0, "")
+        if l:alternate_buffer == -1
+            call s:_buffergator_messenger.send_info("Cowardly refusing to delete last listed buffer")
+            return 0
+        endif
+
+        " switch to it in all windows showing the buffer to delete
+        let l:old_switch_buf = &switchbuf
+        let l:changed_win_bufs = []
+        for winnum in range(1, winnr('$'))
+            let wbufnum = winbufnr(winnum)
+            if wbufnum == l:bufnum_to_delete
+                call add(l:changed_win_bufs, winnum)
+                execute(winnum . "wincmd w")
+                execute("silent keepalt keepjumps buffer " . l:alternate_buffer)
+            endif
+        endfor
+        let &switchbuf = l:old_switch_buf
+
         let l:bufname = expand(bufname(l:bufnum_to_delete))
         try
             execute(l:cmd . string(l:bufnum_to_delete))
@@ -1003,16 +1021,14 @@ function! s:NewCatalogViewer()
             let l:message = l:bufname . " " . l:operation_desc . "d"
             call s:_buffergator_messenger.send_info(l:message)
         catch /E89/
+            for winnum in l:changed_win_bufs
+                execute(winnum . "wincmd w")
+                execute("silent keepalt keepjumps buffer " . l:bufnum_to_delete)
+            endfor
             let l:message = 'Failed to ' . l:operation_desc . ' "' . l:bufname . '" because it is modified; use unconditional version of this command to force operation'
-            execute(l:cur_win_num."wincmd w")
-            call cursor(l:cur_line, 0)
-            call self.visit_target(1, 1, "")
             call s:_buffergator_messenger.send_error(l:message)
         catch //
             let l:message = 'Failed to ' . l:operation_desc . ' "' . l:bufname . '"'
-            execute(l:cur_win_num."wincmd w")
-            call cursor(l:cur_line, 0)
-            call self.visit_target(1, 1, "")
             call s:_buffergator_messenger.send_error(l:message)
         endtry
     endfunction
