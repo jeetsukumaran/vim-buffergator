@@ -1006,12 +1006,10 @@ function! s:NewCatalogViewer()
             endfor
         endif
         if l:alternate_buffer == -1
-            call s:_buffergator_messenger.send_info("Cowardly refusing to delete last listed buffer")
+            call s:_buffergator_messenger.send_warning("Cowardly refusing to delete last listed buffer")
             return 0
         endif
 
-        " switch to it in all windows showing the buffer to delete
-        let l:old_switch_buf = &switchbuf
         let l:changed_win_bufs = []
         for winnum in range(1, winnr('$'))
             let wbufnum = winbufnr(winnum)
@@ -1021,7 +1019,6 @@ function! s:NewCatalogViewer()
                 execute("silent keepalt keepjumps buffer " . l:alternate_buffer)
             endif
         endfor
-        let &switchbuf = l:old_switch_buf
 
         let l:bufname = expand(bufname(l:bufnum_to_delete))
         try
@@ -1046,6 +1043,7 @@ function! s:NewCatalogViewer()
             let l:message = 'Failed to ' . l:operation_desc . ' "' . l:bufname . '"'
             call s:_buffergator_messenger.send_error(l:message)
         endtry
+
     endfunction
 
     " Finds next line with occurrence of a rendered index
