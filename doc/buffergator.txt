@@ -16,18 +16,18 @@ INTRODUCTION~
 
 Buffergator is a plugin for listing, navigating between, and selecting buffers
 to edit. Upon invocation, listed buffers are displayed in a separate window.
-From this 'buffer catalog viewer', a buffer can be selected and opened in an
+From this "buffer catalog viewer", a buffer can be selected and opened in an
 existing window, a new window split (vertical or horizontal), or a new tab
-page.  Buffers can also be selected for 'previewing', i.e., opened in an
+page.  Buffers can also be selected for "previewing", i.e., opened in an
 existing or new window without the focus leaving the buffer catalog viewer.
 When in the buffer catalog viewer, <SPACE>/<C-N> or <C-SPACE>/<C-P>, you can
 walk down the list of buffers, previewing them quickly, without leaving the
 buffer catalog viewer.
 
 By default, Buffergator provides global key maps that invoke its main
-commands: '<Leader>b' to open, '<Leader>B' to close. If you prefer to map
+commands: "<Leader>b" to open, "<Leader>B" to close. If you prefer to map
 other keys, or do not want any keys mapped at all, set
-'g:buffergator_suppress_keymaps' to 1 in your $VIMRUNTIME.
+"g:buffergator_suppress_keymaps" to 1 in your $VIMRUNTIME.
 ~
 ===============================================================================
                                                           *buffergator-commands*
@@ -49,13 +49,13 @@ These following commands are provided globally by Buffergator:
                                                       *buffergator-global-keys*
 KEY MAPPINGS (GLOBAL)~
 
-Unless 'g:buffergator_suppress_keymaps' is set to 1, then the following
+Unless "g:buffergator_suppress_keymaps" is set to 1, then the following
 key mappings are defined:
 
-<Leader>b           Invokes ':BuffergatorOpen': open the buffer catalog, or go
+<Leader>b           Invokes ":BuffergatorOpen": open the buffer catalog, or go
                     to it if it is already open.
 
-<Leader>B           Invokes ':BuffergatorClose': close the buffer catalog.
+<Leader>B           Invokes ":BuffergatorClose": close the buffer catalog.
 
 ===============================================================================
                                                              *buffergator-keys*
@@ -81,7 +81,7 @@ q                   Quit the index/catalog window.
 Open Selected Buffer~
 
 <CR>                Switch focus to the previous window and go to the current
-                    entry. If 'g:buffergator_autodismiss_on_select' is True,
+                    entry. If "g:buffergator_autodismiss_on_select" is True,
                     then the catalog viewer is closed; otherwise it is kept
                     open.
 
@@ -107,7 +107,7 @@ it, but keep the catalog viewer open.
 
 o                   Keeping the catalog viewer open, switch focus to the
                     previous window and go to the currently-selected buffer
-                    (as <CR> if 'g:buffergator_autodismiss_on_select' is 0).
+                    (as <CR> if "g:buffergator_autodismiss_on_select" is 0).
 ws                  Keeping the catalog viewer open, split the previous window,
                     switch focus, and go to the currently-selected buffer.
 wv                  Keeping the catalog viewer open, split the previous window
@@ -123,7 +123,7 @@ The following keys all open the currently-selected buffer and switch focus to
 it, closing the catalog viewer at the same time.
 
 O                   Close catalog viewer and go to the currently-selected
-                    buffer (as <CR> if 'g:buffergator_autodismiss_on_select'
+                    buffer (as <CR> if "g:buffergator_autodismiss_on_select"
                     is 1).
 wS                  Close the catalog viewer, split the previous window
                     and go to the currently-selected buffer.
@@ -145,13 +145,13 @@ OPTIONS AND SETTINGS~
 The following options can be used to customize the behavior of this plugin:
 
 g:buffergator_viewport_split_policy~
-    Default: 'L'
+    Default: "L"
     Determines how a new Buffergator window will be opened. Can be one of the
     following values:
-        'L'   : vertical left (full screen height)
-        'R'   : vertical right (full screen height)
-        'T'   : horizontal top (full screen width)
-        'B'   : horizontal bottom (full screen width)
+        "L"   : vertical left (full screen height)
+        "R"   : vertical right (full screen height)
+        "T"   : horizontal top (full screen width)
+        "B"   : horizontal bottom (full screen width)
 
 g:buffergator_autodismiss_on_select~
     Default: 1
@@ -169,23 +169,23 @@ g:buffergator_split_size~
     vertical splitting mode, or its height in any horizontal splitting mode.
 
 g:buffergator_sort_regime~
-    Default: 'bufnum'
+    Default: "bufnum"
     Sets the default sort regime for buffer listing:
-        'bufnum' : sort by buffer number [default]
-        'basename': sort by buffer file basename
-        'filepath': sort by full buffer filepath
+        "bufnum" : sort by buffer number [default]
+        "basename": sort by buffer file basename
+        "filepath": sort by full buffer filepath
 
 g:buffergator_display_regime~
-    Default: 'basename'
+    Default: "basename"
     Sets the default sort regime for buffer listing:
-        'basename': display buffer basename first,
+        "basename": display buffer basename first,
                     followed by directory [default]
-        'filepath': display full buffer filepath
-        'bufname': display buffer name
+        "filepath": display full buffer filepath
+        "bufname": display buffer name
 
 g:buffergator_suppress_keymaps~
     Default: 0
-    If true, then Buffergator will not automatically map '<Leader>b' to
-    open the Buffergator catalog and '<Leader>B' to close it.
+    If true, then Buffergator will not automatically map "<Leader>b" to
+    open the Buffergator catalog and "<Leader>B" to close it.
 
  vim:tw=78:ts=8:ft=help:norl:
