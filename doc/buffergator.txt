@@ -24,8 +24,8 @@ a new tab page.
 Selected buffers can be "previewed", i.e. opened in a window or tab page, but
 with focus remaining in the buffer catalog. Even better, you can "walk" up and
 down the list of buffers shown in the catalog by using <C-N> (or <SPACE>) /
-<C-P> (or <C-SPACE>) whch select the next/previous buffer in succession,
-respectively, and open it for preview it without leaving the buffer catalog
+<C-P> (or <C-SPACE>). These keys select the next/previous buffer in succession,
+respectively, opening it for preview without leaving the buffer catalog
 viewer.
 
 By default, Buffergator provides global key maps that invoke its main
