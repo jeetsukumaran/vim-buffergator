@@ -16,12 +16,13 @@ INTRODUCTION~
 
 Buffergator is a plugin for listing, navigating between, and selecting buffers
 to edit. Upon invocation, listed buffers are displayed in a separate window.
-From this 'buffer catalog', a buffer can be selected and opened in an existing
-window, a new window split (vertical or horizontal), or a new tab page.
-Buffers can also be selected for 'previewing', i.e., opened in an existing or
-new window without the focus leaving the buffer catalog. When in the buffer
-catalog <SPACE>/<C-N> or <C-SPACE>/<C-P>, you can walk down the list of
-buffers, previewing them quickly, without leaving the buffer catalog.
+From this 'buffer catalog viewer', a buffer can be selected and opened in an
+existing window, a new window split (vertical or horizontal), or a new tab
+page.  Buffers can also be selected for 'previewing', i.e., opened in an
+existing or new window without the focus leaving the buffer catalog viewer.
+When in the buffer catalog viewer, <SPACE>/<C-N> or <C-SPACE>/<C-P>, you can
+walk down the list of buffers, previewing them quickly, without leaving the
+buffer catalog viewer.
 
 By default, Buffergator provides global key maps that invoke its main
 commands: '<Leader>b' to open, '<Leader>B' to close. If you prefer to map
@@ -61,8 +62,8 @@ key mappings are defined:
 KEY MAPPINGS (CATALOG VIEWER)~
 
 Invoking Buffergator results in the listed buffers being displayed in a
-special Buffergator buffer, which is referred to as a "buffer catalog". The
-following key mappings are available in the buffer catalog.
+special Buffergator window, which is referred to as a "buffer catalog viewer".
+The following key mappings are available when in the viewer.
 
 -------------------------------------------------------------------------------
 Catalog Management~
@@ -80,11 +81,15 @@ q                   Quit the index/catalog window.
 Open Selected Buffer~
 
 <CR>                Switch focus to the previous window and go to the current
-                    entry. If 'g:buffergator_autodismiss_on_select' is 1,
-                    then the catalog is closed; otherwise it is kept open.
+                    entry. If 'g:buffergator_autodismiss_on_select' is True,
+                    then the catalog viewer is closed; otherwise it is kept
+                    open.
 
 -------------------------------------------------------------------------------
-Movement Within the Catalog that Updates the Other Window~
+Movement Within the Catalog Viewer that Updates the Other Window~
+
+The following keys open the currently-selected buffer in the previous
+window, but retain focus on the catalog viewer.
 
 p                   Show the current buffer entry in the previous window.
 <SPACE>             Go to the next buffer entry and show it in the previous
@@ -95,28 +100,37 @@ p                   Show the current buffer entry in the previous window.
 <C-P>               Go to and show the previous buffer entry.
 
 -------------------------------------------------------------------------------
-Jumping to the Matched Line Without Closing the Catalog~
+Jumping to the Matched Line Without Closing the Catalog Viewer~
 
-o                   Switch focus to the previous window and go to the current
-                    entry (as <CR> if 'g:buffergator_autodismiss_on_select'
-                    is 0).
-ws                  Split the previous window, switch focus, and go to the
-                    current entry.
-wv                  Split the previous window vertically, switch focus, and go
-                    to the current entry.
-t                   Open the current entry in a new tab page, keeping the
-                    catalog open.
+The following keys all open the currently-selected buffer and switch focus to
+it, but keep the catalog viewer open.
+
+o                   Keeping the catalog viewer open, switch focus to the
+                    previous window and go to the currently-selected buffer
+                    (as <CR> if 'g:buffergator_autodismiss_on_select' is 0).
+ws                  Keeping the catalog viewer open, split the previous window,
+                    switch focus, and go to the currently-selected buffer.
+wv                  Keeping the catalog viewer open, split the previous window
+                    vertically, switch focus, and go to the currently-selected
+                    buffer.
+t                   Keeping the catalog viewer open, open the current selected
+                    in a new tab page.
 
 -------------------------------------------------------------------------------
-Jumping to the Matched Line, Closing the Catalog~
+Jumping to the Matched Line, Closing the Catalog Viewer~
 
-O                   Close catalog and go to the current entry (as <CR> if
-                    'g:buffergator_autodismiss_on_select' is 1).
-wS                  Split the previous window and go to the current entry.
-wV                  Split the previous window vertically and go to the current
-                    entry.
-T                   Open the current entry in a new tab page, closing the
-                    catalog.
+The following keys all open the currently-selected buffer and switch focus to
+it, closing the catalog viewer at the same time.
+
+O                   Close catalog viewer and go to the currently-selected
+                    buffer (as <CR> if 'g:buffergator_autodismiss_on_select'
+                    is 1).
+wS                  Close the catalog viewer, split the previous window
+                    and go to the currently-selected buffer.
+wV                  Close the catalog viewer, split the previous window
+                    vertically and go to the currently-selected buffer.
+T                   Close the catalog viewer and open the currently-selected
+                    buffer in a new tab page.
 
 -------------------------------------------------------------------------------
 Window Control~
