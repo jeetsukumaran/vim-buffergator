@@ -448,11 +448,17 @@ function! s:NewCatalogViewer()
         return sort(self.buffers_catalog, l:sort_func)
     endfunction
 
-    " Opens the buffer for viewing, creating it if needed. If non-empty first
-    " argument is given, forces re-rendering of buffer.
+    " Opens the buffer for viewing, creating it if needed.
+    " First argument, if given, should be number of calling buffer.
     function! l:catalog_viewer.open(...) dict
+
         " store calling buffer
-        let self.calling_bufnum = bufnr("%")
+        if (a:0 > 0 && a:1 > 0) "|| b:buffergator_catalog_viewer != self
+            let self.calling_bufnum = a:1
+        else
+            let self.calling_bufnum = bufnr("%")
+        endif
+
         " populate data
         call self.update_buffers_info()
         " get buffer number of the catalog view buffer, creating it if neccessary
@@ -1017,7 +1023,7 @@ function! s:NewCatalogViewer()
         let l:bufname = expand(bufname(l:bufnum_to_delete))
         try
             execute(l:cmd . string(l:bufnum_to_delete))
-            call self.open()
+            call self.open(l:alternate_buffer)
             let l:message = l:bufname . " " . l:operation_desc . "d"
             call s:_buffergator_messenger.send_info(l:message)
         catch /E89/
