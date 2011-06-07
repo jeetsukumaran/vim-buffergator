@@ -15,14 +15,18 @@ CONTENTS~
 INTRODUCTION~
 
 Buffergator is a plugin for listing, navigating between, and selecting buffers
-to edit. Upon invocation, listed buffers are displayed in a separate window.
-From this "buffer catalog viewer", a buffer can be selected and opened in an
-existing window, a new window split (vertical or horizontal), or a new tab
-page.  Buffers can also be selected for "previewing", i.e., opened in an
-existing or new window without the focus leaving the buffer catalog viewer.
-When in the buffer catalog viewer, <SPACE>/<C-N> or <C-SPACE>/<C-P>, you can
-walk down the list of buffers, previewing them quickly, without leaving the
-buffer catalog viewer.
+to edit. Upon invocation, a "catalog" of listed buffers are displayed in a
+separate new window split (vertical or horizontal, based on user options;
+default = vertical).  From this "buffer catalog", a buffer can be selected and
+opened in an existing window, a new window split (vertical or horizontal), or
+a new tab page.
+
+Selected buffers can be "previewed", i.e. opened in a window or tab page, but
+with focus remaining in the buffer catalog. Even better, you can "walk" up and
+down the list of buffers shown in the catalog by using <C-N> (or <SPACE>) /
+<C-P> (or <C-SPACE>) whch select the next/previous buffer in succession,
+respectively, and open it for preview it without leaving the buffer catalog
+viewer.
 
 By default, Buffergator provides global key maps that invoke its main
 commands: "<Leader>b" to open, "<Leader>B" to close. If you prefer to map
