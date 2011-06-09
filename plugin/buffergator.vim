@@ -520,22 +520,7 @@ function! s:NewCatalogViewer()
         else
             " create viewport
             let self.split_mode = s:_get_split_mode()
-            if has("gui_running") && g:buffergator_autoexpand_on_split && g:buffergator_split_size
-                if g:buffergator_viewport_split_policy =~ '[RL]'
-                    let self.pre_expand_columns = &columns
-                    let &columns += g:buffergator_split_size
-                    let self.columns_expanded = &columns - self.pre_expand_columns
-                else
-                    let self.columns_expanded = 0
-                endif
-                if g:buffergator_viewport_split_policy =~ '[TB]'
-                    let self.pre_expand_lines = &lines
-                    let &lines += g:buffergator_split_size
-                    let self.lines_expanded = &lines - self.pre_expand_lines
-                else
-                    let self.lines_expanded = 0
-                endif
-            endif
+            call self.expand_screen()
             execute("silent keepalt keepjumps " . self.split_mode . " " . self.bufnum)
             if g:buffergator_viewport_split_policy =~ '[RrLl]' && g:buffergator_split_size
                 execute("vertical resize " . g:buffergator_split_size)
@@ -746,29 +731,30 @@ function! s:NewCatalogViewer()
         if self.bufnum < 0 || !bufexists(self.bufnum)
             return
         endif
-        " let l:bfwn = bufwinnr(self.bufnum)
-        " if l:bfwn >= 0
-        "     let self.preclose_width = winwidth(l:bfwn)
-        "     let self.preclose_height = winheight(l:bfwn)
-        " else
-        "     let self.preclose_width = 0
-        "     let self.preclose_height = 0
-        " endif
-        call self.cleanup()
+        call self.contract_screen()
         execute("bwipe " . self.bufnum)
     endfunction
 
-    " Clean up windows
-    function! l:catalog_viewer.cleanup() dict
-        " if has("gui_running") && g:buffergator_autoexpand_on_split && g:buffergator_split_size
-        "     if self.is_zoomed
-        "         let self.preclose_width = self.columns_expanded
-        "         let self.preclose_height = self.lines_expanded
-        "     elseif (self.columns_expanded != self.preclose_width)
-        "                 \ || (self.lines_expanded != self.preclose_height)
-        "         " window size has been customized
-        "         return
-        "     endif
+    function! l:catalog_viewer.expand_screen() dict
+        if has("gui_running") && g:buffergator_autoexpand_on_split && g:buffergator_split_size
+            if g:buffergator_viewport_split_policy =~ '[RL]'
+                let self.pre_expand_columns = &columns
+                let &columns += g:buffergator_split_size
+                let self.columns_expanded = &columns - self.pre_expand_columns
+            else
+                let self.columns_expanded = 0
+            endif
+            if g:buffergator_viewport_split_policy =~ '[TB]'
+                let self.pre_expand_lines = &lines
+                let &lines += g:buffergator_split_size
+                let self.lines_expanded = &lines - self.pre_expand_lines
+            else
+                let self.lines_expanded = 0
+            endif
+        endif
+    endfunction
+
+    function! l:catalog_viewer.contract_screen() dict
         if self.columns_expanded
                     \ && &columns - self.columns_expanded > 20
             let new_size  = &columns - self.columns_expanded
