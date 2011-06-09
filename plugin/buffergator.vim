@@ -520,7 +520,6 @@ function! s:NewCatalogViewer()
         else
             " create viewport
             let self.split_mode = s:_get_split_mode()
-            execute("silent keepalt keepjumps " . self.split_mode . " " . self.bufnum)
             if has("gui_running") && g:buffergator_autoexpand_on_split && g:buffergator_split_size
                 if g:buffergator_viewport_split_policy =~ '[RL]'
                     let self.pre_expand_columns = &columns
@@ -537,6 +536,7 @@ function! s:NewCatalogViewer()
                     let self.lines_expanded = 0
                 endif
             endif
+            execute("silent keepalt keepjumps " . self.split_mode . " " . self.bufnum)
             if g:buffergator_viewport_split_policy =~ '[RrLl]' && g:buffergator_split_size
                 execute("vertical resize " . g:buffergator_split_size)
             elseif g:buffergator_viewport_split_policy =~ '[TtBb]' && g:buffergator_split_size
@@ -754,8 +754,8 @@ function! s:NewCatalogViewer()
         "     let self.preclose_width = 0
         "     let self.preclose_height = 0
         " endif
-        execute("bwipe " . self.bufnum)
         call self.cleanup()
+        execute("bwipe " . self.bufnum)
     endfunction
 
     " Clean up windows
