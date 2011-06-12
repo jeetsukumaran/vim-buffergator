@@ -939,14 +939,13 @@ function! s:NewCatalogViewer()
         endif
         let [l:jump_to_bufnum] = self.jump_map[l:cur_line].target
         let l:cur_tab_num = tabpagenr()
-        let l:cur_win_num = winnr()
         if !a:keep_catalog
             call self.close()
         endif
         call self.visit_buffer(l:jump_to_bufnum, a:split_cmd)
-        if a:keep_catalog && a:refocus_catalog && (tabpagenr() != l:cur_tab_num || winnr() != l:cur_win_num)
+        if a:keep_catalog && a:refocus_catalog
             execute("tabnext " . l:cur_tab_num)
-            execute(l:cur_win_num."wincmd w")
+            execute(bufwinnr(self.bufnum) . "wincmd w")
         endif
         call s:_buffergator_messenger.send_info(expand(bufname(l:jump_to_bufnum)))
     endfunction
