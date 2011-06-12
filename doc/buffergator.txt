@@ -9,7 +9,7 @@ CONTENTS~
     3. Key Mappings (Global) .............. |buffergator-global-keys|
     4. Key Mappings (Catalog Viewer) ...... |buffergator-keys|
     5. Options and Settings ............... |buffergator-options|
-~
+
 ===============================================================================
                                                       *buffergator-introduction*
 INTRODUCTION~
@@ -32,7 +32,7 @@ By default, Buffergator provides global key maps that invoke its main
 commands: "<Leader>b" to open, "<Leader>B" to close. If you prefer to map
 other keys, or do not want any keys mapped at all, set
 "g:buffergator_suppress_keymaps" to 1 in your $VIMRUNTIME.
-~
+
 ===============================================================================
                                                           *buffergator-commands*
 COMMANDS~
@@ -104,7 +104,7 @@ p                   Show the current buffer entry in the previous window.
 <C-P>               Go to and show the previous buffer entry.
 
 -------------------------------------------------------------------------------
-Jumping to the Matched Line Without Closing the Catalog Viewer~
+Open Target Buffer Without Closing the Catalog Viewer~
 
 The following keys all open the currently-selected buffer and switch focus to
 it, but keep the catalog viewer open.
@@ -121,7 +121,7 @@ t                   Keeping the catalog viewer open, open the current selected
                     in a new tab page.
 
 -------------------------------------------------------------------------------
-Jumping to the Matched Line, Closing the Catalog Viewer~
+Open Target Buffer and Close the Catalog Viewer~
 
 The following keys all open the currently-selected buffer and switch focus to
 it, closing the catalog viewer at the same time.
