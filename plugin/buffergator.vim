@@ -94,10 +94,11 @@ let s:buffergator_viewport_split_modes = {
 
 " Catalog Sort Regimes {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let s:buffergator_catalog_sort_regimes = ['basename', 'filepath', 'bufnum']
+let s:buffergator_catalog_sort_regimes = ['basename', 'filepath', 'extension', 'bufnum']
 let s:buffergator_catalog_sort_regime_desc = {
-            \ 'basename' : ["basename", "by basename"],
+            \ 'basename' : ["basename", "by basename (followed by directory)"],
             \ 'filepath' : ["filepath", "by (full) filepath"],
+            \ 'extension'  : ["ext", "by extension (followed by full filepath)"],
             \ 'bufnum'  : ["bufnum", "by buffer number"],
             \ }
 let s:buffergator_default_catalog_sort_regime = "bufnum"
@@ -107,7 +108,7 @@ let s:buffergator_default_catalog_sort_regime = "bufnum"
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 let s:buffergator_catalog_display_regimes = ['basename', 'filepath', 'bufname']
 let s:buffergator_catalog_display_regime_desc = {
-            \ 'basename' : ["basename", "basename"],
+            \ 'basename' : ["basename", "basename (followed by directory)"],
             \ 'filepath' : ["filepath", "full filepath"],
             \ 'bufname'  : ["bufname", "buffer name"],
             \ }
@@ -342,6 +343,17 @@ function! s:_compare_dicts_by_filepath(m1, m2)
     endif
 endfunction
 
+" comparison function used for sorting buffers catalog by extension
+function! s:_compare_dicts_by_extension(m1, m2)
+    if a:m1["extension"] < a:m2["extension"]
+        return -1
+    elseif a:m1["extension"] > a:m2["extension"]
+        return 1
+    else
+        return s:_compare_dicts_by_filepath(a:m1, a:m2)
+    endif
+endfunction
+
 " comparison function used for sorting buffers catalog by basename
 function! s:_compare_dicts_by_basename(m1, m2)
     return s:_compare_dicts_by_value(a:m1, a:m2, "basename")
@@ -441,6 +453,7 @@ function! s:NewCatalogViewer()
             let l:info["filepath"] = fnamemodify(l:info["bufname"], ":p")
             let l:info["basename"] = fnamemodify(l:info["bufname"], ":t")
             let l:info["parentdir"] = fnamemodify(l:info["bufname"], ":p:h")
+            let l:info["extension"] = fnamemodify(l:info["bufname"], ":e")
             call add(self.buffers_catalog, l:info)
             " let l:buffers_info[l:info[l:key]] = l:info
         endfor

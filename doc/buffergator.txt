@@ -181,8 +181,10 @@ g:buffergator_sort_regime~
     Default: "bufnum"
     Sets the default sort regime for buffer listing:
         "bufnum" : sort by buffer number [default]
-        "basename": sort by buffer file basename
+        "basename": sort by buffer file basename (followed by directory)
         "filepath": sort by full buffer filepath
+        "extension": sort by buffer filename extension (followed by full
+                    filepath)
 
 g:buffergator_display_regime~
     Default: "basename"
