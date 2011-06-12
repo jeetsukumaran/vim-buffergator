@@ -90,10 +90,10 @@ Open Selected Buffer~
                     open.
 
 -------------------------------------------------------------------------------
-Open Target Buffer, Keeping Catalog in Focus~
+Preview Selected Buffer Without Leaving the Catalog Viewer~
 
-The following keys open the currently-selected buffer, but retain focus on the
-catalog viewer.
+The following keys all open the currently-selected buffer, but retain focus on
+the catalog viewer.
 
 po, .               Preview the currently-selected buffer in the previous
                     window, keeping focus on the catalog.
@@ -109,7 +109,7 @@ pt                  Preview the currently-selected buffer is a new tab
                     previous window.
 
 -------------------------------------------------------------------------------
-Open Target Buffer Without Closing the Catalog Viewer~
+Open Selected Buffer Without Closing the Catalog Viewer~
 
 The following keys all open the currently-selected buffer and switch focus to
 it, but keep the catalog viewer open.
@@ -126,7 +126,7 @@ t                   Keeping the catalog viewer open, open the current selected
                     in a new tab page.
 
 -------------------------------------------------------------------------------
-Open Target Buffer and Close the Catalog Viewer~
+Open Selected Buffer and Close the Catalog Viewer~
 
 The following keys all open the currently-selected buffer and switch focus to
 it, closing the catalog viewer at the same time.
