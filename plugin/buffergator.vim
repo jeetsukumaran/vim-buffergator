@@ -615,42 +615,44 @@ function! s:NewCatalogViewer()
         endfor
 
         """" Catalog management
-        noremap <buffer> <silent> s       :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
-        noremap <buffer> <silent> i       :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
-        noremap <buffer> <silent> u       :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
-        noremap <buffer> <silent> q       :call b:buffergator_catalog_viewer.close()<CR>
-        noremap <buffer> <silent> d       :call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
-        noremap <buffer> <silent> D       :call b:buffergator_catalog_viewer.delete_target(0, 1)<CR>
-        noremap <buffer> <silent> x       :call b:buffergator_catalog_viewer.delete_target(1, 0)<CR>
-        noremap <buffer> <silent> X       :call b:buffergator_catalog_viewer.delete_target(1, 1)<CR>
+        noremap <buffer> <silent> s           :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
+        noremap <buffer> <silent> i           :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
+        noremap <buffer> <silent> u           :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
+        noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close()<CR>
+        noremap <buffer> <silent> d           :call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
+        noremap <buffer> <silent> D           :call b:buffergator_catalog_viewer.delete_target(0, 1)<CR>
+        noremap <buffer> <silent> x           :call b:buffergator_catalog_viewer.delete_target(1, 0)<CR>
+        noremap <buffer> <silent> X           :call b:buffergator_catalog_viewer.delete_target(1, 1)<CR>
 
         " open target
         noremap <buffer> <silent> <CR>  :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
 
         " show target line in other window, keeping catalog open and in focus
-        noremap <buffer> <silent> p           :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
+        noremap <buffer> <silent> .           :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
+        noremap <buffer> <silent> po          :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
+        noremap <buffer> <silent> ps          :call b:buffergator_catalog_viewer.visit_target(1, 1, "sb")<CR>
+        noremap <buffer> <silent> pv          :call b:buffergator_catalog_viewer.visit_target(1, 1, "vert sb")<CR>
+        noremap <buffer> <silent> pt          :call b:buffergator_catalog_viewer.visit_target(1, 1, "tab sb")<CR>
         noremap <buffer> <silent> <SPACE>     :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
         noremap <buffer> <silent> <C-SPACE>   :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
         noremap <buffer> <silent> <C-@>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
         noremap <buffer> <silent> <C-N>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
         noremap <buffer> <silent> <C-P>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
 
-        """" Movement that moves to the current search target
-
         " go to target line in other window, keeping catalog open
-        noremap <buffer> <silent> o     :call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
-        noremap <buffer> <silent> ws    :call b:buffergator_catalog_viewer.visit_target(1, 0, "sb")<CR>
-        noremap <buffer> <silent> wv    :call b:buffergator_catalog_viewer.visit_target(1, 0, "vert sb")<CR>
-        noremap <buffer> <silent> t     :call b:buffergator_catalog_viewer.visit_target(1, 0, "tab sb")<CR>
+        noremap <buffer> <silent> o           :call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
+        noremap <buffer> <silent> ws          :call b:buffergator_catalog_viewer.visit_target(1, 0, "sb")<CR>
+        noremap <buffer> <silent> wv          :call b:buffergator_catalog_viewer.visit_target(1, 0, "vert sb")<CR>
+        noremap <buffer> <silent> t           :call b:buffergator_catalog_viewer.visit_target(1, 0, "tab sb")<CR>
 
         " open target line in other window, closing catalog
-        noremap <buffer> <silent> O     :call b:buffergator_catalog_viewer.visit_target(0, 0, "")<CR>
-        noremap <buffer> <silent> wS    :call b:buffergator_catalog_viewer.visit_target(0, 0, "sb")<CR>
-        noremap <buffer> <silent> wV    :call b:buffergator_catalog_viewer.visit_target(0, 0, "vert sb")<CR>
-        noremap <buffer> <silent> T     :call b:buffergator_catalog_viewer.visit_target(0, 0, "tab sb")<CR>
+        noremap <buffer> <silent> O           :call b:buffergator_catalog_viewer.visit_target(0, 0, "")<CR>
+        noremap <buffer> <silent> wS          :call b:buffergator_catalog_viewer.visit_target(0, 0, "sb")<CR>
+        noremap <buffer> <silent> wV          :call b:buffergator_catalog_viewer.visit_target(0, 0, "vert sb")<CR>
+        noremap <buffer> <silent> T           :call b:buffergator_catalog_viewer.visit_target(0, 0, "tab sb")<CR>
 
         " other
-        noremap <buffer> <silent> A     :call b:buffergator_catalog_viewer.toggle_zoom()<CR>
+        noremap <buffer> <silent> A           :call b:buffergator_catalog_viewer.toggle_zoom()<CR>
 
     endfunction
 
@@ -936,12 +938,14 @@ function! s:NewCatalogViewer()
             return 0
         endif
         let [l:jump_to_bufnum] = self.jump_map[l:cur_line].target
+        let l:cur_tab_num = tabpagenr()
         let l:cur_win_num = winnr()
         if !a:keep_catalog
             call self.close()
         endif
         call self.visit_buffer(l:jump_to_bufnum, a:split_cmd)
-        if a:keep_catalog && a:refocus_catalog && winnr() != l:cur_win_num
+        if a:keep_catalog && a:refocus_catalog && (tabpagenr() != l:cur_tab_num || winnr() != l:cur_win_num)
+            execute("tabnext " . l:cur_tab_num)
             execute(l:cur_win_num."wincmd w")
         endif
         call s:_buffergator_messenger.send_info(expand(bufname(l:jump_to_bufnum)))

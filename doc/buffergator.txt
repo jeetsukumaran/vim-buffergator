@@ -90,12 +90,19 @@ Open Selected Buffer~
                     open.
 
 -------------------------------------------------------------------------------
-Movement Within the Catalog Viewer that Updates the Other Window~
+Open Target Buffer, Keeping Catalog in Focus~
 
-The following keys open the currently-selected buffer in the previous
-window, but retain focus on the catalog viewer.
+The following keys open the currently-selected buffer, but retain focus on the
+catalog viewer.
 
-p                   Preview the current buffer entry in the previous window.
+po, .               Preview the currently-selected buffer in the previous
+                    window, keeping focus on the catalog.
+ps                  Preview the currently-selected buffer is a new split,
+                    keeping focus on the catalog.
+pv                  Preview the currently-selected buffer is a new vertical
+                    split, keeping focus on the catalog.
+pt                  Preview the currently-selected buffer is a new tab
+                    page, keeping focus on the catalog.
 <SPACE>, <C-N>      Go to the next buffer entry and preview it in the previous
                     window.
 <C-SPACE>, <C-P>    Go to the previous buffer entry and preview it in the
