@@ -95,13 +95,11 @@ Movement Within the Catalog Viewer that Updates the Other Window~
 The following keys open the currently-selected buffer in the previous
 window, but retain focus on the catalog viewer.
 
-p                   Show the current buffer entry in the previous window.
-<SPACE>             Go to the next buffer entry and show it in the previous
+p                   Preview the current buffer entry in the previous window.
+<SPACE>, <C-N>      Go to the next buffer entry and preview it in the previous
                     window.
-<C-SPACE>           Go to the previous buffer entry and show it in the
+<C-SPACE>, <C-P>    Go to the previous buffer entry and preview it in the
                     previous window.
-<C-N>               Go to and show the next buffer entry.
-<C-P>               Go to and show the previous buffer entry.
 
 -------------------------------------------------------------------------------
 Open Target Buffer Without Closing the Catalog Viewer~
