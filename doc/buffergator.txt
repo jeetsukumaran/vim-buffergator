@@ -72,9 +72,9 @@ The following key mappings are available when in the viewer.
 -------------------------------------------------------------------------------
 Catalog Management~
 
-s                   Cycle through sort regimes.
-i                   Cycle through display regimes (alternate).
-u                   Update (rebuild/refresh) index.
+cs                  Cycle through sort regimes.
+cd                  Cycle through display regimes (alternate).
+r                   Update (rebuild/refresh) index.
 d                   Delete the selected buffer.
 D                   Unconditionally delete the selected buffer.
 x                   Wipe the selected buffer.
@@ -84,63 +84,33 @@ q                   Quit the index/catalog window.
 -------------------------------------------------------------------------------
 Open Selected Buffer~
 
-<CR>                Switch focus to the previous window and go to the current
-                    entry. If "g:buffergator_autodismiss_on_select" is True,
-                    then the catalog viewer is closed; otherwise it is kept
-                    open.
+The following keys all open the currently-selected buffer and switch focus to
+it. The catalog buffer will be closed if 'g:buffergator_autodismiss_on_select'
+evaluates to true; otherwise it will be kept open.
+
+<CR>, o             Open the currently-selected buffer in previous window.
+s                   Open the currently-selected buffer in a new vertical
+                    split.
+i                   Open the currently-selected buffer in a new split.
+t                   Open the currently-selected buffer in a new tab page.
 
 -------------------------------------------------------------------------------
-Preview Selected Buffer Without Leaving the Catalog Viewer~
+Preview Selected Buffer~
 
 The following keys all open the currently-selected buffer, but retain focus on
 the catalog viewer.
 
-po, .               Preview the currently-selected buffer in the previous
-                    window, keeping focus on the catalog.
-ps                  Preview the currently-selected buffer is a new split,
-                    keeping focus on the catalog.
-pv                  Preview the currently-selected buffer is a new vertical
-                    split, keeping focus on the catalog.
-pt                  Preview the currently-selected buffer is a new tab
-                    page, keeping focus on the catalog.
+O                   Preview the currently-selected buffer in the previous
+                    window.
+S                   Preview the currently-selected buffer is a new vertical
+                    split.
+I                   Preview the currently-selected buffer is a new split
+T                   Preview the currently-selected buffer is a new tab
+                    page.
 <SPACE>, <C-N>      Go to the next buffer entry and preview it in the previous
                     window.
 <C-SPACE>, <C-P>    Go to the previous buffer entry and preview it in the
                     previous window.
-
--------------------------------------------------------------------------------
-Open Selected Buffer Without Closing the Catalog Viewer~
-
-The following keys all open the currently-selected buffer and switch focus to
-it, but keep the catalog viewer open.
-
-o                   Keeping the catalog viewer open, switch focus to the
-                    previous window and go to the currently-selected buffer
-                    (as <CR> if "g:buffergator_autodismiss_on_select" is 0).
-ws                  Keeping the catalog viewer open, split the previous window,
-                    switch focus, and go to the currently-selected buffer.
-wv                  Keeping the catalog viewer open, split the previous window
-                    vertically, switch focus, and go to the currently-selected
-                    buffer.
-t                   Keeping the catalog viewer open, open the current selected
-                    in a new tab page.
-
--------------------------------------------------------------------------------
-Open Selected Buffer and Close the Catalog Viewer~
-
-The following keys all open the currently-selected buffer and switch focus to
-it, closing the catalog viewer at the same time.
-
-O                   Close catalog viewer and go to the currently-selected
-                    buffer (as <CR> if "g:buffergator_autodismiss_on_select"
-                    is 1).
-wS                  Close the catalog viewer, split the previous window
-                    and go to the currently-selected buffer.
-wV                  Close the catalog viewer, split the previous window
-                    vertically and go to the currently-selected buffer.
-T                   Close the catalog viewer and open the currently-selected
-                    buffer in a new tab page.
-
 -------------------------------------------------------------------------------
 Window Control~
 
