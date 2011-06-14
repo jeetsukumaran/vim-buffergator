@@ -100,11 +100,11 @@ Preview Selected Buffer~
 The following keys all open the currently-selected buffer, but retain focus on
 the catalog viewer.
 
-O                   Preview the currently-selected buffer in the previous
+O, go               Preview the currently-selected buffer in the previous
                     window.
-S                   Preview the currently-selected buffer is a new vertical
+S, gs               Preview the currently-selected buffer is a new vertical
                     split.
-I                   Preview the currently-selected buffer is a new split
+I, gi               Preview the currently-selected buffer is a new split
 T                   Preview the currently-selected buffer is a new tab
                     page.
 <SPACE>, <C-N>      Go to the next buffer entry and preview it in the previous
