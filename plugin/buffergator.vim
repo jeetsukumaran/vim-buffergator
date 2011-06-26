@@ -88,7 +88,7 @@ let s:buffergator_viewport_split_modes = {
             \ "T"   : "topleft sbuffer",
             \ "t"   : "leftabove sbuffer",
             \ "B"   : "botright sbuffer",
-            \ "b"   : "rightbelow",
+            \ "b"   : "rightbelow sbuffer",
             \ }
 " 2}}}
 
