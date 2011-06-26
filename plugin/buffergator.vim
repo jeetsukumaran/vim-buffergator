@@ -463,6 +463,8 @@ function! s:NewCatalogViewer()
 
     " Opens the buffer for viewing, creating it if needed.
     " First argument, if given, should be number of calling buffer.
+    " Second argument, if given, should be false if the buffers info is *not*
+    " to be repopulated; defaults to 1
     function! l:catalog_viewer.open(...) dict
 
         " store calling buffer
@@ -473,7 +475,9 @@ function! s:NewCatalogViewer()
         endif
 
         " populate data
-        call self.update_buffers_info()
+        if (a:0 < 2 || a:2) "|| b:buffergator_catalog_viewer != self
+            call self.update_buffers_info()
+        endif
         " get buffer number of the catalog view buffer, creating it if neccessary
         if self.bufnum < 0 || !bufexists(self.bufnum)
             " create and render a new buffer
@@ -1168,7 +1172,6 @@ function! s:NewCatalogViewer()
 
     " Rebuilds catalog.
     function! l:catalog_viewer.rebuild_catalog() dict
-        call self.update_buffers_info()
         call self.open(1)
     endfunction
 
