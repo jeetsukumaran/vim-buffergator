@@ -115,9 +115,8 @@ T                   Preview the currently-selected buffer is a new tab
 -------------------------------------------------------------------------------
 Go to Existing Viewport Showing Buffer~
 
-The following keys will first try to find the selected buffer in an existing
-viewport (whether on the current tab page or another), creating a new window
-and/or tabpage only if an existing one showing the buffer is not present.
+The following keys will try to find the selected buffer in an existing
+viewport (whether on the current tab page or another).
 
 eo                  If currently-selected buffer is showing in an existing
                     viewport on this or any other tab page, go it it;
@@ -131,6 +130,9 @@ ei                  If currently-selected buffer is showing in an existing
 et                  If currently-selected buffer is showing in an existing
                     viewport on this or any other tab page, go it it;
                     otherwise show it in a new tab page.
+E                   If currently-selected buffer is showing in an existing
+                    viewport on this or any other tab page, go it it;
+                    otherwise do nothing.
 
 -------------------------------------------------------------------------------
 Window Control~
