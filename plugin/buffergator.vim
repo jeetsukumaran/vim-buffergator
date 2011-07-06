@@ -769,7 +769,7 @@ function! s:NewCatalogViewer()
         let b:buffergator_last_render_time = localtime()
         try
             " remove extra last line
-            execute("normal! GVX")
+            execute('normal! GV"_X')
         catch //
         endtry
         setlocal nomodifiable
