@@ -504,7 +504,7 @@ function! s:NewCatalogViewer()
         else
             let l:bfwn = bufwinnr(self.bufnum)
             if l:bfwn >= 0
-                call self.close()
+                call self.close(1)
             else
                 call self.open()
             endif
@@ -637,7 +637,7 @@ function! s:NewCatalogViewer()
             noremap <buffer> <silent> cs          :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
             noremap <buffer> <silent> cd          :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
             noremap <buffer> <silent> r           :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
-            noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close()<CR>
+            noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close(1)<CR>
             noremap <buffer> <silent> d           :call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
             noremap <buffer> <silent> D           :call b:buffergator_catalog_viewer.delete_target(0, 1)<CR>
             noremap <buffer> <silent> x           :call b:buffergator_catalog_viewer.delete_target(1, 0)<CR>
@@ -677,7 +677,7 @@ function! s:NewCatalogViewer()
             noremap <buffer> <silent> s           :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
             noremap <buffer> <silent> i           :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
             noremap <buffer> <silent> u           :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
-            noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close()<CR>
+            noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close(1)<CR>
             noremap <buffer> <silent> d           :call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
             noremap <buffer> <silent> D           :call b:buffergator_catalog_viewer.delete_target(0, 1)<CR>
             noremap <buffer> <silent> x           :call b:buffergator_catalog_viewer.delete_target(1, 0)<CR>
@@ -790,11 +790,24 @@ function! s:NewCatalogViewer()
     endfunction
 
     " Close and quit the viewer.
-    function! l:catalog_viewer.close() dict
+    function! l:catalog_viewer.close(restore_prev_window) dict
         if self.bufnum < 0 || !bufexists(self.bufnum)
             return
         endif
         call self.contract_screen()
+        if a:restore_prev_window
+            if !self.is_usable_viewport(winnr("#")) && self.first_usable_viewport() ==# -1
+            else
+                try
+                    if !self.is_usable_viewport(winnr("#"))
+                        execute(self.first_usable_viewport() . "wincmd w")
+                    else
+                        execute('wincmd p')
+                    endif
+                catch //
+                endtry
+            endif
+        endif
         execute("bwipe " . self.bufnum)
     endfunction
 
@@ -1001,7 +1014,7 @@ function! s:NewCatalogViewer()
         let [l:jump_to_bufnum] = self.jump_map[l:cur_line].target
         let l:cur_tab_num = tabpagenr()
         if !a:keep_catalog
-            call self.close()
+            call self.close(0)
         endif
         call self.visit_buffer(l:jump_to_bufnum, a:split_cmd)
         if a:keep_catalog && a:refocus_catalog
@@ -1024,7 +1037,7 @@ function! s:NewCatalogViewer()
         if wnr != -1
             execute(wnr . "wincmd w")
             if !a:keep_catalog
-                call self.close()
+                call self.close(0)
             endif
             return
         endif
@@ -1035,7 +1048,7 @@ function! s:NewCatalogViewer()
             if wnr != -1
                 execute(wnr . "wincmd w")
                 if !a:keep_catalog
-                    call self.close()
+                    call self.close(0)
                 endif
                 return
             endif
@@ -1299,7 +1312,7 @@ function! s:OpenBuffergator()
 endfunction
 
 function! s:CloseBuffergator()
-    call s:_catalog_viewer.close()
+    call s:_catalog_viewer.close(1)
 endfunction
 
 function! s:ToggleBuffergator()
