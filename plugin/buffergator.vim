@@ -94,12 +94,13 @@ let s:buffergator_viewport_split_modes = {
 
 " Catalog Sort Regimes {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let s:buffergator_catalog_sort_regimes = ['basename', 'filepath', 'extension', 'bufnum']
+let s:buffergator_catalog_sort_regimes = ['basename', 'filepath', 'extension', 'bufnum', 'mru']
 let s:buffergator_catalog_sort_regime_desc = {
             \ 'basename' : ["basename", "by basename (followed by directory)"],
             \ 'filepath' : ["filepath", "by (full) filepath"],
             \ 'extension'  : ["ext", "by extension (followed by full filepath)"],
             \ 'bufnum'  : ["bufnum", "by buffer number"],
+            \ 'mru'  : ["mru", "by most recently used"],
             \ }
 let s:buffergator_default_catalog_sort_regime = "bufnum"
 " 2}}}
@@ -115,6 +116,10 @@ let s:buffergator_catalog_display_regime_desc = {
 let s:buffergator_default_display_regime = "basename"
 " 2}}}
 
+" MRU {{{2
+" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+let s:buffergator_mru = []
+" 2}}}
 " 1}}}
 
 " Utilities {{{1
@@ -300,6 +305,16 @@ function! s:_is_full_height_window(win_num)
     endif
 endfunction!
 
+" Moves (or adds) the given buffer number to the top of the list
+function! s:_update_mru(acmd_bufnr)
+    let bnum = a:acmd_bufnr + 0
+    if bnum == 0
+        return
+    endif
+    call filter(s:buffergator_mru, 'v:val !=# bnum')
+    call insert(s:buffergator_mru, bnum, 0)
+endfunction
+
 " 2}}}
 
 " Sorting {{{2
@@ -357,6 +372,19 @@ endfunction
 " comparison function used for sorting buffers catalog by basename
 function! s:_compare_dicts_by_basename(m1, m2)
     return s:_compare_dicts_by_value(a:m1, a:m2, "basename")
+endfunction
+
+" comparison function used for sorting buffers catalog by mru
+function! s:_compare_dicts_by_mru(m1, m2)
+    let l:i1 = index(s:buffergator_mru, a:m1['bufnum'])
+    let l:i2 = index(s:buffergator_mru, a:m2['bufnum'])
+	if l:i1 < l:i2
+		return -1
+	elseif l:i1 > l:i2
+		return 1
+	else
+		return 0
+	endif
 endfunction
 
 " 2}}}
@@ -1302,6 +1330,11 @@ if exists("s:_buffergator_messenger")
 endif
 let s:_buffergator_messenger = s:NewMessenger("")
 let s:_catalog_viewer = s:NewCatalogViewer()
+
+" Autocommands that update the most recenly used buffers
+autocmd BufRead * call s:_update_mru(expand('<abuf>'))
+autocmd BufNewFile * call s:_update_mru(expand('<abuf>'))
+autocmd BufWritePost * call s:_update_mru(expand('<abuf>'))
 " 1}}}
 
 " Functions Supporting User Commands {{{1
