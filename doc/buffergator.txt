@@ -178,6 +178,7 @@ g:buffergator_sort_regime~
         "filepath": sort by full buffer filepath
         "extension": sort by buffer filename extension (followed by full
                     filepath)
+        "mru": sort by most recently used
 
 g:buffergator_display_regime~
     Default: "basename"
