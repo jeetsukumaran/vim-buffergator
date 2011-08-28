@@ -378,13 +378,13 @@ endfunction
 function! s:_compare_dicts_by_mru(m1, m2)
     let l:i1 = index(s:buffergator_mru, a:m1['bufnum'])
     let l:i2 = index(s:buffergator_mru, a:m2['bufnum'])
-	if l:i1 < l:i2
-		return -1
-	elseif l:i1 > l:i2
-		return 1
-	else
-		return 0
-	endif
+    if l:i1 < l:i2
+        return -1
+    elseif l:i1 > l:i2
+        return 1
+    else
+        return 0
+    endif
 endfunction
 
 " 2}}}
