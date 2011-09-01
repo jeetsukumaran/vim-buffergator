@@ -4,22 +4,24 @@
                                              *buffergator* *buffergator-contents*
 CONTENTS~
 
-    1. Introduction ....................... |buffergator-introduction|
-    2. Commands ........................... |buffergator-commands|
-    3. Key Mappings (Global) .............. |buffergator-global-keys|
-    4. Key Mappings (Catalog Viewer) ...... |buffergator-keys|
-    5. Options and Settings ............... |buffergator-options|
+    1. Introduction ........................... |buffergator-introduction|
+    2. Commands ............................... |buffergator-commands|
+    3. Key Mappings (Global) .................. |buffergator-global-keys|
+    4. Key Mappings (Buffer Catalog) .......... |buffergator-buffer-keys|
+    5. Key Mappings (Tab Page Catalog) ........ |buffergator-tabpage-keys|
+    5. Options and Settings ................... |buffergator-options|
 
 ===============================================================================
                                                       *buffergator-introduction*
 INTRODUCTION~
 
 Buffergator is a plugin for listing, navigating between, and selecting buffers
-to edit. Upon invocation, a "catalog" of listed buffers are displayed in a
-separate new window split (vertical or horizontal, based on user options;
-default = vertical).  From this "buffer catalog", a buffer can be selected and
-opened in an existing window, a new window split (vertical or horizontal), or
-a new tab page.
+to edit. Upon invocation (using the command, ":BuffergatorOpen" or
+"BuffergatorToggle", or the provided key mapping, "<Leader>b"), a "catalog" of
+listed buffers are displayed in a separate new window split (vertical or
+horizontal, based on user options; default = vertical).  From this "buffer
+catalog", a buffer can be selected and opened in an existing window, a new
+window split (vertical or horizontal), or a new tab page.
 
 Selected buffers can be "previewed", i.e. opened in a window or tab page, but
 with focus remaining in the buffer catalog. Even better, you can "walk" up and
@@ -28,9 +30,14 @@ down the list of buffers shown in the catalog by using <C-N> (or <SPACE>) /
 respectively, opening it for preview without leaving the buffer catalog
 viewer.
 
+Buffergator also provides a way to list tab pages and buffers associated with
+windows in tab pages (the "tab page catalog", which can be invoked using the
+command ":BuffergatorTabsOpen" or the provided key mapping, "<Leader>t").
+
 By default, Buffergator provides global key maps that invoke its main
-commands: "<Leader>b" to open, "<Leader>B" to close. If you prefer to map
-other keys, or do not want any keys mapped at all, set
+commands: "<Leader>b" to open and "<Leader>B" to close the buffer catalog, and
+"<Leader>t" to open and "<Leader>T" to close the tab page catalog. If you
+prefer to map other keys, or do not want any keys mapped at all, set
 "g:buffergator_suppress_keymaps" to 1 in your $VIMRUNTIME.
 
 ===============================================================================
@@ -49,6 +56,16 @@ These following commands are provided globally by Buffergator:
                     Open the buffer catalog if it is closed, or close it if
                     it is already open.
 
+:BuffergatorTabsOpen
+                    Open the tab page catalog, or go to it if it is already open.
+
+:BuffergatorTabsClose
+                    Close the tab page catalog if it is already open.
+
+:BuffergatorTabsToggle
+                    Open the tab page catalog if it is closed, or close it if
+                    it is already open.
+
 ===============================================================================
                                                       *buffergator-global-keys*
 KEY MAPPINGS (GLOBAL)~
@@ -61,9 +78,15 @@ key mappings are defined:
 
 <Leader>B           Invokes ":BuffergatorClose": close the buffer catalog.
 
+<Leader>t           Invokes ":BuffergatorTabsOpen": open the tab page catalog,
+                    or go to it if it is already open.
+
+<Leader>T           Invokes ":BuffergatorTabsClose": close the tab page
+                    catalog.
+
 ===============================================================================
-                                                             *buffergator-keys*
-KEY MAPPINGS (CATALOG VIEWER)~
+                                                      *buffergator-buffer-keys*
+KEY MAPPINGS (BUFFER CATALOG)~
 
 Invoking Buffergator results in the listed buffers being displayed in a
 special Buffergator window, which is referred to as a "buffer catalog viewer".
@@ -73,7 +96,7 @@ The following key mappings are available when in the viewer.
 Catalog Management~
 
 cs                  Cycle through sort regimes.
-cd                  Cycle through display regimes (alternate).
+cd                  Cycle through display regimes.
 r                   Update (rebuild/refresh) index.
 d                   Delete the selected buffer.
 D                   Unconditionally delete the selected buffer.
@@ -139,6 +162,35 @@ Window Control~
 
 A                   Zoom/unzoom window, expanding to full height (if
                     horizontally split) or full width (if vertically split)
+
+===============================================================================
+                                                     *buffergator-tabpage-keys*
+KEY MAPPINGS (TAB PAGE CATALOG)~
+
+-------------------------------------------------------------------------------
+Catalog Management~
+
+cd                  Cycle through display regimes.
+r                   Update (rebuild/refresh) index.
+q                   Quit the index/catalog window.
+
+-------------------------------------------------------------------------------
+Open Selected Tab Page or Tab Page Window~
+
+The following keys all open the currently-selected tab page or window.
+
+<CR>, o             Open the currently-selected tab page or window.
+<SPACE>             Select the next tab page entry.
+<C-SPACE>           Select the previous tab page entry.
+<C-N>               Select the next tab page window entry.
+<C-P>               Select the previous tab page window entry.
+
+-------------------------------------------------------------------------------
+Window Control~
+
+A                   Zoom/unzoom window, expanding to full height (if
+                    horizontally split) or full width (if vertically split)
+
 
 ===============================================================================
                                                           *buffergator-options*

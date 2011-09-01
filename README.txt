@@ -12,9 +12,13 @@ down the list of buffers shown in the catalog by using <C-N> (or <SPACE>) /
 respectively, opening it for preview without leaving the buffer catalog
 viewer.
 
+Buffergator also provides the ability to list and navigate through tab pages
+(and windows within tab pages).
+
 By default, Buffergator provides global key maps that invoke its main
-commands: "<Leader>b" to open, "<Leader>B" to close. If you prefer to map
-other keys, or do not want any keys mapped at all, set
+commands: "<Leader>b" to open and "<Leader>B" to close the buffer catalog, and
+"<Leader>t" to open and "<Leader>T" to close the tab page catalog. If you
+prefer to map other keys, or do not want any keys mapped at all, set
 "g:buffergator_suppress_keymaps" to 1 in your $VIMRUNTIME.
 
 Detailed usage description given in the help file, which can be viewed on-line
