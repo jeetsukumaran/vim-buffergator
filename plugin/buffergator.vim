@@ -792,9 +792,9 @@ function! s:NewCatalogViewer(name, title)
             " call cursor(line(".")+1, 0)
         endif
         if g:buffergator_move_wrap
-            let l:flags .= "W"
-        else
             let l:flags .= "w"
+        else
+            let l:flags .= "W"
         endif
         let l:flags .= "e"
         let l:lnum = -1
