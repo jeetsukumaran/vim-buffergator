@@ -1524,8 +1524,8 @@ function! BuffergatorTabsStatusLine()
     let l:status_line = "[[buffergator]]"
     let l:line = line(".")
     if has_key(b:buffergator_catalog_viewer.jump_map, l:line)
-        let l:status_line .= " Tab Page " . b:buffergator_catalog_viewer.jump_map[l:line].target[0]
-        let l:status_line .= ", Window " . b:buffergator_catalog_viewer.jump_map[l:line].target[1]
+        let l:status_line .= " Tab Page: " . b:buffergator_catalog_viewer.jump_map[l:line].target[0]
+        let l:status_line .= ", Window: " . b:buffergator_catalog_viewer.jump_map[l:line].target[1]
     endif
     return l:status_line
 endfunction
