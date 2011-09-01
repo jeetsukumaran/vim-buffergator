@@ -1379,7 +1379,8 @@ function! s:NewTabCatalogViewer()
             if l:cur_tab_num - 1 == l:tidx
                 let l:initial_line = line("$")
             endif
-            let l:tabfield = "==== Tab Page [" . string(l:tidx+1) . "] ===="
+            " let l:tabfield = "==== Tab Page [" . string(l:tidx+1) . "] ===="
+            let l:tabfield = "TAB PAGE " . string(l:tidx+1) . ":"
             call self.append_line(l:tabfield, l:tidx+1, 1)
             for widx in range(len(l:tabinfo))
                 let l:tabbufnum = l:tabinfo[widx]
@@ -1416,7 +1417,7 @@ function! s:NewTabCatalogViewer()
 
     function! l:catalog_viewer.setup_buffer_syntax() dict
         if has("syntax")
-            syn match BuffergatorTabPageLine '^==== Tab Page \[\d\+\] ====$'
+            syn match BuffergatorTabPageLine '^TAB PAGE \d\+\:$'
             " syn match BuffergatorTabPageLineStart '^==== Tab Page \[' nextgroup=BuffergatorTabPageNumber
             " syn match BuffergatorTabPageNumber '\d\+' nextgroup=BuffergatorTabPageLineEnd
             " syn match BuffergatorTabPageLineEnd '\] ====$'
@@ -1473,7 +1474,7 @@ function! s:NewTabCatalogViewer()
     endfunction
 
     function! l:catalog_viewer.goto_index_entry(direction) dict
-        let l:ok = self.goto_pattern("^=", a:direction)
+        let l:ok = self.goto_pattern("^T", a:direction)
         execute("normal! zz")
         " if l:ok && a:visit_target
         "     call self.visit_target(1, a:refocus_catalog, "")
@@ -1520,7 +1521,12 @@ function! BuffergatorBuffersStatusLine()
     return l:status_line
 endfunction
 function! BuffergatorTabsStatusLine()
-    let l:status_line = "[[buffergator: tabs]]"
+    let l:status_line = "[[buffergator]]"
+    let l:line = line(".")
+    if has_key(b:buffergator_catalog_viewer.jump_map, l:line)
+        let l:status_line .= " Tab Page " . b:buffergator_catalog_viewer.jump_map[l:line].target[0]
+        let l:status_line .= ", Window " . b:buffergator_catalog_viewer.jump_map[l:line].target[1]
+    endif
     return l:status_line
 endfunction
 " 1}}}
