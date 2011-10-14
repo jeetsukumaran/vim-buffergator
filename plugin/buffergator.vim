@@ -33,7 +33,7 @@ set cpo&vim
 " Global Plugin Options {{{1
 " =============================================================================
 if !exists("g:buffergator_viewport_split_policy")
-    let g:buffergator_viewport_split_policy = "L"
+    let g:buffergator_viewport_split_policy = "n"
 endif
 if !exists("g:buffergator_move_wrap")
     let g:buffergator_move_wrap = 1
@@ -1139,7 +1139,7 @@ function! s:NewBufferCatalogViewer()
             " explicit split command not given: switch to buffer in current
             " window
             let &switchbuf="useopen"
-            execute("silent keepalt keepjumps buffer " . a:bufnum)
+            execute("silent buffer " . a:bufnum)
         else
             " explcit split command given: split current window
             let &switchbuf="split"
