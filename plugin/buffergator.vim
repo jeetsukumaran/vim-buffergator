@@ -532,8 +532,10 @@ function! s:NewCatalogViewer(name, title)
             execute("silent keepalt keepjumps " . self.split_mode . " " . self.bufnum)
             if g:buffergator_viewport_split_policy =~ '[RrLl]' && g:buffergator_split_size
                 execute("vertical resize " . g:buffergator_split_size)
+                setlocal winfixwidth
             elseif g:buffergator_viewport_split_policy =~ '[TtBb]' && g:buffergator_split_size
                 execute("resize " . g:buffergator_split_size)
+                setlocal winfixheight
             endif
         endif
     endfunction
