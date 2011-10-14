@@ -33,7 +33,7 @@ set cpo&vim
 " Global Plugin Options {{{1
 " =============================================================================
 if !exists("g:buffergator_viewport_split_policy")
-    let g:buffergator_viewport_split_policy = "n"
+    let g:buffergator_viewport_split_policy = "L"
 endif
 if !exists("g:buffergator_move_wrap")
     let g:buffergator_move_wrap = 1
