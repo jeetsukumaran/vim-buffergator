@@ -1011,20 +1011,20 @@ function! s:NewBufferCatalogViewer()
             noremap <buffer> <silent> X           :call b:buffergator_catalog_viewer.delete_target(1, 1)<CR>
 
             """"" Selection: show target and switch focus
-            noremap <buffer> <silent> <CR>        :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
-            noremap <buffer> <silent> o           :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
-            noremap <buffer> <silent> s           :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "vert sb")<CR>
-            noremap <buffer> <silent> i           :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "sb")<CR>
-            noremap <buffer> <silent> t           :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "tab sb")<CR>
+            noremap <buffer> <silent> <CR>        :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
+            noremap <buffer> <silent> o           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
+            noremap <buffer> <silent> s           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "vert sb")<CR>
+            noremap <buffer> <silent> i           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "sb")<CR>
+            noremap <buffer> <silent> t           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "tab sb")<CR>
 
             """"" Preview: show target , keeping focus on catalog
-            noremap <buffer> <silent> O           :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
-            noremap <buffer> <silent> go          :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
-            noremap <buffer> <silent> S           :call b:buffergator_catalog_viewer.visit_target(1, 1, "vert sb")<CR>
-            noremap <buffer> <silent> gs          :call b:buffergator_catalog_viewer.visit_target(1, 1, "vert sb")<CR>
-            noremap <buffer> <silent> I           :call b:buffergator_catalog_viewer.visit_target(1, 1, "sb")<CR>
-            noremap <buffer> <silent> gi          :call b:buffergator_catalog_viewer.visit_target(1, 1, "sb")<CR>
-            noremap <buffer> <silent> T           :call b:buffergator_catalog_viewer.visit_target(1, 1, "tab sb")<CR>
+            noremap <buffer> <silent> O           :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
+            noremap <buffer> <silent> go          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
+            noremap <buffer> <silent> S           :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "vert sb")<CR>
+            noremap <buffer> <silent> gs          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "vert sb")<CR>
+            noremap <buffer> <silent> I           :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "sb")<CR>
+            noremap <buffer> <silent> gi          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "sb")<CR>
+            noremap <buffer> <silent> T           :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "tab sb")<CR>
             noremap <buffer> <silent> <SPACE>     :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
             noremap <buffer> <silent> <C-SPACE>   :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
             noremap <buffer> <silent> <C-@>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
@@ -1148,14 +1148,37 @@ function! s:NewBufferCatalogViewer()
         let &switchbuf=l:old_switch_buf
     endfunction
 
+    function! l:catalog_viewer.get_target_bufnum(cmd_count) dict
+        if a:cmd_count == 0
+            let l:cur_line = line(".")
+            if !has_key(l:self.jump_map, l:cur_line)
+                call s:_buffergator_messenger.send_info("Not a valid navigation line")
+                return -1
+            endif
+            let [l:jump_to_bufnum] = self.jump_map[l:cur_line].target
+        else
+            let l:jump_to_bufnum = a:cmd_count
+            if bufnr(l:jump_to_bufnum) == -1
+                call s:_buffergator_messenger.send_info("Not a valid buffer number: " . string(l:jump_to_bufnum) )
+                return -1
+            endif
+            for lnum in range(1, line("$"))
+                if self.jump_map[lnum].target[0] == l:jump_to_bufnum
+                    call cursor(lnum, 1)
+                    return l:jump_to_bufnum
+                endif
+            endfor
+            call s:_buffergator_messenger.send_info("Not a listed buffer number: " . string(l:jump_to_bufnum) )
+            return -1
+        endif
+    endfunction
+
     " Go to the selected buffer.
-    function! l:catalog_viewer.visit_target(keep_catalog, refocus_catalog, split_cmd) dict
-        let l:cur_line = line(".")
-        if !has_key(l:self.jump_map, l:cur_line)
-            call s:_buffergator_messenger.send_info("Not a valid navigation line")
+    function! l:catalog_viewer.visit_target(keep_catalog, refocus_catalog, split_cmd) dict range
+        let l:jump_to_bufnum = self.get_target_bufnum(v:count)
+        if l:jump_to_bufnum == -1
             return 0
         endif
-        let [l:jump_to_bufnum] = self.jump_map[l:cur_line].target
         let l:cur_tab_num = tabpagenr()
         if !a:keep_catalog
             call self.close(0)
@@ -1170,13 +1193,11 @@ function! s:NewBufferCatalogViewer()
 
     " Go to the selected buffer, preferentially using a window that already is
     " showing it; if not, create a window using split_cmd
-    function! l:catalog_viewer.visit_open_target(unconditional, keep_catalog, split_cmd) dict
-        let l:cur_line = line(".")
-        if !has_key(l:self.jump_map, l:cur_line)
-            call s:_buffergator_messenger.send_info("Not a valid navigation line")
+    function! l:catalog_viewer.visit_open_target(unconditional, keep_catalog, split_cmd) dict range
+        let l:jump_to_bufnum = self.get_target_bufnum(v:count)
+        if l:jump_to_bufnum == -1
             return 0
         endif
-        let [l:jump_to_bufnum] = self.jump_map[l:cur_line].target
         let wnr = bufwinnr(l:jump_to_bufnum)
         if wnr != -1
             execute(wnr . "wincmd w")
@@ -1289,18 +1310,29 @@ function! s:NewBufferCatalogViewer()
     endfunction
 
     " Finds next line with occurrence of a rendered index
-    function! l:catalog_viewer.goto_index_entry(direction, visit_target, refocus_catalog) dict
-        let l:ok = self.goto_pattern("^\[", a:direction)
-        execute("normal! zz")
-        if l:ok && a:visit_target
-            call self.visit_target(1, a:refocus_catalog, "")
+    function! l:catalog_viewer.goto_index_entry(direction, visit_target, refocus_catalog) dict range
+        if v:count > 0
+            let l:target_bufnum = v:count
+            if bufnr(l:target_bufnum) == -1
+                call s:_buffergator_messenger.send_info("Not a valid buffer number: " . string(l:target_bufnum) )
+                return -1
+            endif
+            let l:ok = 0
+            for lnum in range(1, line("$"))
+                if self.jump_map[lnum].target[0] == l:target_bufnum
+                    call cursor(lnum, 1)
+                    let l:ok = 1
+                    break
+                endif
+            endfor
+            if !l:ok
+                call s:_buffergator_messenger.send_info("Not a listed buffer number: " . string(l:target_bufnum) )
+                return -1
+            endif
+        else
+            let l:ok = self.goto_pattern("^\[", a:direction)
+            execute("normal! zz")
         endif
-    endfunction
-
-    " Finds next line with occurrence of a file pattern.
-    function! l:catalog_viewer.goto_file_start(direction, visit_target, refocus_catalog) dict
-        let l:ok = self.goto_pattern("^:::", a:direction)
-        execute("normal! zz")
         if l:ok && a:visit_target
             call self.visit_target(1, a:refocus_catalog, "")
         endif
