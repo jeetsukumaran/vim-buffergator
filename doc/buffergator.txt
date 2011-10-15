@@ -108,52 +108,72 @@ q                   Quit the index/catalog window.
 Open Selected Buffer~
 
 The following keys all open the currently-selected buffer and switch focus to
-it. The catalog buffer will be closed if 'g:buffergator_autodismiss_on_select'
-evaluates to true; otherwise it will be kept open.
+it. If the key presses are preceded by a number, then the buffer with that
+number will opened instead of the current buffer. The catalog buffer will be
+closed if 'g:buffergator_autodismiss_on_select' evaluates to true; otherwise
+it will be kept open.
 
-<CR>, o             Open the currently-selected buffer in previous window.
-s                   Open the currently-selected buffer in a new vertical
+<CR>, o             Open the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), in previous window.
+s                   Open the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), in a new vertical
                     split.
-i                   Open the currently-selected buffer in a new split.
-t                   Open the currently-selected buffer in a new tab page.
+i                   Open the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), in a new split.
+t                   Open the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), in a new tab page.
 
 -------------------------------------------------------------------------------
 Preview Selected Buffer~
 
 The following keys all open the currently-selected buffer, but retain focus on
-the catalog viewer.
+the catalog viewer. If the key presses are preceded by a number, than the
+buffer with that number will be opened.
 
-O, go               Preview the currently-selected buffer in the previous
+O, go               Preview the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), in the previous
                     window.
-S, gs               Preview the currently-selected buffer is a new vertical
+S, gs               Preview the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), is a new vertical
                     split.
-I, gi               Preview the currently-selected buffer is a new split
-T                   Preview the currently-selected buffer is a new tab
+I, gi               Preview the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), in a new split
+T                   Preview the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), in a new tab
                     page.
-<SPACE>, <C-N>      Go to the next buffer entry and preview it in the previous
-                    window.
-<C-SPACE>, <C-P>    Go to the previous buffer entry and preview it in the
+<SPACE>, <C-N>      Go to the next buffer entry (or, if [count] is
+                    given, buffer with number [count]), and preview it in the
+                    previous window.
+<C-SPACE>, <C-P>    Go to the previous buffer entry (or, if [count] is
+                    given, buffer with number [count]), and preview it in the
                     previous window.
 
 -------------------------------------------------------------------------------
 Go to Existing Viewport Showing Buffer~
 
 The following keys will try to find the selected buffer in an existing
-viewport (whether on the current tab page or another).
+viewport (whether on the current tab page or another). If the key presses are
+preceded by a number, then the buffer with that number will be the target
+buffer.
 
-eo                  If currently-selected buffer is showing in an existing
+eo                  If currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), is showing in an existing
                     viewport on this or any other tab page, go it it;
                     otherwise show it in the previous window.
-es                  If currently-selected buffer is showing in an existing
+es                  If currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), is showing in an existing
                     viewport on this or any other tab page, go it it;
                     otherwise show it in a new vertical split.
-ei                  If currently-selected buffer is showing in an existing
+ei                  If currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), is showing in an existing
                     viewport on this or any other tab page, go it it;
                     otherwise show it in a new horizontal split.
-et                  If currently-selected buffer is showing in an existing
+et                  If currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), is showing in an existing
                     viewport on this or any other tab page, go it it;
                     otherwise show it in a new tab page.
-E                   If currently-selected buffer is showing in an existing
+E                   If currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), is showing in an existing
                     viewport on this or any other tab page, go it it;
                     otherwise do nothing.
 
