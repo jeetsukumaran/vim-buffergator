@@ -1156,6 +1156,7 @@ function! s:NewBufferCatalogViewer()
                 return -1
             endif
             let [l:jump_to_bufnum] = self.jump_map[l:cur_line].target
+            return l:jump_to_bufnum
         else
             let l:jump_to_bufnum = a:cmd_count
             if bufnr(l:jump_to_bufnum) == -1
