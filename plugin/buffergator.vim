@@ -1005,10 +1005,10 @@ function! s:NewBufferCatalogViewer()
             noremap <buffer> <silent> cd          :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
             noremap <buffer> <silent> r           :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
             noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close(1)<CR>
-            noremap <buffer> <silent> d           :call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
-            noremap <buffer> <silent> D           :call b:buffergator_catalog_viewer.delete_target(0, 1)<CR>
-            noremap <buffer> <silent> x           :call b:buffergator_catalog_viewer.delete_target(1, 0)<CR>
-            noremap <buffer> <silent> X           :call b:buffergator_catalog_viewer.delete_target(1, 1)<CR>
+            noremap <buffer> <silent> d           :<C-U>call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
+            noremap <buffer> <silent> D           :<C-U>call b:buffergator_catalog_viewer.delete_target(0, 1)<CR>
+            noremap <buffer> <silent> x           :<C-U>call b:buffergator_catalog_viewer.delete_target(1, 0)<CR>
+            noremap <buffer> <silent> X           :<C-U>call b:buffergator_catalog_viewer.delete_target(1, 1)<CR>
 
             """"" Selection: show target and switch focus
             noremap <buffer> <silent> <CR>        :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
@@ -1225,13 +1225,11 @@ function! s:NewBufferCatalogViewer()
         endif
     endfunction
 
-    function! l:catalog_viewer.delete_target(wipe, force) dict
-        let l:cur_line = line(".")
-        if !has_key(l:self.jump_map, l:cur_line)
-            call s:_buffergator_messenger.send_info("Not a valid navigation line")
+    function! l:catalog_viewer.delete_target(wipe, force) dict range
+        let l:bufnum_to_delete = self.get_target_bufnum(v:count)
+        if l:bufnum_to_delete == -1
             return 0
         endif
-        let [l:bufnum_to_delete] = self.jump_map[l:cur_line].target
         if !bufexists(l:bufnum_to_delete)
             call s:_buffergator_messenger.send_info("Not a valid or existing buffer")
             return 0
