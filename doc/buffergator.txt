@@ -109,9 +109,9 @@ Open Selected Buffer~
 
 The following keys all open the currently-selected buffer and switch focus to
 it. If the key presses are preceded by a number, then the buffer with that
-number will opened instead of the current buffer. The catalog buffer will be
-closed if 'g:buffergator_autodismiss_on_select' evaluates to true; otherwise
-it will be kept open.
+number will be selected and opened instead of the current buffer. The catalog
+buffer will be closed if 'g:buffergator_autodismiss_on_select' evaluates to
+true; otherwise it will be kept open.
 
 <CR>, o             Open the currently-selected buffer (or, if [count] is
                     given, buffer with number [count]), in previous window.

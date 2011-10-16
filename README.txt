@@ -13,15 +13,48 @@ down the list of buffers shown in the catalog by using <C-N> (or <SPACE>) /
 respectively, opening it for preview without leaving the buffer catalog
 viewer.
 
+The buffer opening commands follow that of NERDTree. Examples:
+
+    - Use movement keys (h,j,k,l) to select a buffer from the list, then type
+      <CR> or "o" to open it in the previous window.
+    - Type "42" and <CR> or "o" to open buffer number 42 in the previous
+      window.
+    - You can use "go" to open the currently selected buffer in the previous
+      window, but with focus remaining in the buffer catalog ("42go" will do
+      the same, but will select buffer number 42).
+    - You can use "s" to open the currently selected buffer in new vertical
+      split. "S" will open the buffer in a new vertical split, but keep the
+      focus in the buffer catalog.  ("42s" or "42S" will do the same, but will
+      select buffer number 42)
+    - You can use "i" to open the currently selected buffer in new horizontal
+      split. "I" will open the buffer in a new vertical split, but keep the
+      focus in the buffer catalog.  ("42i" or "42I" will do the same, but will
+      select buffer number 42)
+    - You can use "t" to open the currently selected buffer in new tab ("42t"
+      will do the same, but will select buffer number 42).
+
+Other key maps allow you to jump to a target buffer in an open
+window/split/tab page if it is already active there instead of creating a new
+window. Minimal management of buffers (wiping/dropping) are also provided.
+
 Buffergator also provides a way to list tab pages and buffers associated with
 windows in tab pages (the "tab page catalog", which can be invoked using the
 command ":BuffergatorTabsOpen" or the provided key mapping, "<Leader>t").
+
+The buffer listing can be sorted alphabetically by filename, by full filepath,
+by extension followed by filename, or by most-recently used (MRU).
 
 By default, Buffergator provides global key maps that invoke its main
 commands: "<Leader>b" to open and "<Leader>B" to close the buffer catalog, and
 "<Leader>t" to open and "<Leader>T" to close the tab page catalog. If you
 prefer to map other keys, or do not want any keys mapped at all, set
 "g:buffergator_suppress_keymaps" to 1 in your $VIMRUNTIME.
+
+[NOTE: If you have other plugins installed that have key maps that start with
+"<Leader>b" (e.g., BufExplorer, which uses "<Leader>bs", "<Leader>bv", etc.),
+then you may notice a slight delay or lag when typing the default "<Leader>b"
+to start Buffergator. In this case, you should either use another keymap for
+Buffergator or BufExplorer.]
 
 Detailed usage description given in the help file, which can be viewed on-line
 here:
