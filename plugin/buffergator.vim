@@ -422,7 +422,7 @@ function! s:NewCatalogViewer(name, title)
         redir END
         let l:buffers_output_rows = split(l:buffers_output, "\n")
         for l:buffers_output_row in l:buffers_output_rows
-            let l:parts = matchlist(l:buffers_output_row, '^\s*\(\d\+\)\(.....\) "\(.*\)"\s\+\w\+ \d\+$')
+            let l:parts = matchlist(l:buffers_output_row, '^\s*\(\d\+\)\(.....\) "\(.*\)"')
             let l:info = {}
             let l:info["bufnum"] = l:parts[1] + 0
             if l:parts[2][0] == "u"
