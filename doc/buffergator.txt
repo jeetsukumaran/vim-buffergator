@@ -123,6 +123,7 @@ i                   Open the currently-selected buffer (or, if [count] is
 t                   Open the currently-selected buffer (or, if [count] is
                     given, buffer with number [count]), in a new tab page.
 
+
 -------------------------------------------------------------------------------
 Preview Selected Buffer~
 
@@ -147,6 +148,27 @@ T                   Preview the currently-selected buffer (or, if [count] is
 <C-SPACE>, <C-P>    Go to the previous buffer entry (or, if [count] is
                     given, buffer with number [count]), and preview it in the
                     previous window.
+
+-------------------------------------------------------------------------------
+Open and Switch Focus to Selected Buffer~
+
+The following keys all open the currently-selected buffer and switch focus to
+it, keeping the catalog viewe open, regardless of the
+'g:buffergator_autodismiss_on_select' setting. If the key presses are preceded
+by a number, than the buffer with that number will be opened.
+
+po                  Open the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), in the previous
+                    window, and switch focus to it, keeping the catalog
+                    viewer open.
+ps                  Open the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), is a new vertical
+                    split, and switch focus to it, keeping the catalog
+                    viewer open.
+pi                  Open the currently-selected buffer (or, if [count] is
+                    given, buffer with number [count]), in a new split,
+                    and switch focus to it, keeping the catalog
+                    viewer open.
 
 -------------------------------------------------------------------------------
 Go to Existing Viewport Showing Buffer~
