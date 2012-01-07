@@ -411,6 +411,7 @@ function! s:NewCatalogViewer(name, title)
     let l:catalog_viewer["is_zoomed"] = 0
     let l:catalog_viewer["columns_expanded"] = 0
     let l:catalog_viewer["lines_expanded"] = 0
+    let l:catalog_viewer["max_buffer_basename_len"] = 30
 
     " Initialize object state.
     let l:catalog_viewer["bufnum"] = -1
@@ -420,6 +421,7 @@ function! s:NewCatalogViewer(name, title)
         redir => buffers_output
         execute('silent ls')
         redir END
+        let self.max_buffer_basename_len = 0
         let l:buffers_output_rows = split(l:buffers_output, "\n")
         for l:buffers_output_row in l:buffers_output_rows
             let l:parts = matchlist(l:buffers_output_row, '^\s*\(\d\+\)\(.....\) "\(.*\)"')
@@ -478,6 +480,9 @@ function! s:NewCatalogViewer(name, title)
             let l:info["bufname"] = parts[3]
             let l:info["filepath"] = fnamemodify(l:info["bufname"], ":p")
             let l:info["basename"] = fnamemodify(l:info["bufname"], ":t")
+            if len(l:info["basename"]) > self.max_buffer_basename_len
+                let self.max_buffer_basename_len = len(l:info["basename"])
+            endif
             let l:info["parentdir"] = fnamemodify(l:info["bufname"], ":p:h")
             let l:info["extension"] = fnamemodify(l:info["bufname"], ":e")
             call add(bcat, l:info)
@@ -1110,7 +1115,8 @@ function! s:NewBufferCatalogViewer()
                 let l:line .= "  "
             endif
             if self.display_regime == "basename"
-                let l:line .= s:_format_align_left(l:bufinfo.basename, 30, " ")
+                let l:line .= s:_format_align_left(l:bufinfo.basename, self.max_buffer_basename_len, " ")
+                let l:line .= "    "
                 let l:line .= l:bufinfo.parentdir
             elseif self.display_regime == "filepath"
                 let l:line .= l:bufinfo.filepath
