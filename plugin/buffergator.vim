@@ -1116,7 +1116,7 @@ function! s:NewBufferCatalogViewer()
             endif
             if self.display_regime == "basename"
                 let l:line .= s:_format_align_left(l:bufinfo.basename, self.max_buffer_basename_len, " ")
-                let l:line .= "    "
+                let l:line .= "  "
                 let l:line .= l:bufinfo.parentdir
             elseif self.display_regime == "filepath"
                 let l:line .= l:bufinfo.filepath
