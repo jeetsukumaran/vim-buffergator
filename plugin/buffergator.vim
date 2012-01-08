@@ -937,7 +937,7 @@ endfunction
 function! s:NewBufferCatalogViewer()
 
     " initialize
-    let l:catalog_viewer = s:NewCatalogViewer("[[buffergator: buffers]]", "buffergator")
+    let l:catalog_viewer = s:NewCatalogViewer("[[buffergator-buffers]]", "buffergator")
     let l:catalog_viewer["calling_bufnum"] = -1
     let l:catalog_viewer["buffers_catalog"] = {}
 
@@ -1378,7 +1378,7 @@ endfunction
 function! s:NewTabCatalogViewer()
 
     " initialize
-    let l:catalog_viewer = s:NewCatalogViewer("[[buffergator: tabs]]", "buffergator")
+    let l:catalog_viewer = s:NewCatalogViewer("[[buffergator-tabs]]", "buffergator")
     let l:catalog_viewer["tab_catalog"] = []
 
     " Opens the buffer for viewing, creating it if needed.
