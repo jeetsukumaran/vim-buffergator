@@ -1617,6 +1617,7 @@ let s:_catalog_viewer = s:NewBufferCatalogViewer()
 let s:_tab_catalog_viewer = s:NewTabCatalogViewer()
 
 " Autocommands that update the most recenly used buffers
+autocmd BufEnter * call s:_update_mru(expand('<abuf>'))
 autocmd BufRead * call s:_update_mru(expand('<abuf>'))
 autocmd BufNewFile * call s:_update_mru(expand('<abuf>'))
 autocmd BufWritePost * call s:_update_mru(expand('<abuf>'))
