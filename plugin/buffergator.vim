@@ -1646,9 +1646,12 @@ function! s:ToggleBuffergator()
     call s:_catalog_viewer.toggle()
 endfunction
 
+function! s:CloseBuffergatorTabs()
+    call s:_tab_catalog_viewer.close(1)
+endfunction
+
 function! s:ToggleBuffergatorTabs()
     call s:_catalog_viewer.close(1)
-    call s:_tab_catalog_viewer.toggle()
 endfunction
 
 " 1}}}
