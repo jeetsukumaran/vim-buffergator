@@ -1295,25 +1295,58 @@ function! s:NewBufferCatalogViewer()
         let l:cur_win_num = winnr()
 
         " find alternate buffer to switch to
+        " let l:alternate_buffer = -1
+        " for abufnum in range(l:bufnum_to_delete, 1, -1)
+        "     if bufexists(abufnum) && buflisted(abufnum) && abufnum != l:bufnum_to_delete
+        "         let l:alternate_buffer = abufnum
+        "         break
+        "     endif
+        " endfor
+        " if l:alternate_buffer == -1 && bufnr("$") > l:bufnum_to_delete
+        "     for abufnum in range(l:bufnum_to_delete+1, bufnr("$"))
+        "         if bufexists(abufnum) && buflisted(abufnum) && abufnum != l:bufnum_to_delete
+        "             let l:alternate_buffer = abufnum
+        "             break
+        "         endif
+        "     endfor
+        " endif
+        " if l:alternate_buffer == -1
+        "     call s:_buffergator_messenger.send_warning("Cowardly refusing to delete last listed buffer")
+        "     return 0
+        " endif
+
+        call self.update_buffers_info()
+        if len(self.buffers_catalog) == 1
+            if self.buffers_catalog[0].bufnum == l:bufnum_to_delete
+                call s:_buffergator_messenger.send_warning("Cowardly refusing to delete last listed buffer")
+                return 0
+            else
+                call s:_buffergator_messenger.send_warning("Buffer not found")
+                return 0
+            endif
+        endif
         let l:alternate_buffer = -1
-        for abufnum in range(l:bufnum_to_delete, 1, -1)
-            if bufexists(abufnum) && buflisted(abufnum) && abufnum != l:bufnum_to_delete
-                let l:alternate_buffer = abufnum
+        for xbi in range(0, len(self.buffers_catalog)-1)
+            let curbf = self.buffers_catalog[xbi].bufnum
+            if curbf == l:bufnum_to_delete
+                if xbi == len(self.buffers_catalog)-1
+                    if xbi > 0
+                        let l:alternate_buffer = self.buffers_catalog[xbi-1].bufnum
+                    else
+                        call s:_buffergator_messenger.send_warning("Cowardly refusing to delete last listed buffer")
+                        return 0
+                    endif
+                else
+                    if xbi+1 < len(self.buffers_catalog)
+                        let l:alternate_buffer = self.buffers_catalog[xbi+1].bufnum
+                    else
+                        call s:_buffergator_messenger.send_warning("Cowardly refusing to delete last listed buffer")
+                        return 0
+                    endif
+                endif
                 break
             endif
         endfor
-        if l:alternate_buffer == -1 && bufnr("$") > l:bufnum_to_delete
-            for abufnum in range(l:bufnum_to_delete+1, bufnr("$"))
-                if bufexists(abufnum) && buflisted(abufnum) && abufnum != l:bufnum_to_delete
-                    let l:alternate_buffer = abufnum
-                    break
-                endif
-            endfor
-        endif
-        if l:alternate_buffer == -1
-            call s:_buffergator_messenger.send_warning("Cowardly refusing to delete last listed buffer")
-            return 0
-        endif
 
         let l:changed_win_bufs = []
         for winnum in range(1, winnr('$'))
