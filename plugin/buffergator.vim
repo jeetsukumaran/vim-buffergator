@@ -735,6 +735,11 @@ function! s:NewCatalogViewer(name, title)
     function! l:catalog_viewer.highlight_current_line()
         if self.current_buffer_index
           execute ":" . self.current_buffer_index
+          if self.current_buffer_index < line('w0')
+            execute "silent! normal! zt"
+          elseif self.current_buffer_index > line('w$')
+            execute "silent! normal! zb"
+          endif
         endif
     endfunction
 
@@ -1770,7 +1775,7 @@ function! s:UpdateBuffergator(event, affected)
         call s:_catalog_viewer.render_buffer()
 
         if !l:self_call
-          execute ":" . s:_catalog_viewer.current_buffer_index
+          call s:_catalog_viewer.highlight_current_line()
         endif
       endif
     endfor
