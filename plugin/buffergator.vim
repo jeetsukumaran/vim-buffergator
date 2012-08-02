@@ -59,8 +59,8 @@ endif
 if !exists("g:buffergator_show_full_directory_path")
     let g:buffergator_show_full_directory_path = 1
 endif
-if !exists("g:buffergator_unicode_ornaments")
-    let g:buffergator_unicode_ornaments = 0
+if !exists("g:buffergator_help_ornaments")
+    let g:buffergator_help_ornaments = 0
 endif
 " 1}}}
 
@@ -638,7 +638,7 @@ function! s:NewCatalogViewer(name, title)
       endif
 
       setlocal modifiable
-      " if g:buffergator_unicode_ornaments
+      " if g:buffergator_help_ornaments
       "   let l:window_width = winwidth(0) - 6
       "   let l:window_width += l:window_width % 2 ? 1 : 0
       "   let l:column_1 = float2nr(floor((l:window_width - 4) * 0.4))
@@ -654,12 +654,15 @@ function! s:NewCatalogViewer(name, title)
       let l:column_1 = float2nr(floor((l:window_width - 4) * 0.4))
       let l:column_2 = float2nr(ceil((l:window_width - 4) * 0.6))
       let l:help_text = ['']
-      if g:buffergator_unicode_ornaments
+      if g:buffergator_help_ornaments == 2
         let l:help_text += ['┌' . s:_format_align_center('  Buffergator Help  ', l:window_width, '─') . '┐']
         let l:help_text += ['│' . s:_format_align_center('',l:window_width,' ') . '│']
-      else
+      elseif g:buffergator_help_ornaments == 1
         let l:help_text += ['+' . s:_format_align_center('  Buffergator Help  ', l:window_width+2, '-') . '+']
         let l:help_text += ['|' . s:_format_align_center('',l:window_width+2,' ') . '|']
+      else
+        let l:help_text += [s:_format_align_center('  Buffergator Help  ', l:window_width+2, ' ')]
+        let l:help_text += [s:_format_align_center('',l:window_width+2,' ')]
       endif
       echomsg string([l:window_width, l:column_1, l:column_2])
       "
@@ -684,25 +687,29 @@ function! s:NewCatalogViewer(name, title)
                       " use only the matching portion
                       let l:key_string = s:_format_align_left(get(l:keys_split,l:row,""), l:column_1, ' ')
                       let l:help_string = s:_format_align_right(get(l:help_split,l:row,""), l:column_2, ' ')
-                      if g:buffergator_unicode_ornaments
+                      if g:buffergator_help_ornaments == 2
                         let l:help_text += ['│ ' .
                               \ s:_format_align_center(l:key_string . '│ ' .
                               \ l:help_string, l:window_width, ' ') . ' │']
-                      else
+                      elseif g:buffergator_help_ornaments == 1
                         let l:help_text += ['| ' .
                                 \ s:_format_align_center(l:key_string . '| ' .
                                 \ l:help_string, l:window_width, ' ') . ' |']
+                      else
+                        let l:help_text += [s:_format_align_center(l:key_string . '  ' .  l:help_string, l:window_width, ' ')]
                       endif
                   endfor
-                  if g:buffergator_unicode_ornaments
+                  if g:buffergator_help_ornaments == 2
                       let l:help_text += ['└' . s:_format_align_center('', l:window_width, '─') . '┘']
-                  else
+                  elseif g:buffergator_help_ornaments == 1
                       let l:help_text += ['+' . s:_format_align_center('', l:window_width+2, '-') . '+']
+                  else
+                      let l:help_text += [s:_format_align_center('', l:window_width+2, ' ')]
                   endif
               endif
           endfor
       endfor
-      " if g:buffergator_unicode_ornaments
+      " if g:buffergator_help_ornaments
       "   let l:help_text += ['└' . s:_format_align_center('', l:window_width, '─') . '┘']
       " else
       "   let l:help_text += ['+' . s:_format_align_center('', l:window_width+2, '-') . '+']
@@ -713,14 +720,15 @@ function! s:NewCatalogViewer(name, title)
       normal gg
       syntax clear
       syntax match BuffergatorTitle 'Buffergator Help'
-      if g:buffergator_unicode_ornaments
+      if g:buffergator_help_ornaments == 2
         syntax match BuffergatorKeys  /\v(^│).{-}\ze(\s│)/hs=s+1
         syntax match BuffergatorHelp /\v(\s│).{-}│/ contains=BuffergatorBorder
         syntax match BuffergatorBorder '[─┘┐└┌│]' contains=BuffergatorKeys
-      else
+      elseif g:buffergator_help_ornaments == 1
         syntax match BuffergatorKeys  /\v(^|).{-}\ze(\s|)/hs=s+1
         syntax match BuffergatorHelp /\v(\s|).{-}|/ contains=BuffergatorBorder
         syntax match BuffergatorBorder '[-+|]' contains=BuffergatorKeys
+      else
       endif
 
       highlight link BuffergatorBorder NonText
