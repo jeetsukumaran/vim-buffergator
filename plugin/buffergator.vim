@@ -638,8 +638,18 @@ function! s:NewCatalogViewer(name, title)
       endif
 
       setlocal modifiable
+      " if g:buffergator_unicode_ornaments
+      "   let l:window_width = winwidth(0) - 6
+      "   let l:window_width += l:window_width % 2 ? 1 : 0
+      "   let l:column_1 = float2nr(floor((l:window_width - 4) * 0.4))
+      "   let l:column_2 = float2nr(ceil((l:window_width - 4) * 0.6))
+      " else
+      "   let l:window_width = winwidth(0) - 4
+      "   let l:window_width += l:window_width % 2 ? 1 : 0
+      "   let l:column_1 = float2nr(floor((l:window_width - 2) * 0.4))
+      "   let l:column_2 = float2nr(ceil((l:window_width - 2) * 0.6))
+      " endif
       let l:window_width = winwidth(0) - 6
-      " adjust the window so it's an even number if the window with is odd
       let l:window_width += l:window_width % 2 ? 1 : 0
       let l:column_1 = float2nr(floor((l:window_width - 4) * 0.4))
       let l:column_2 = float2nr(ceil((l:window_width - 4) * 0.6))
@@ -648,8 +658,8 @@ function! s:NewCatalogViewer(name, title)
         let l:help_text += ['┌' . s:_format_align_center('  Buffergator Help  ', l:window_width, '─') . '┐']
         let l:help_text += ['│' . s:_format_align_center('',l:window_width,' ') . '│']
       else
-        let l:help_text += ['+' . s:_format_align_center('  Buffergator Help  ', l:window_width, '-') . '+']
-        let l:help_text += ['|' . s:_format_align_center('',l:window_width,' ') . '|']
+        let l:help_text += ['+' . s:_format_align_center('  Buffergator Help  ', l:window_width+2, '-') . '+']
+        let l:help_text += ['|' . s:_format_align_center('',l:window_width+2,' ') . '|']
       endif
       echomsg string([l:window_width, l:column_1, l:column_2])
       "
@@ -690,7 +700,7 @@ function! s:NewCatalogViewer(name, title)
       if g:buffergator_unicode_ornaments
         let l:help_text += ['└' . s:_format_align_center('', l:window_width, '─') . '┘']
       else
-        let l:help_text += ['+' . s:_format_align_center('', l:window_width, '-') . '+']
+        let l:help_text += ['+' . s:_format_align_center('', l:window_width+2, '-') . '+']
       endif
       normal Gdgg
       call append(0,l:help_text)
