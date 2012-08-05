@@ -216,7 +216,7 @@ noremap <Plug>BuffergatorZoomWin           :call b:buffergator_catalog_viewer.to
 noremap <Plug>BuffergatorShowHelp          :call b:buffergator_catalog_viewer.toggle_help()<CR>
 
 """"" Close the help window
-noremap <Plug>BuffergatorCloseHelp         :q<CR>:wincmd p<CR>
+noremap <Plug>BuffergatorCloseHelp         :call b:buffergator_catalog_viewer.close_help()<CR>
 
 
 " Script Data and Variables {{{1
@@ -644,7 +644,10 @@ function! s:NewCatalogViewer(name, title)
             let l:col1_prop = 0.4
             let l:col2_prop = 0.6
           endif
+          let b:buffergator_catalog_viewer = self
+          let b:buffergator_help_bufnum = bufnr('%')
       else
+        " execute "buffer " . self.bufnum
         execute "bdelete " l:help_buffer
         return
       endif
@@ -837,7 +840,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Opens viewer if closed, closes viewer if open.
-    function! l:catalog_viewer.toggle() dict
+    function! l:catalog_viewer.toggle(existing_only) dict
         " get buffer number of the catalog view buffer, creating it if neccessary
         if self.bufnum < 0 || !bufexists(self.bufnum)
             call self.open()
@@ -966,6 +969,23 @@ function! s:NewCatalogViewer(name, title)
         "     " setlocal fillchars=fold:\ "
         "     setlocal fillchars=fold:.
         " endif
+    endfunction
+
+    " Close help if open, and jump back to Buffergator catalog viewer
+    function! l:catalog_viewer.close_help() dict
+        if !exists("b:buffergator_help_bufnum") || !bufexists(b:buffergator_help_bufnum)
+        " if !exists("b:buffergator_help_bufnum")
+            return
+        endif
+        let l:bufnum_to_delete = b:buffergator_help_bufnum
+        if bufexists(self.bufnum)
+            let l:bfwn = bufwinnr(self.bufnum)
+            if l:bfwn >= 0
+                execute l:bfwn . " :wincmd w"
+            endif
+        endif
+        call self.contract_screen()
+        execute("bwipe " . l:bufnum_to_delete)
     endfunction
 
     " Close and quit the viewer.
