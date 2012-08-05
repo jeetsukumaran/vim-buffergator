@@ -678,9 +678,6 @@ function! s:NewCatalogViewer(name, title)
                   let l:keys = join(s:_default_keymaps[l:command_set][l:plug_mapping],", ")
                   let l:help = l:plug_mapping_help[1]
                   " ha ha syntax fail.
-                  let l:rows_for_columns = [strlen(l:keys) / l:column_1 + 1, strlen(l:help) / l:column_2 + 1]
-
-                  let l:rows = max(l:rows_for_columns)
                   " to divide on the first space before the column break
                   " we split on the last space before our column width
                   " use a zero width match to avoid remove parts of
@@ -688,6 +685,7 @@ function! s:NewCatalogViewer(name, title)
                   " \(\s[^ ]*\%24c\)\@=
                   let l:keys_split = split(l:keys,'\v\s([^ ]*%' . l:column_1 . 'c)@=')
                   let l:help_split = split(l:help,'\v\s([^ ]*%' . l:column_2 . 'c)@=')
+                  let l:rows = max([len(l:keys_split), len(l:help_split)])
 
                   for l:row in range(l:rows)
                       " use only the matching portion
