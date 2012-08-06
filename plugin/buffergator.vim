@@ -62,9 +62,6 @@ endif
 if !exists("g:buffergator_help_ornaments")
     let g:buffergator_help_ornaments = 0
 endif
-if !exists("g:buffergator_help_split_top")
-    let g:buffergator_help_split_top = 0
-endif
 " 1}}}
 
 " Script Key Maps {{{1
@@ -625,24 +622,15 @@ function! s:NewCatalogViewer(name, title)
     function! l:catalog_viewer.toggle_help() dict
       let l:help_buffer = bufnr("[[buffergator-help]]", 1)
       if bufwinnr(l:help_buffer) < 0
-          if g:buffergator_help_split_top
-            let l:split_mode = "topleft sbuffer"
-            execute("silent keepalt keepjumps " . l:split_mode . " " . l:help_buffer)
-            let l:col1_prop = 0.1
-            let l:col2_prop = 0.9
-          else
-            let l:split_mode = s:_get_split_mode()
-            call self.expand_screen()
-            execute("silent keepalt keepjumps " . l:split_mode . " " . l:help_buffer)
-            if g:buffergator_viewport_split_policy =~ '[RrLl]' && g:buffergator_split_size
-                execute("vertical resize " . g:buffergator_split_size)
-                setlocal winfixwidth
-            elseif g:buffergator_viewport_split_policy =~ '[TtBb]' && g:buffergator_split_size
-                execute("resize " . g:buffergator_split_size)
-                setlocal winfixheight
-            endif
-            let l:col1_prop = 0.4
-            let l:col2_prop = 0.6
+          let self.split_mode = s:_get_split_mode()
+          call self.expand_screen()
+          execute("silent keepalt keepjumps " . self.split_mode . " " . l:help_buffer)
+          if g:buffergator_viewport_split_policy =~ '[RrLl]' && g:buffergator_split_size
+              execute("vertical resize " . g:buffergator_split_size)
+              setlocal winfixwidth
+          elseif g:buffergator_viewport_split_policy =~ '[TtBb]' && g:buffergator_split_size
+              execute("resize " . g:buffergator_split_size)
+              setlocal winfixheight
           endif
       else
         execute "bdelete " l:help_buffer
@@ -650,9 +638,21 @@ function! s:NewCatalogViewer(name, title)
       endif
 
       setlocal modifiable
+      " if g:buffergator_help_ornaments
+      "   let l:window_width = winwidth(0) - 6
+      "   let l:window_width += l:window_width % 2 ? 1 : 0
+      "   let l:column_1 = float2nr(floor((l:window_width - 4) * 0.4))
+      "   let l:column_2 = float2nr(ceil((l:window_width - 4) * 0.6))
+      " else
+      "   let l:window_width = winwidth(0) - 4
+      "   let l:window_width += l:window_width % 2 ? 1 : 0
+      "   let l:column_1 = float2nr(floor((l:window_width - 2) * 0.4))
+      "   let l:column_2 = float2nr(ceil((l:window_width - 2) * 0.6))
+      " endif
       let l:window_width = winwidth(0) - 6
-      let l:column_1 = float2nr(floor((l:window_width - 4) * l:col1_prop))
-      let l:column_2 = float2nr(ceil((l:window_width - 4) * l:col2_prop))
+      let l:window_width += l:window_width % 2 ? 1 : 0
+      let l:column_1 = float2nr(floor((l:window_width - 4) * 0.4))
+      let l:column_2 = float2nr(ceil((l:window_width - 4) * 0.6))
       let l:help_text = ['']
       if g:buffergator_help_ornaments == 2
         let l:help_text += ['┌' . s:_format_align_center('  Buffergator Help  ', l:window_width, '─') . '┐']
@@ -663,8 +663,8 @@ function! s:NewCatalogViewer(name, title)
       else
         let l:help_text += [s:_format_align_center('  Buffergator Help  ', l:window_width+2, ' ')]
         let l:help_text += [s:_format_align_center('',l:window_width+2,' ')]
-        let l:column_1 = float2nr(floor((l:window_width) * l:col1_prop))
-        let l:column_2 = float2nr(ceil((l:window_width) * l:col2_prop))
+        let l:column_1 = float2nr(floor((l:window_width) * 0.4))
+        let l:column_2 = float2nr(ceil((l:window_width) * 0.6))
       endif
       echomsg string([l:window_width, l:column_1, l:column_2])
       "
