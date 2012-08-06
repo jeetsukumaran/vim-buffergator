@@ -119,42 +119,42 @@ let s:_default_keymaps = {
       \},
    \ }
 
-let s:_keymap_help = [
-   \ ['BuffergatorSelect', 'Open in previous window'],
-   \ ['BuffergatorCycleSort', 'Cycle through sort regime'],
-   \ ['BuffergatorDelete', 'Delete the selected buffer'],
-   \ ['BuffergatorWipe', 'Wipe the selected buffer'],
-   \ ['BuffergatorForceDelete', 'Uncondtionally delete the selected buffer'],
-   \ ['BuffergatorForceWipe', 'Uncondtionally wipe the selected buffer'],
-   \ ['BuffergatorSplitVert', 'Open in new vertical split'],
-   \ ['BuffergatorSplitHorz', 'Open in a new split'],
-   \ ['BuffergatorNewTab', 'Open in a new tab'],
-   \ ['BuffergatorSelectGator', 'Open in previous window and keep buffergator open'],
-   \ ['BuffergatorSplitVertGator', 'Open in vertical split and keep buffergator open'],
-   \ ['BuffergatorSplitHorzGator', 'Open in new split and keep buffergator open'],
-   \ ['BuffergatorNewTabGator', 'Open in new tab and keep buffergator open'],
-   \ ['BuffergatorPreview', 'Preview in previous window'],
-   \ ['BuffergatorPreviewVertSplit', 'Preview in a new vertical split'],
-   \ ['BuffergatorPreviewHorzSplit', 'Preview in a new split'],
-   \ ['BuffergatorPreviewTab', 'Preview in a new tab'],
-   \ ['BuffergatorPreviewNext', 'Go to next buffer and preview in previous window'],
-   \ ['BuffergatorPreviewPrevious', 'Go to previus buffer and preview in in previous window'],
-   \ ['BuffergatorFind', 'Find buffer in an existing window anywhere, and go to it only if it can be found'],
-   \ ['BuffergatorFindOrOpen', 'Find buffer in an existing window or open in previous'],
-   \ ['BuffergatorFindOrVSplit', 'Find buffer in an existing window or open in new vertical split'],
-   \ ['BuffergatorFindOrHSplit', 'Find buffer in an existing window or open in new split'],
-   \ ['BuffergatorFindOrTab', 'Find buffer in an existing window or open in a new tab'],
-   \ ['BuffergatorTabSelect', 'Opens tab page or window'],
-   \ ['BuffergatorTabNext', 'Select the next tab page'],
-   \ ['BuffergatorTabPrev', 'Select the previous tab page'],
-   \ ['BuffergatorTabWinNext', 'Select the next tab page window entry'],
-   \ ['BuffergatorTabWinPrev', 'Select the previous tab page window entry'],
-   \ ['BuffergatorCycleDisplay', 'Cycle the display regime'],
-   \ ['BuffergatorCyclePath', 'Cycle the full path display'],
-   \ ['BuffergatorZoomWin', 'Zoom / unzoom the window'],
-   \ ['BuffergatorRebuild', 'Update rebuild / refresh the buffers catalog'],
-   \ ['BuffergatorQuit', 'Quit the buffergator window']
-   \ ]
+let s:_keymap_help = {
+      \ 'BuffergatorSelect'           : 'Open in previous window',
+      \ 'BuffergatorCycleSort'        : 'Cycle through sort regime',
+      \ 'BuffergatorDelete'           : 'Delete the selected buffer',
+      \ 'BuffergatorWipe'             : 'Wipe the selected buffer',
+      \ 'BuffergatorForceDelete'      : 'Uncondtionally delete the selected buffer',
+      \ 'BuffergatorForceWipe'        : 'Uncondtionally wipe the selected buffer',
+      \ 'BuffergatorSplitVert'        : 'Open in new vertical split',
+      \ 'BuffergatorSplitHorz'        : 'Open in a new split',
+      \ 'BuffergatorNewTab'           : 'Open in a new tab',
+      \ 'BuffergatorSelectGator'      : 'Open in previous window and keep buffergator open',
+      \ 'BuffergatorSplitVertGator'   : 'Open in vertical split and keep buffergator open',
+      \ 'BuffergatorSplitHorzGator'   : 'Open in new split and keep buffergator open',
+      \ 'BuffergatorNewTabGator'      : 'Open in new tab and keep buffergator open',
+      \ 'BuffergatorPreview'          : 'Preview in previous window',
+      \ 'BuffergatorPreviewVertSplit' : 'Preview in a new vertical split',
+      \ 'BuffergatorPreviewHorzSplit' : 'Preview in a new split',
+      \ 'BuffergatorPreviewTab'       : 'Preview in a new tab',
+      \ 'BuffergatorPreviewNext'      : 'Go to next buffer and preview in previous window',
+      \ 'BuffergatorPreviewPrevious'  : 'Go to previus buffer and preview in in previous window',
+      \ 'BuffergatorFind'             : 'Find buffer in an existing window anywhere, and go to it only if it can be found',
+      \ 'BuffergatorFindOrOpen'       : 'Find buffer in an existing window or open in previous',
+      \ 'BuffergatorFindOrVSplit'     : 'Find buffer in an existing window or open in new vertical split',
+      \ 'BuffergatorFindOrHSplit'     : 'Find buffer in an existing window or open in new split',
+      \ 'BuffergatorFindOrTab'        : 'Find buffer in an existing window or open in a new tab',
+      \ 'BuffergatorTabSelect'        : 'Opens tab page or window',
+      \ 'BuffergatorTabNext'          : 'Select the next tab page',
+      \ 'BuffergatorTabPrev'          : 'Select the previous tab page',
+      \ 'BuffergatorTabWinNext'       : 'Select the next tab page window entry',
+      \ 'BuffergatorTabWinPrev'       : 'Select the previous tab page window entry',
+      \ 'BuffergatorCycleDisplay'     : 'Cycle the display regime',
+      \ 'BuffergatorCyclePath'        : 'Cycle the full path display',
+      \ 'BuffergatorZoomWin'          : 'Zoom / unzoom the window',
+      \ 'BuffergatorRebuild'          : 'Update rebuild / refresh the buffers catalog',
+      \ 'BuffergatorQuit'             : 'Quit the buffergator window',
+      \ }
 
 if exists('g:buffergator_keymaps')
   call extend(s:_default_keymaps, g:buffergator_keymaps, 'force')
@@ -672,12 +672,10 @@ function! s:NewCatalogViewer(name, title)
       echomsg string([l:window_width, l:column_1, l:column_2])
       "
       for l:command_set in ['buffer_catalog_viewer', 'tab_catalog_viewer', 'global', 'help']
-          " for l:plug_mapping in sort(keys(s:_default_keymaps[l:command_set]))
-          for l:plug_mapping_help in s:_keymap_help
-              let l:plug_mapping = l:plug_mapping_help[0]
-              if has_key(s:_default_keymaps[l:command_set], l:plug_mapping)
+          for l:plug_mapping in keys(s:_default_keymaps[l:command_set])
+              if has_key(s:_keymap_help,l:plug_mapping)
                   let l:keys = join(s:_default_keymaps[l:command_set][l:plug_mapping],", ")
-                  let l:help = l:plug_mapping_help[1]
+                  let l:help = s:_keymap_help[l:plug_mapping]
                   " ha ha syntax fail.
                   let l:rows_for_columns = [strlen(l:keys) / l:column_1 + 1, strlen(l:help) / l:column_2 + 1]
 
