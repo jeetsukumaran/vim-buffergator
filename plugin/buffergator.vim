@@ -57,10 +57,7 @@ if !exists("g:buffergator_display_regime")
     let g:buffergator_display_regime = "basename"
 endif
 if !exists("g:buffergator_show_full_directory_path")
-    let g:buffergator_show_full_directory_path = 1
-endif
-if !exists("g:buffergator_unicode_ornaments")
-    let g:buffergator_unicode_ornaments = 0
+    let g:buffergator_show_full_directory_path = 1 
 endif
 " 1}}}
 
@@ -261,13 +258,13 @@ let s:buffergator_buffer_line_symbols = {
     \ 'alternate':    "#",
     \ }
 
-" dictionaries are not in any order, so store the order here
+" dictionaries are not in any order, so store the order here 
 let s:buffergator_buffer_line_symbols_order = [
     \ 'current',
     \ 'modified',
     \ 'alternate',
     \ ]
-" 3}}}
+" 3}}} 
 
 " Catalog Sort Regimes {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -609,7 +606,7 @@ function! s:NewCatalogViewer(name, title)
       let l:line_symbols = ""
       " so we can control the order they are shown in
       let l:noted_status = s:buffergator_buffer_line_symbols_order
-      for l:status in l:noted_status
+      for l:status in l:noted_status 
         if a:bufinfo['is_' . l:status]
           let l:line_symbols .= s:buffergator_buffer_line_symbols[l:status]
         else
@@ -636,31 +633,26 @@ function! s:NewCatalogViewer(name, title)
         execute "bdelete " l:help_buffer
         return
       endif
-
+      
       setlocal modifiable
-      let l:window_width = winwidth(0) - 6
-      " adjust the window so it's an even number if the window with is odd
+      let l:window_width = winwidth(0) - 6 
+      " adjust the window so it's an even number if the window with is odd 
       let l:window_width += l:window_width % 2 ? 1 : 0
       let l:column_1 = float2nr(floor((l:window_width - 4) * 0.4))
       let l:column_2 = float2nr(ceil((l:window_width - 4) * 0.6))
       let l:help_text = ['']
-      if g:buffergator_unicode_ornaments
-        let l:help_text += ['┌' . s:_format_align_center('  Buffergator Help  ', l:window_width, '─') . '┐']
-        let l:help_text += ['│' . s:_format_align_center('',l:window_width,' ') . '│']
-      else
-        let l:help_text += ['+' . s:_format_align_center('  Buffergator Help  ', l:window_width, '-') . '+']
-        let l:help_text += ['|' . s:_format_align_center('',l:window_width,' ') . '|']
-      endif
+      let l:help_text += ['┌' . s:_format_align_center('  Buffergator Help  ', l:window_width, '─') . '┐']
+      let l:help_text += ['│' . s:_format_align_center('',l:window_width,' ') . '│']
       echomsg string([l:window_width, l:column_1, l:column_2])
       "
-      for l:command_set in ['buffer_catalog_viewer', 'tab_catalog_viewer', 'global', 'help']
+      for l:command_set in ['buffer_catalog_viewer', 'tab_catalog_viewer', 'global', 'help'] 
           for l:plug_mapping in keys(s:_default_keymaps[l:command_set])
               if has_key(s:_keymap_help,l:plug_mapping)
                   let l:keys = join(s:_default_keymaps[l:command_set][l:plug_mapping],", ")
-                  let l:help = s:_keymap_help[l:plug_mapping]
+                  let l:help = s:_keymap_help[l:plug_mapping] 
                   " ha ha syntax fail.
                   let l:rows_for_columns = [strlen(l:keys) / l:column_1 + 1, strlen(l:help) / l:column_2 + 1]
-
+                  
                   let l:rows = max(l:rows_for_columns)
                   " to divide on the first space before the column break
                   " we split on the last space before our column width
@@ -671,46 +663,30 @@ function! s:NewCatalogViewer(name, title)
                   let l:help_split = split(l:help,'\v\s([^ ]*%' . l:column_2 . 'c)@=')
 
                   for l:row in range(l:rows)
-                      " use only the matching portion
+                      " use only the matching portion 
                       let l:key_string = s:_format_align_left(get(l:keys_split,l:row,""), l:column_1, ' ')
                       let l:help_string = s:_format_align_right(get(l:help_split,l:row,""), l:column_2, ' ')
-                      if g:buffergator_unicode_ornaments
-                        let l:help_text += ['│ ' .
-                              \ s:_format_align_center(l:key_string . '│ ' .
-                              \ l:help_string, l:window_width, ' ') . ' │']
-                      else
-                        let l:help_text += ['| ' .
-                                \ s:_format_align_center(l:key_string . '| ' .
-                                \ l:help_string, l:window_width, ' ') . ' |']
-                      endif
+                      let l:help_text += ['│ ' . 
+                            \ s:_format_align_center(l:key_string . '│ ' . 
+                            \ l:help_string, l:window_width, ' ') . ' │']
                   endfor
               endif
           endfor
       endfor
-      if g:buffergator_unicode_ornaments
-        let l:help_text += ['└' . s:_format_align_center('', l:window_width, '─') . '┘']
-      else
-        let l:help_text += ['+' . s:_format_align_center('', l:window_width, '-') . '+']
-      endif
+      let l:help_text += ['└' . s:_format_align_center('', l:window_width, '─') . '┘']
       normal Gdgg
       call append(0,l:help_text)
       call self.setup_buffer_opts()
-      normal gg
+      normal gg 
       syntax clear
       syntax match BuffergatorTitle 'Buffergator Help'
-      if g:buffergator_unicode_ornaments
-        syntax match BuffergatorKeys  /\v(^│).{-}\ze(\s│)/hs=s+1
-        syntax match BuffergatorHelp /\v(\s│).{-}│/ contains=BuffergatorBorder
-        syntax match BuffergatorBorder '[─┘┐└┌│]' contains=BuffergatorKeys
-      else
-        syntax match BuffergatorKeys  /\v(^|).{-}\ze(\s|)/hs=s+1
-        syntax match BuffergatorHelp /\v(\s|).{-}|/ contains=BuffergatorBorder
-        syntax match BuffergatorBorder '[-+|]' contains=BuffergatorKeys
-      endif
+      syntax match BuffergatorKeys  /\v(^│).{-}\ze(\s│)/hs=s+1
+      syntax match BuffergatorHelp /\v(\s│).{-}│/ contains=BuffergatorBorder
+      syntax match BuffergatorBorder '[─┘┐└┌│]' contains=BuffergatorKeys
 
       highlight link BuffergatorBorder NonText
       highlight link BuffergatorTitle Title
-      highlight link BuffergatorKeys Identifier
+      highlight link BuffergatorKeys Identifier 
       highlight link BuffergatorHelp String
       setlocal nomodifiable
 
@@ -1325,10 +1301,10 @@ function! s:NewBufferCatalogViewer()
         if has("syntax") && !(exists('b:did_syntax'))
             syn region BuffergatorFileLine start='^' keepend oneline end='$'
             syn match BuffergatorBufferNr '^\[.\{3\}\]' containedin=BuffergatorFileLine
-
+            
             let l:line_symbols = values(s:buffergator_buffer_line_symbols)
             execute "syn match BuffergatorSymbol '[" . join(l:line_symbols,"") . "]' containedin=BuffergatorFileLine"
-
+             
 
             for l:buffer_status_index in range(0, len(s:buffergator_buffer_line_symbols_order) - 1)
               let l:name = s:buffergator_buffer_line_symbols_order[l:buffer_status_index]
@@ -1339,32 +1315,32 @@ function! s:NewBufferCatalogViewer()
               let l:pattern .= '\s.\{-}/'
               let l:pattern_name = "Buffergator" . toupper(l:name[0]) . tolower(l:name[1:]) . "Entry"
               let l:element = [
-                \ "syn match",
-                \ l:pattern_name, "'" . l:pattern . "'me=e-1",
+                \ "syn match", 
+                \ l:pattern_name, "'" . l:pattern . "'me=e-1", 
                 \ "containedin=BuffergatorFileLine",
                 \ "contains=BuffergatorSymbol",
                 \ "nextgroup=BuffergatorPath"
                 \ ]
 
               let l:syntax_cmd = join(l:element," ")
-
+           
               execute l:syntax_cmd
             endfor
 
             syn match BuffergatorPath '/.\+$' containedin=BuffergatorFileLine
-
+           
             highlight link BuffergatorSymbol Constant
             highlight link BuffergatorAlternateEntry Function
             highlight link BuffergatorModifiedEntry String
             highlight link BuffergatorCurrentEntry Keyword
-            highlight link BuffergatorBufferNr LineNr
+            highlight link BuffergatorBufferNr LineNr 
             highlight link BuffergatorPath Comment
             let b:did_syntax = 1
         endif
       endfunction
 
     " Sets buffer key maps.
-    function! l:catalog_viewer.setup_buffer_keymaps() dict
+    function! l:catalog_viewer.setup_buffer_keymaps() dict 
         mapclear <buffer>
         call self.disable_editing_keymaps()
         for l:command_set in ['buffer_catalog_viewer', 'global']
@@ -1395,9 +1371,9 @@ function! s:NewBufferCatalogViewer()
 
             let l:bufnum_str = s:_format_filled(l:bufinfo.bufnum, 3, 1, 0)
             let l:line = "[" . l:bufnum_str . "]"
-
+           
             let l:line .= s:_format_filled(self.line_symbols(l:bufinfo),4,-1,0)
-
+            
             if self.display_regime == "basename"
                 let l:line .= s:_format_align_left(l:bufinfo.basename, self.max_buffer_basename_len, " ")
                 let l:line .= "  "
@@ -1804,7 +1780,7 @@ function! s:NewTabCatalogViewer()
         endif
     endfunction
 
-    function! l:catalog_viewer.setup_buffer_keymaps() dict
+    function! l:catalog_viewer.setup_buffer_keymaps() dict 
         mapclear <buffer>
         call self.disable_editing_keymaps()
         for l:command_set in ['tab_catalog_viewer', 'global']
@@ -1814,7 +1790,7 @@ function! s:NewTabCatalogViewer()
                 endfor
             endfor
         endfor
-    endfunction
+    endfunction 
 
     " Appends a line to the buffer and registers it in the line log.
     function! l:catalog_viewer.append_line(text, jump_to_tabnum, jump_to_winnum) dict
@@ -1924,7 +1900,7 @@ function! s:UpdateBuffergator(event, affected)
     if !(g:buffergator_autoupdate)
       return
     endif
-
+    
     let l:calling = bufnr("%")
     let l:self_call = 0
     let l:buffergators = s:_find_buffers_with_var("is_buffergator_buffer",1)
