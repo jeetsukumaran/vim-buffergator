@@ -694,19 +694,14 @@ function! s:NewCatalogViewer(name, title)
                                 \ l:help_string, l:window_width, ' ') . ' |']
                       endif
                   endfor
-                  if g:buffergator_unicode_ornaments
-                      let l:help_text += ['└' . s:_format_align_center('', l:window_width, '─') . '┘']
-                  else
-                      let l:help_text += ['+' . s:_format_align_center('', l:window_width+2, '-') . '+']
-                  endif
               endif
           endfor
       endfor
-      " if g:buffergator_unicode_ornaments
-      "   let l:help_text += ['└' . s:_format_align_center('', l:window_width, '─') . '┘']
-      " else
-      "   let l:help_text += ['+' . s:_format_align_center('', l:window_width+2, '-') . '+']
-      " endif
+      if g:buffergator_unicode_ornaments
+        let l:help_text += ['└' . s:_format_align_center('', l:window_width, '─') . '┘']
+      else
+        let l:help_text += ['+' . s:_format_align_center('', l:window_width+2, '-') . '+']
+      endif
       normal Gdgg
       call append(0,l:help_text)
       call self.setup_buffer_opts()
