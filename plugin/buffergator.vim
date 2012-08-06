@@ -663,8 +663,6 @@ function! s:NewCatalogViewer(name, title)
       else
         let l:help_text += [s:_format_align_center('  Buffergator Help  ', l:window_width+2, ' ')]
         let l:help_text += [s:_format_align_center('',l:window_width+2,' ')]
-        let l:column_1 = float2nr(floor((l:window_width) * 0.4))
-        let l:column_2 = float2nr(ceil((l:window_width) * 0.6))
       endif
       echomsg string([l:window_width, l:column_1, l:column_2])
       "
@@ -688,7 +686,7 @@ function! s:NewCatalogViewer(name, title)
                   for l:row in range(l:rows)
                       " use only the matching portion
                       let l:key_string = s:_format_align_left(get(l:keys_split,l:row,""), l:column_1, ' ')
-                      let l:help_string = s:_format_align_left(get(l:help_split,l:row,""), l:column_2, ' ')
+                      let l:help_string = s:_format_align_right(get(l:help_split,l:row,""), l:column_2, ' ')
                       if g:buffergator_help_ornaments == 2
                         let l:help_text += ['│ ' .
                               \ s:_format_align_center(l:key_string . '│ ' .
