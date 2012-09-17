@@ -57,9 +57,166 @@ if !exists("g:buffergator_display_regime")
     let g:buffergator_display_regime = "basename"
 endif
 if !exists("g:buffergator_show_full_directory_path")
-    let g:buffergator_show_full_directory_path = 1 
+    let g:buffergator_show_full_directory_path = 1
+endif
+if !exists("g:buffergator_help_ornaments")
+    let g:buffergator_help_ornaments = 0
+endif
+if !exists("g:buffergator_help_split_top")
+    let g:buffergator_help_split_top = 0
 endif
 " 1}}}
+
+" Script Key Maps {{{1
+" =============================================================================
+"
+
+"
+let s:_default_keymaps = {
+      \ 'buffer_catalog_viewer' : {
+        \ 'BuffergatorSelectDefault'    : ['<CR>', 'o'],
+        \ 'BuffergatorCycleSort'        : ['cs'],
+        \ 'BuffergatorDelete'           : ['d'],
+        \ 'BuffergatorForceDelete'      : ['D'],
+        \ 'BuffergatorWipe'             : ['x'],
+        \ 'BuffergatorForceWipe'        : ['X'],
+        \ 'BuffergatorSplitVertSwitch'  : ['s'],
+        \ 'BuffergatorSplitHorzSwitch'  : ['i'],
+        \ 'BuffergatorNewTabSwitch'     : ['t'],
+        \ 'BuffergatorSelectKeep'       : ['po'],
+        \ 'BuffergatorSplitVertKeep'    : ['ps'],
+        \ 'BuffergatorSplitHorzKeep'    : ['pi'],
+        \ 'BuffergatorNewTabKeep'       : ['pt'],
+        \ 'BuffergatorPreviewWindow'    : ['O', 'go'],
+        \ 'BuffergatorPreviewVertSplit' : ['S', 'gs'],
+        \ 'BuffergatorPreviewHorzSplit' : ['I', 'gi'],
+        \ 'BuffergatorPreviewTab'       : ['T'],
+        \ 'BuffergatorPreviewNext'      : ['<SPACE>', '<C-N>'],
+        \ 'BuffergatorPreviewPrevious'  : ['<C-SPACE>', '<C-P>', '<C-@>'],
+        \ 'BuffergatorFindOrBust'       : ['E'],
+        \ 'BuffergatorFindOrOpen'       : ['eo'],
+        \ 'BuffergatorFindOrVSplit'     : ['es'],
+        \ 'BuffergatorFindOrHSplit'     : ['ei'],
+        \ 'BuffergatorFindOrTab'        : ['et'],
+     \ },
+     \ 'tab_catalog_viewer': {
+        \ 'BuffergatorTabSelect'         : ['<CR>', 'o'],
+        \ 'BuffergatorTabNext'           : ['<SPACE>'],
+        \ 'BuffergatorTabPrev'           : ['<C-SPACE>', '<C-@>'],
+        \ 'BuffergatorTabWinNext'        : ['<C-N>'],
+        \ 'BuffergatorTabWinPrev'        : ['<C-P>'],
+     \ },
+     \ 'global'                         : {
+        \ 'BuffergatorCycleDisplay'     : ['cd'],
+        \ 'BuffergatorCyclePath'        : ['cp'],
+        \ 'BuffergatorZoomWin'          : ['A'],
+        \ 'BuffergatorRebuild'          : ['r'],
+        \ 'BuffergatorQuit'             : ['q'],
+        \ 'BuffergatorShowHelp'         : ['?', '<F1>'],
+     \ },
+     \ 'help'                           : {
+        \ 'BuffergatorCloseHelp'        : ['?', 'q'],
+      \},
+   \ }
+
+let s:_keymap_help = [
+   \ ['BuffergatorSelectDefault', 'Open in previous window'],
+   \ ['BuffergatorSplitVertSwitch', 'Open in new vertical split'],
+   \ ['BuffergatorSplitHorzSwitch', 'Open in a new split'],
+   \ ['BuffergatorNewTabSwitch', 'Open in a new tab'],
+   \ ['BuffergatorPreviewWindow', 'Preview in previous window'],
+   \ ['BuffergatorPreviewVertSplit', 'Preview in a new vertical split'],
+   \ ['BuffergatorPreviewHorzSplit', 'Preview in a new split'],
+   \ ['BuffergatorPreviewTab', 'Preview in a new tab'],
+   \ ['BuffergatorPreviewNext', 'Go to next buffer and preview in previous window'],
+   \ ['BuffergatorPreviewPrevious', 'Go to previus buffer and preview in in previous window'],
+   \ ['BuffergatorSelectKeep', 'Open in previous window and keep buffergator open'],
+   \ ['BuffergatorSplitVertKeep', 'Open in vertical split and keep buffergator open'],
+   \ ['BuffergatorSplitHorzKeep', 'Open in new split and keep buffergator open'],
+   \ ['BuffergatorNewTabKeep', 'Open in new tab and keep buffergator open'],
+   \ ['BuffergatorFindOrBust', 'Find buffer in an existing window anywhere, and go to it only if it can be found'],
+   \ ['BuffergatorFindOrOpen', 'Find buffer in an existing window or open in previous'],
+   \ ['BuffergatorFindOrVSplit', 'Find buffer in an existing window or open in new vertical split'],
+   \ ['BuffergatorFindOrHSplit', 'Find buffer in an existing window or open in new split'],
+   \ ['BuffergatorTabSelect', 'Opens tab page or window'],
+   \ ['BuffergatorTabNext', 'Select the next tab page'],
+   \ ['BuffergatorTabPrev', 'Select the previous tab page'],
+   \ ['BuffergatorTabWinNext', 'Select the next tab page window entry'],
+   \ ['BuffergatorTabWinPrev', 'Select the previous tab page window entry'],
+   \ ['BuffergatorCycleSort', 'Cycle through sort regime'],
+   \ ['BuffergatorCycleDisplay', 'Cycle the display regime'],
+   \ ['BuffergatorCyclePath', 'Cycle the full path display'],
+   \ ['BuffergatorZoomWin', 'Zoom / unzoom the window'],
+   \ ['BuffergatorRebuild', 'Update rebuild / refresh the buffers catalog'],
+   \ ['BuffergatorDelete', 'Delete the selected buffer'],
+   \ ['BuffergatorForceDelete', 'Uncondtionally delete the selected buffer'],
+   \ ['BuffergatorWipe', 'Wipe the selected buffer'],
+   \ ['BuffergatorForceWipe', 'Uncondtionally wipe the selected buffer'],
+   \ ['BuffergatorQuit', 'Quit the buffergator window']
+   \ ]
+
+if exists('g:buffergator_keymaps')
+  call extend(s:_default_keymaps, g:buffergator_keymaps, 'force')
+endif
+
+" Plugin Scoped Maps {{{1
+"""" Catalog management
+noremap <Plug>BuffergatorCycleSort         :<C-U>call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
+noremap <Plug>BuffergatorCycleDisplay      :<C-U>call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
+noremap <Plug>BuffergatorCyclePath         :<C-U>call b:buffergator_catalog_viewer.cycle_directory_path_display()<CR>
+noremap <Plug>BuffergatorRebuild           :<C-U>call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
+noremap <Plug>BuffergatorQuit              :<C-U>call b:buffergator_catalog_viewer.close(1)<CR>
+noremap <Plug>BuffergatorDelete            :<C-U>call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
+noremap <Plug>BuffergatorForceDelete       :<C-U>call b:buffergator_catalog_viewer.delete_target(0, 1)<CR>
+noremap <Plug>BuffergatorWipe              :<C-U>call b:buffergator_catalog_viewer.delete_target(1, 0)<CR>
+noremap <Plug>BuffergatorForceWipe         :<C-U>call b:buffergator_catalog_viewer.delete_target(1, 1)<CR>
+
+""""" Selection                                     :show target and switch focus
+noremap <Plug>BuffergatorSelectDefault     :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
+noremap <Plug>BuffergatorSplitVertSwitch   :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "vert sb")<CR>
+noremap <Plug>BuffergatorSplitHorzSwitch   :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "sb")<CR>
+noremap <Plug>BuffergatorNewTabSwitch      :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "tab sb")<CR>
+
+
+
+""""" Selection                                     :show target and switch focus, preserving the catalog regardless of the autodismiss setting
+noremap <Plug>BuffergatorSelectKeep        :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
+noremap <Plug>BuffergatorSplitVertKeep     :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 0, "vert sb")<CR>
+noremap <Plug>BuffergatorSplitHorzKeep     :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 0, "sb")<CR>
+noremap <Plug>BuffergatorNewTabKeep        :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 0, "tab sb")<CR>
+
+
+""""" Preview                                      :show target , keeping focus on catalog
+noremap <Plug>BuffergatorPreviewWindow     :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
+noremap <Plug>BuffergatorPreviewVertSplit  :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "vert sb")<CR>
+noremap <Plug>BuffergatorPreviewHorzSplit  :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "sb")<CR>
+noremap <Plug>BuffergatorPreviewTab        :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "tab sb")<CR>
+noremap <Plug>BuffergatorPreviewNext       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
+noremap <Plug>BuffergatorPreviewPrevious   :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
+
+
+""""" Preview                                       :go to existing window showing target
+noremap <Plug>BuffergatorFindOrBust        :<C-U>call b:buffergator_catalog_viewer.visit_open_target(1, !g:buffergator_autodismiss_on_select, "")<CR>
+noremap <Plug>BuffergatorFindOrOpen        :<C-U>call b:buffergator_catalog_viewer.visit_open_target(0, !g:buffergator_autodismiss_on_select, "")<CR>
+noremap <Plug>BuffergatorFindOrVSplit      :<C-U>call b:buffergator_catalog_viewer.visit_open_target(0, !g:buffergator_autodismiss_on_select, "vert sb")<CR>
+noremap <Plug>BuffergatorFindOrHSplit      :<C-U>call b:buffergator_catalog_viewer.visit_open_target(0, !g:buffergator_autodismiss_on_select, "sb")<CR>
+noremap <Plug>BuffergatorFindOrTab         :<C-U>call b:buffergator_catalog_viewer.visit_open_target(0, !g:buffergator_autodismiss_on_select, "tab sb")<CR>
+
+
+""""" Tab Catalog Maps
+noremap <Plug>BuffergatorTabSelect         :call b:buffergator_catalog_viewer.visit_target()<CR>
+noremap <Plug>BuffergatorTabNext           :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n")<CR>
+noremap <Plug>BuffergatorTabPrev           :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p")<CR>
+noremap <Plug>BuffergatorTabWinNext        :<C-U>call b:buffergator_catalog_viewer.goto_win_entry("n")<CR>
+noremap <Plug>BuffergatorTabWinPrev        :<C-U>call b:buffergator_catalog_viewer.goto_win_entry("p")<CR>
+
+""""" Window control
+noremap <Plug>BuffergatorZoomWin           :call b:buffergator_catalog_viewer.toggle_zoom()<CR>
+noremap <Plug>BuffergatorShowHelp          :call b:buffergator_catalog_viewer.toggle_help()<CR>
+
+""""" Close the help window
+noremap <Plug>BuffergatorCloseHelp         :call b:buffergator_catalog_viewer.close_help()<CR>
+
 
 " Script Data and Variables {{{1
 " =============================================================================
@@ -106,13 +263,13 @@ let s:buffergator_buffer_line_symbols = {
     \ 'alternate':    "#",
     \ }
 
-" dictionaries are not in any order, so store the order here 
+" dictionaries are not in any order, so store the order here
 let s:buffergator_buffer_line_symbols_order = [
     \ 'current',
     \ 'modified',
     \ 'alternate',
     \ ]
-" 3}}} 
+" 3}}}
 
 " Catalog Sort Regimes {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,6 +314,16 @@ endfunction
 function! s:_format_align_right(text, width, fill_char)
     let l:fill = repeat(a:fill_char, a:width-len(a:text))
     return l:fill . a:text
+endfunction
+
+function! s:_format_align_center(text, width, fill_char)
+    let l:text = copy(a:text)
+    let l:half_width = a:width / 2
+    if len(l:text) % 2
+        let l:half_width -= 1
+    endif
+    let l:fill = repeat(a:fill_char, (l:half_width - (len(l:text) / 2 )))
+    return l:fill . l:text . l:fill
 endfunction
 
 function! s:_format_time(secs)
@@ -444,7 +611,7 @@ function! s:NewCatalogViewer(name, title)
       let l:line_symbols = ""
       " so we can control the order they are shown in
       let l:noted_status = s:buffergator_buffer_line_symbols_order
-      for l:status in l:noted_status 
+      for l:status in l:noted_status
         if a:bufinfo['is_' . l:status]
           let l:line_symbols .= s:buffergator_buffer_line_symbols[l:status]
         else
@@ -452,6 +619,132 @@ function! s:NewCatalogViewer(name, title)
         endif
       endfor
       return l:line_symbols
+    endfunction
+
+    function! l:catalog_viewer.toggle_help() dict
+      let l:help_buffer = bufnr("[[buffergator-help]]", 1)
+      if bufwinnr(l:help_buffer) < 0
+          if g:buffergator_help_split_top
+            let l:split_mode = "topleft sbuffer"
+            execute("silent keepalt keepjumps " . l:split_mode . " " . l:help_buffer)
+            let l:col1_prop = 0.1
+            let l:col2_prop = 0.9
+          else
+            let l:split_mode = s:_get_split_mode()
+            call self.expand_screen()
+            execute("silent keepalt keepjumps " . l:split_mode . " " . l:help_buffer)
+            if g:buffergator_viewport_split_policy =~ '[RrLl]' && g:buffergator_split_size
+                execute("vertical resize " . g:buffergator_split_size)
+                setlocal winfixwidth
+            elseif g:buffergator_viewport_split_policy =~ '[TtBb]' && g:buffergator_split_size
+                execute("resize " . g:buffergator_split_size)
+                setlocal winfixheight
+            endif
+            let l:col1_prop = 0.4
+            let l:col2_prop = 0.6
+          endif
+          let b:buffergator_catalog_viewer = self
+          let b:buffergator_help_bufnum = bufnr('%')
+      else
+        " execute "buffer " . self.bufnum
+        execute "bdelete " l:help_buffer
+        return
+      endif
+
+      setlocal modifiable
+      let l:window_width = winwidth(0) - 6
+      let l:column_1 = float2nr(floor((l:window_width - 4) * l:col1_prop))
+      let l:column_2 = float2nr(ceil((l:window_width - 4) * l:col2_prop))
+      let l:help_text = ['']
+      if g:buffergator_help_ornaments == 2
+        let l:help_text += ['┌' . s:_format_align_center('  Buffergator Help  ', l:window_width, '─') . '┐']
+        let l:help_text += ['│' . s:_format_align_center('',l:window_width,' ') . '│']
+      elseif g:buffergator_help_ornaments == 1
+        let l:help_text += ['+' . s:_format_align_center('  Buffergator Help  ', l:window_width+2, '-') . '+']
+        let l:help_text += ['|' . s:_format_align_center('',l:window_width+2,' ') . '|']
+      else
+        let l:help_text += [s:_format_align_center('  Buffergator Help  ', l:window_width+2, ' ')]
+        let l:help_text += [s:_format_align_center('',l:window_width+2,' ')]
+        let l:column_1 = float2nr(floor((l:window_width) * l:col1_prop))
+        let l:column_2 = float2nr(ceil((l:window_width) * l:col2_prop))
+      endif
+      echomsg string([l:window_width, l:column_1, l:column_2])
+      "
+      for l:command_set in ['buffer_catalog_viewer', 'tab_catalog_viewer', 'global', 'help']
+          " for l:plug_mapping in sort(keys(s:_default_keymaps[l:command_set]))
+          for l:plug_mapping_help in s:_keymap_help
+              let l:plug_mapping = l:plug_mapping_help[0]
+              if has_key(s:_default_keymaps[l:command_set], l:plug_mapping)
+                  let l:keys = join(s:_default_keymaps[l:command_set][l:plug_mapping],", ")
+                  let l:help = l:plug_mapping_help[1]
+                  " to divide on the first space before the column break
+                  " we split on the last space before our column width
+                  " use a zero width match to avoid removng parts of
+                  " the string, and to split multiple times
+                  " \(\s[^ ]*\%24c\)\@=
+                  let l:keys_split = split(l:keys,'\v\s([^ ]*%' . l:column_1 . 'c)@=')
+                  let l:help_split = split(l:help,'\v\s([^ ]*%' . l:column_2 . 'c)@=')
+                  let l:rows = max([len(l:keys_split), len(l:help_split)])
+
+                  for l:row in range(l:rows)
+                      " use only the matching portion
+                      let l:key_string = s:_format_align_left(get(l:keys_split,l:row,""), l:column_1, ' ')
+                      let l:help_string = s:_format_align_left(get(l:help_split,l:row,""), l:column_2, ' ')
+                      if g:buffergator_help_ornaments == 2
+                        let l:help_text += ['│ ' . l:key_string . '│ ' . l:help_string . '│']
+                      elseif g:buffergator_help_ornaments == 1
+                        let l:help_text += ['| ' . l:key_string . '| ' . l:help_string . '|']
+                      else
+                        let l:help_text += [s:_format_align_center(l:key_string . '  ' .  l:help_string, l:window_width, ' ')]
+                      endif
+                  endfor
+                  if g:buffergator_help_ornaments == 2
+                      let l:help_text += ['├' . repeat('─', l:column_1 + 1) . '┼'. repeat('─', l:column_2 + 1). '┤']
+                  elseif g:buffergator_help_ornaments == 1
+                      let l:help_text += ['+' . s:_format_align_center('', l:window_width+2, '-') . '+']
+                  else
+                      let l:help_text += [s:_format_align_center('', l:window_width+2, ' ')]
+                  endif
+              endif
+          endfor
+      endfor
+      " if g:buffergator_help_ornaments
+      "   let l:help_text += ['└' . s:_format_align_center('', l:window_width, '─') . '┘']
+      " else
+      "   let l:help_text += ['+' . s:_format_align_center('', l:window_width+2, '-') . '+']
+      " endif
+      normal Gdgg
+      call append(0,l:help_text)
+      call self.setup_buffer_opts()
+      normal gg
+      syntax clear
+      syntax match BuffergatorTitle 'Buffergator\sHelp'
+      if g:buffergator_help_ornaments == 2
+        syntax match BuffergatorKeys  /\v(^│).{-}\ze(\s│)/hs=s+1
+        syntax match BuffergatorHelp /\v(\s│).{-}│/ contains=BuffergatorBorder
+        syntax match BuffergatorBorder '[─┘┐└┌│├┤┼]' contains=BuffergatorKeys
+      elseif g:buffergator_help_ornaments == 1
+        syntax match BuffergatorKeys  /\v(^|).{-}\ze(\s|)/hs=s+1
+        syntax match BuffergatorHelp /\v(\s|).{-}|/ contains=BuffergatorBorder
+        syntax match BuffergatorBorder '[-+|]' contains=BuffergatorKeys
+      else
+      endif
+
+      highlight link BuffergatorBorder NonText
+      highlight link BuffergatorTitle Title
+      highlight link BuffergatorKeys Identifier
+      highlight link BuffergatorHelp String
+      setlocal nomodifiable
+
+      mapclear <buffer>
+      call self.disable_editing_keymaps()
+      for l:command_set in ['help']
+        for l:command in keys(s:_default_keymaps[l:command_set])
+          for l:sequence in s:_default_keymaps[l:command_set][l:command]
+            execute 'nmap <buffer> ' . l:sequence . ' ' . '<Plug>' . l:command
+          endfor
+        endfor
+      endfor
     endfunction
 
     function! l:catalog_viewer.list_buffers() dict
@@ -541,7 +834,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Opens viewer if closed, closes viewer if open.
-    function! l:catalog_viewer.toggle() dict
+    function! l:catalog_viewer.toggle(existing_only) dict
         " get buffer number of the catalog view buffer, creating it if neccessary
         if self.bufnum < 0 || !bufexists(self.bufnum)
             call self.open()
@@ -670,6 +963,23 @@ function! s:NewCatalogViewer(name, title)
         "     " setlocal fillchars=fold:\ "
         "     setlocal fillchars=fold:.
         " endif
+    endfunction
+
+    " Close help if open, and jump back to Buffergator catalog viewer
+    function! l:catalog_viewer.close_help() dict
+        if !exists("b:buffergator_help_bufnum") || !bufexists(b:buffergator_help_bufnum)
+        " if !exists("b:buffergator_help_bufnum")
+            return
+        endif
+        let l:bufnum_to_delete = b:buffergator_help_bufnum
+        if bufexists(self.bufnum)
+            let l:bfwn = bufwinnr(self.bufnum)
+            if l:bfwn >= 0
+                execute l:bfwn . " :wincmd w"
+            endif
+        endif
+        call self.contract_screen()
+        execute("bwipe " . l:bufnum_to_delete)
     endfunction
 
     " Close and quit the viewer.
@@ -1054,10 +1364,10 @@ function! s:NewBufferCatalogViewer()
         if has("syntax") && !(exists('b:did_syntax'))
             syn region BuffergatorFileLine start='^' keepend oneline end='$'
             syn match BuffergatorBufferNr '^\[.\{3\}\]' containedin=BuffergatorFileLine
-            
+
             let l:line_symbols = values(s:buffergator_buffer_line_symbols)
             execute "syn match BuffergatorSymbol '[" . join(l:line_symbols,"") . "]' containedin=BuffergatorFileLine"
-             
+
 
             for l:buffer_status_index in range(0, len(s:buffergator_buffer_line_symbols_order) - 1)
               let l:name = s:buffergator_buffer_line_symbols_order[l:buffer_status_index]
@@ -1068,25 +1378,25 @@ function! s:NewBufferCatalogViewer()
               let l:pattern .= '\s.\{-}/'
               let l:pattern_name = "Buffergator" . toupper(l:name[0]) . tolower(l:name[1:]) . "Entry"
               let l:element = [
-                \ "syn match", 
-                \ l:pattern_name, "'" . l:pattern . "'me=e-1", 
+                \ "syn match",
+                \ l:pattern_name, "'" . l:pattern . "'me=e-1",
                 \ "containedin=BuffergatorFileLine",
                 \ "contains=BuffergatorSymbol",
                 \ "nextgroup=BuffergatorPath"
                 \ ]
 
               let l:syntax_cmd = join(l:element," ")
-           
+
               execute l:syntax_cmd
             endfor
 
             syn match BuffergatorPath '/.\+$' containedin=BuffergatorFileLine
-           
+
             highlight link BuffergatorSymbol Constant
             highlight link BuffergatorAlternateEntry Function
             highlight link BuffergatorModifiedEntry String
             highlight link BuffergatorCurrentEntry Keyword
-            highlight link BuffergatorBufferNr LineNr 
+            highlight link BuffergatorBufferNr LineNr
             highlight link BuffergatorPath Comment
             let b:did_syntax = 1
         endif
@@ -1094,100 +1404,15 @@ function! s:NewBufferCatalogViewer()
 
     " Sets buffer key maps.
     function! l:catalog_viewer.setup_buffer_keymaps() dict
-
+        mapclear <buffer>
         call self.disable_editing_keymaps()
-
-        if !exists("g:buffergator_use_new_keymap") || !g:buffergator_use_new_keymap
-
-            """" Catalog management
-            noremap <buffer> <silent> cs          :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
-            noremap <buffer> <silent> cd          :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
-            noremap <buffer> <silent> cp          :call b:buffergator_catalog_viewer.cycle_directory_path_display()<CR>
-            noremap <buffer> <silent> r           :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
-            noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close(1)<CR>
-            noremap <buffer> <silent> d           :<C-U>call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
-            noremap <buffer> <silent> D           :<C-U>call b:buffergator_catalog_viewer.delete_target(0, 1)<CR>
-            noremap <buffer> <silent> x           :<C-U>call b:buffergator_catalog_viewer.delete_target(1, 0)<CR>
-            noremap <buffer> <silent> X           :<C-U>call b:buffergator_catalog_viewer.delete_target(1, 1)<CR>
-
-            """"" Selection: show target and switch focus
-            noremap <buffer> <silent> <CR>        :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
-            noremap <buffer> <silent> o           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
-            noremap <buffer> <silent> s           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "vert sb")<CR>
-            noremap <buffer> <silent> i           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "sb")<CR>
-            noremap <buffer> <silent> t           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "tab sb")<CR>
-
-            """"" Selection: show target and switch focus, preserving the catalog regardless of the autodismiss setting
-            noremap <buffer> <silent> po          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
-            noremap <buffer> <silent> ps          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 0, "vert sb")<CR>
-            noremap <buffer> <silent> pi          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 0, "sb")<CR>
-            noremap <buffer> <silent> pt          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 0, "tab sb")<CR>
-
-            """"" Preview: show target , keeping focus on catalog
-            noremap <buffer> <silent> O           :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
-            noremap <buffer> <silent> go          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
-            noremap <buffer> <silent> S           :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "vert sb")<CR>
-            noremap <buffer> <silent> gs          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "vert sb")<CR>
-            noremap <buffer> <silent> I           :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "sb")<CR>
-            noremap <buffer> <silent> gi          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "sb")<CR>
-            noremap <buffer> <silent> T           :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 1, "tab sb")<CR>
-            noremap <buffer> <silent> <SPACE>     :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
-            noremap <buffer> <silent> <C-SPACE>   :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
-            noremap <buffer> <silent> <C-@>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
-            noremap <buffer> <silent> <C-N>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
-            noremap <buffer> <silent> <C-P>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
-
-            """"" Preview: go to existing window showing target
-            noremap <buffer> <silent> E           :<C-U>call b:buffergator_catalog_viewer.visit_open_target(1, !g:buffergator_autodismiss_on_select, "")<CR>
-            noremap <buffer> <silent> eo          :<C-U>call b:buffergator_catalog_viewer.visit_open_target(0, !g:buffergator_autodismiss_on_select, "")<CR>
-            noremap <buffer> <silent> es          :<C-U>call b:buffergator_catalog_viewer.visit_open_target(0, !g:buffergator_autodismiss_on_select, "vert sb")<CR>
-            noremap <buffer> <silent> ei          :<C-U>call b:buffergator_catalog_viewer.visit_open_target(0, !g:buffergator_autodismiss_on_select, "sb")<CR>
-            noremap <buffer> <silent> et          :<C-U>call b:buffergator_catalog_viewer.visit_open_target(0, !g:buffergator_autodismiss_on_select, "tab sb")<CR>
-
-        else
-
-            """" Catalog management
-            noremap <buffer> <silent> s           :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
-            noremap <buffer> <silent> i           :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
-            noremap <buffer> <silent> u           :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
-            noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close(1)<CR>
-            noremap <buffer> <silent> d           :call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
-            noremap <buffer> <silent> D           :call b:buffergator_catalog_viewer.delete_target(0, 1)<CR>
-            noremap <buffer> <silent> x           :call b:buffergator_catalog_viewer.delete_target(1, 0)<CR>
-            noremap <buffer> <silent> X           :call b:buffergator_catalog_viewer.delete_target(1, 1)<CR>
-
-            " open target
-            noremap <buffer> <silent> <CR>  :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
-
-            " show target line in other window, keeping catalog open and in focus
-            noremap <buffer> <silent> .           :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
-            noremap <buffer> <silent> po          :call b:buffergator_catalog_viewer.visit_target(1, 1, "")<CR>
-            noremap <buffer> <silent> ps          :call b:buffergator_catalog_viewer.visit_target(1, 1, "sb")<CR>
-            noremap <buffer> <silent> pv          :call b:buffergator_catalog_viewer.visit_target(1, 1, "vert sb")<CR>
-            noremap <buffer> <silent> pt          :call b:buffergator_catalog_viewer.visit_target(1, 1, "tab sb")<CR>
-            noremap <buffer> <silent> <SPACE>     :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
-            noremap <buffer> <silent> <C-SPACE>   :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
-            noremap <buffer> <silent> <C-@>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
-            noremap <buffer> <silent> <C-N>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n", 1, 1)<CR>
-            noremap <buffer> <silent> <C-P>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p", 1, 1)<CR>
-
-            " go to target line in other window, keeping catalog open
-            noremap <buffer> <silent> o           :call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
-            noremap <buffer> <silent> ws          :call b:buffergator_catalog_viewer.visit_target(1, 0, "sb")<CR>
-            noremap <buffer> <silent> wv          :call b:buffergator_catalog_viewer.visit_target(1, 0, "vert sb")<CR>
-            noremap <buffer> <silent> t           :call b:buffergator_catalog_viewer.visit_target(1, 0, "tab sb")<CR>
-
-            " open target line in other window, closing catalog
-            noremap <buffer> <silent> O           :call b:buffergator_catalog_viewer.visit_target(0, 0, "")<CR>
-            noremap <buffer> <silent> wS          :call b:buffergator_catalog_viewer.visit_target(0, 0, "sb")<CR>
-            noremap <buffer> <silent> wV          :call b:buffergator_catalog_viewer.visit_target(0, 0, "vert sb")<CR>
-            noremap <buffer> <silent> T           :call b:buffergator_catalog_viewer.visit_target(0, 0, "tab sb")<CR>
-
-        endif
-
-        " other
-        noremap <buffer> <silent> A           :call b:buffergator_catalog_viewer.toggle_zoom()<CR>
-
+        for l:command_set in ['buffer_catalog_viewer', 'global']
+            for l:command in keys(s:_default_keymaps[l:command_set])
+                for l:sequence in s:_default_keymaps[l:command_set][l:command]
+                    execute 'nmap <buffer> ' . l:sequence . ' ' . '<Plug>' . l:command
+                endfor
+            endfor
+        endfor
     endfunction
 
     " Populates the buffer with the catalog index.
@@ -1209,9 +1434,9 @@ function! s:NewBufferCatalogViewer()
 
             let l:bufnum_str = s:_format_filled(l:bufinfo.bufnum, 3, 1, 0)
             let l:line = "[" . l:bufnum_str . "]"
-           
+
             let l:line .= s:_format_filled(self.line_symbols(l:bufinfo),4,-1,0)
-            
+
             if self.display_regime == "basename"
                 let l:line .= s:_format_align_left(l:bufinfo.basename, self.max_buffer_basename_len, " ")
                 let l:line .= "  "
@@ -1619,23 +1844,15 @@ function! s:NewTabCatalogViewer()
     endfunction
 
     function! l:catalog_viewer.setup_buffer_keymaps() dict
-
+        mapclear <buffer>
         call self.disable_editing_keymaps()
-
-        noremap <buffer> <silent> cd          :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
-        noremap <buffer> <silent> r           :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
-        noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close(1)<CR>
-
-        noremap <buffer> <silent> <CR>        :call b:buffergator_catalog_viewer.visit_target()<CR>
-        noremap <buffer> <silent> o           :call b:buffergator_catalog_viewer.visit_target()<CR>
-
-        noremap <buffer> <silent> <SPACE>     :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n")<CR>
-        noremap <buffer> <silent> <C-SPACE>   :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p")<CR>
-        noremap <buffer> <silent> <C-@>       :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p")<CR>
-        noremap <buffer> <silent> <C-N>       :<C-U>call b:buffergator_catalog_viewer.goto_win_entry("n")<CR>
-        noremap <buffer> <silent> <C-P>       :<C-U>call b:buffergator_catalog_viewer.goto_win_entry("p")<CR>
-        noremap <buffer> <silent> A           :call b:buffergator_catalog_viewer.toggle_zoom()<CR>
-
+        for l:command_set in ['tab_catalog_viewer', 'global']
+            for l:command in keys(s:_default_keymaps[l:command_set])
+                for l:sequence in s:_default_keymaps[l:command_set][l:command]
+                    execute 'nmap <buffer> ' . l:sequence . ' ' . '<Plug>' . l:command
+                endfor
+            endfor
+        endfor
     endfunction
 
     " Appends a line to the buffer and registers it in the line log.
@@ -1746,7 +1963,7 @@ function! s:UpdateBuffergator(event, affected)
     if !(g:buffergator_autoupdate)
       return
     endif
-    
+
     let l:calling = bufnr("%")
     let l:self_call = 0
     let l:buffergators = s:_find_buffers_with_var("is_buffergator_buffer",1)
