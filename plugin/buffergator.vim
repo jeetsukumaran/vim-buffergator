@@ -680,6 +680,7 @@ function! s:NewCatalogViewer(name, title)
         call self.contract_screen()
         if a:restore_prev_window
             if !self.is_usable_viewport(winnr("#")) && self.first_usable_viewport() ==# -1
+              execute('buf ' . self.calling_bufnum)
             else
                 try
                     if !self.is_usable_viewport(winnr("#"))
