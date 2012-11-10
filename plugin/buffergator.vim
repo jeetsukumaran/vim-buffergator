@@ -691,7 +691,9 @@ function! s:NewCatalogViewer(name, title)
                 endtry
             endif
         endif
-        execute("bwipe " . self.bufnum)
+        if g:buffergator_viewport_split_policy != 'N'
+          execute("bwipe " . self.bufnum)
+        endif
     endfunction
 
     function! l:catalog_viewer.expand_screen() dict
