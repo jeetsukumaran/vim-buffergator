@@ -680,6 +680,9 @@ function! s:NewCatalogViewer(name, title)
         call self.contract_screen()
         if a:restore_prev_window
             if !self.is_usable_viewport(winnr("#")) && self.first_usable_viewport() ==# -1
+              if self.calling_bufnum != -1
+                execute('buf ' . self.calling_bufnum)
+              endif
             else
                 try
                     if !self.is_usable_viewport(winnr("#"))
@@ -691,7 +694,9 @@ function! s:NewCatalogViewer(name, title)
                 endtry
             endif
         endif
-        execute("bwipe " . self.bufnum)
+        if g:buffergator_viewport_split_policy != 'N'
+          execute("bwipe " . self.bufnum)
+        endif
     endfunction
 
     function! l:catalog_viewer.expand_screen() dict
@@ -1521,6 +1526,12 @@ function! s:NewTabCatalogViewer()
             call self.update_buffers_info()
         endif
         " get buffer number of the catalog view buffer, creating it if neccessary
+        if (a:0 >= 2 && a:2)
+            let self.calling_bufnum = a:2
+        else
+            let self.calling_bufnum = bufnr("%")
+        endif
+
         if self.bufnum < 0 || !bufexists(self.bufnum)
             " create and render a new buffer
             call self.create_buffer()
