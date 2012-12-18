@@ -439,6 +439,10 @@ function! s:NewCatalogViewer(name, title)
 
     " Initialize object state.
     let l:catalog_viewer["bufnum"] = -1
+    
+    " The number of opened view ports(initialized as 0).
+    " +1 after every calling of open(...) and -1 of close()
+    let l:catalog_viewer["opened_views"] = 0
 
     function! l:catalog_viewer.line_symbols(bufinfo) dict
       let l:line_symbols = ""
@@ -691,7 +695,17 @@ function! s:NewCatalogViewer(name, title)
                 endtry
             endif
         endif
-        execute("bwipe " . self.bufnum)
+
+        if (self.opened_views <= 1)
+            execute("bwipe " . self.bufnum)
+            let self.opened_views = 0
+        else
+            " just hide current window not wipeout buffer
+            " -_________-bb Don't use `N wincmd q` to quit window...
+            execute(bufwinnr(self.bufnum) . "wincmd w")
+            execute "q"
+            let self.opened_views -= 1
+        endif
     endfunction
 
     function! l:catalog_viewer.expand_screen() dict
@@ -1048,6 +1062,13 @@ function! s:NewBufferCatalogViewer()
             "     " when found, go to that line
             " endif
         endif
+
+        " opened views counter
+        if (self.opened_views < 0)
+            let self.opened_views = 0
+        endif
+        let self.opened_views += 1
+
     endfunction
 
 
@@ -1535,6 +1556,12 @@ function! s:NewTabCatalogViewer()
             call self.initialize_buffer()
             call self.render_buffer()
         endif
+
+        " opened views counter
+        if (self.opened_views < 0)
+            let self.opened_views = 0
+        endif
+        lef self.opened_views += 1
     endfunction
 
     " Populates the buffer list
