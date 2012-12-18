@@ -1765,6 +1765,7 @@ augroup BufferGatorAuto
   au!
   autocmd BufDelete * call <SID>UpdateBuffergator('delete',expand('<abuf>'))
   autocmd BufWinEnter * call <SID>UpdateBuffergator('enter',expand('<abuf>'))
+  autocmd TabEnter  * call <SID>UpdateBuffergator('enter',expand('<abuf>'))
   autocmd BufWritePost * call <SID>UpdateBuffergator('writepost',expand('<abuf>'))
 augroup END
 " 1}}}
