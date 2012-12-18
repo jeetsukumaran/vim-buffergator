@@ -1785,7 +1785,7 @@ function! s:UpdateBuffergator(event, affected)
     if exists("b:is_buffergator_buffer") && !l:self_call
       execute "wincmd p"
     elseif a:event == 'delete' && !l:self_call
-      execute "wincmd ^"
+      " execute "wincmd ^"
     endif
 endfunction
 
