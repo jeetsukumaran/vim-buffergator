@@ -1038,6 +1038,8 @@ function! s:NewBufferCatalogViewer()
             " buffer exists: activate a viewport on it according to the
             " spawning mode, re-rendering the buffer with the catalog if needed
             call self.activate_viewport()
+            " initialize buffer before render
+            call self.initialize_buffer()
             call self.render_buffer()
             " if (a:0 > 0 && a:1) || b:buffergator_catalog_viewer != self
             "     call self.render_buffer()
@@ -1194,9 +1196,9 @@ function! s:NewBufferCatalogViewer()
     " Populates the buffer with the catalog index.
     function! l:catalog_viewer.render_buffer() dict
         setlocal modifiable
-        call self.claim_buffer()
+        "call self.claim_buffer()
         call self.clear_buffer()
-        call self.setup_buffer_syntax()
+        "call self.setup_buffer_syntax()
         let self.jump_map = {}
         let l:initial_line = 1
         for l:bufinfo in self.buffers_catalog
@@ -1529,6 +1531,8 @@ function! s:NewTabCatalogViewer()
             " buffer exists: activate a viewport on it according to the
             " spawning mode, re-rendering the buffer with the catalog if needed
             call self.activate_viewport()
+            " initialize buffer before render
+            call self.initialize_buffer()
             call self.render_buffer()
         endif
     endfunction
@@ -1546,9 +1550,9 @@ function! s:NewTabCatalogViewer()
     function! l:catalog_viewer.render_buffer() dict
         setlocal modifiable
         let l:cur_tab_num = tabpagenr()
-        call self.claim_buffer()
+        "call self.claim_buffer()
         call self.clear_buffer()
-        call self.setup_buffer_syntax()
+        "call self.setup_buffer_syntax()
         let self.jump_map = {}
         let l:initial_line = 1
         for l:tidx in range(len(self.tab_catalog))
@@ -1627,9 +1631,9 @@ function! s:NewTabCatalogViewer()
         noremap <buffer> <silent> r           :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
         noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close(1)<CR>
 
-        noremap <buffer> <silent> <CR>        :call b:buffergator_catalog_viewer.visit_target()<CR>
-        noremap <buffer> <silent> o           :call b:buffergator_catalog_viewer.visit_target()<CR>
-        noremap <buffer> <silent> <2-LeftMouse> :call b:buffergator_catalog_viewer.visit_target()<CR>
+        noremap <buffer> <silent> <CR>        :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select)<CR>
+        noremap <buffer> <silent> o           :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select)<CR>
+        noremap <buffer> <silent> <2-LeftMouse> :call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select)<CR>
 
         noremap <buffer> <silent> <SPACE>     :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("n")<CR>
         noremap <buffer> <silent> <C-SPACE>   :<C-U>call b:buffergator_catalog_viewer.goto_index_entry("p")<CR>
@@ -1666,14 +1670,16 @@ function! s:NewTabCatalogViewer()
     endfunction
 
     " Go to the selected buffer.
-    function! l:catalog_viewer.visit_target() dict
+    function! l:catalog_viewer.visit_target(keep_catalog) dict
         let l:cur_line = line(".")
         if !has_key(l:self.jump_map, l:cur_line)
             call s:_buffergator_messenger.send_info("Not a valid navigation line")
             return 0
         endif
         let [l:jump_to_tabnum, l:jump_to_winnum] = self.jump_map[l:cur_line].target
-        call self.close(0)
+        if !a:keep_catalog
+            call self.close(0)
+        endif
         execute("tabnext " . l:jump_to_tabnum)
         execute(l:jump_to_winnum . "wincmd w")
         " call s:_buffergator_messenger.send_info(expand(bufname(l:jump_to_bufnum)))
@@ -1726,14 +1732,14 @@ augroup BufferGatorMRU
   autocmd BufRead * call s:_update_mru(expand('<abuf>'))
   autocmd BufNewFile * call s:_update_mru(expand('<abuf>'))
   autocmd BufWritePost * call s:_update_mru(expand('<abuf>'))
-augroup NONE
+augroup END
 
 augroup BufferGatorAuto
   au!
   autocmd BufDelete * call <SID>UpdateBuffergator('delete',expand('<abuf>'))
-  autocmd BufEnter * call <SID>UpdateBuffergator('enter',expand('<abuf>'))
+  autocmd BufWinEnter * call <SID>UpdateBuffergator('enter',expand('<abuf>'))
   autocmd BufWritePost * call <SID>UpdateBuffergator('writepost',expand('<abuf>'))
-augroup NONE
+augroup END
 " 1}}}
 
 " Functions Supporting User Commands {{{1
@@ -1773,7 +1779,8 @@ function! s:UpdateBuffergator(event, affected)
         if has_key(b:buffergator_catalog_viewer, "tab_catalog")
           continue
         endif
-
+        
+        call s:_catalog_viewer.initialize_buffer()
         call s:_catalog_viewer.render_buffer()
 
         if !l:self_call
@@ -1805,11 +1812,13 @@ function! s:ToggleBuffergator()
 endfunction
 
 function! s:CloseBuffergatorTabs()
+    call s:_catalog_viewer.close(1)
     call s:_tab_catalog_viewer.close(1)
 endfunction
 
 function! s:ToggleBuffergatorTabs()
     call s:_catalog_viewer.close(1)
+    call s:_tab_catalog_viewer.toggle()
 endfunction
 
 " 1}}}
