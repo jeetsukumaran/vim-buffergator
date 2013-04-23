@@ -71,8 +71,8 @@ endif
 if !exists("g:buffergator_show_full_directory_path")
     let g:buffergator_show_full_directory_path = 1
 endif
-if !exists("g:buffergator_map_arrow_keys")
-    let g:buffergator_map_arrow_keys = 1
+if !exists("g:buffergator_remap_arrow_keys")
+    let g:buffergator_remap_arrow_keys = 0
 endif
 " 1}}}
 
@@ -1225,11 +1225,11 @@ function! s:NewBufferCatalogViewer()
         " other
         noremap <buffer> <silent> A           :call b:buffergator_catalog_viewer.toggle_zoom()<CR>
 
-        if g:buffergator_map_arrow_keys
-            noremap <UP>     <UP>
-            noremap <DOWN>   <DOWN>
-            noremap <LEFT>   <UP>
-            noremap <RIGHT>  <DOWN>
+        if g:buffergator_remap_arrow_keys
+            noremap <buffer> <UP>     <UP>
+            noremap <buffer> <DOWN>   <DOWN>
+            noremap <buffer> <LEFT>   <UP>
+            noremap <buffer> <RIGHT>  <DOWN>
         endif
 
     endfunction
