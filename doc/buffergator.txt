@@ -97,6 +97,7 @@ Catalog Management~
 
 cs                  Cycle through sort regimes.
 cd                  Cycle through display regimes.
+cw                  Cycle through window (viewport) split modes.
 r                   Update (rebuild/refresh) index.
 d                   Delete the selected buffer.
 D                   Unconditionally delete the selected buffer.

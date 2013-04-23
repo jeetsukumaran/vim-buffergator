@@ -57,7 +57,7 @@ if !exists("g:buffergator_display_regime")
     let g:buffergator_display_regime = "basename"
 endif
 if !exists("g:buffergator_show_full_directory_path")
-    let g:buffergator_show_full_directory_path = 1 
+    let g:buffergator_show_full_directory_path = 1
 endif
 " 1}}}
 
@@ -96,6 +96,7 @@ let s:buffergator_viewport_split_modes = {
             \ "B"   : "botright sbuffer",
             \ "b"   : "rightbelow sbuffer",
             \ }
+let s:buffergator_viewport_split_modes_cycle_list = ["L", "T", "R", "B"]
 " 2}}}
 
 " Buffer Status Symbols {{{3
@@ -106,13 +107,13 @@ let s:buffergator_buffer_line_symbols = {
     \ 'alternate':    "#",
     \ }
 
-" dictionaries are not in any order, so store the order here 
+" dictionaries are not in any order, so store the order here
 let s:buffergator_buffer_line_symbols_order = [
     \ 'current',
     \ 'modified',
     \ 'alternate',
     \ ]
-" 3}}} 
+" 3}}}
 
 " Catalog Sort Regimes {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -444,7 +445,7 @@ function! s:NewCatalogViewer(name, title)
       let l:line_symbols = ""
       " so we can control the order they are shown in
       let l:noted_status = s:buffergator_buffer_line_symbols_order
-      for l:status in l:noted_status 
+      for l:status in l:noted_status
         if a:bufinfo['is_' . l:status]
           let l:line_symbols .= s:buffergator_buffer_line_symbols[l:status]
         else
@@ -914,9 +915,27 @@ function! s:NewCatalogViewer(name, title)
         else
             let self.display_regime = s:buffergator_catalog_display_regimes[l:cur_regime]
         endif
+        let b:did_syntax = 0
         call self.open(1)
         let l:display_desc = get(s:buffergator_catalog_display_regime_desc, self.display_regime, ["??", "in unspecified order"])[1]
         call s:_buffergator_messenger.send_info("displaying " . l:display_desc)
+    endfunction
+
+    " Cycles window regime.
+    function! l:catalog_viewer.cycle_viewport_modes() dict
+        let l:cur_mode = index(s:buffergator_viewport_split_modes_cycle_list, g:buffergator_viewport_split_policy)
+        let l:cur_mode += 1
+        " if l:cur_mode == -1
+        "     let l:lcur_mode = 0
+        " else
+        "     let l:cur_mode += 1
+        " endif
+        if l:cur_mode < 0 || l:cur_mode >= len(s:buffergator_viewport_split_modes_cycle_list)
+            let g:buffergator_viewport_split_policy = s:buffergator_viewport_split_modes_cycle_list[0]
+        else
+            let g:buffergator_viewport_split_policy = s:buffergator_viewport_split_modes_cycle_list[l:cur_mode]
+        endif
+        call s:ReopenBuffergator()
     endfunction
 
     " Rebuilds catalog.
@@ -1051,14 +1070,12 @@ function! s:NewBufferCatalogViewer()
 
     " Sets buffer syntax.
     function! l:catalog_viewer.setup_buffer_syntax() dict
-        if has("syntax") && !(exists('b:did_syntax'))
+        if has("syntax") && (!exists('b:did_syntax') || !b:did_syntax)
+            syntax clear
             syn region BuffergatorFileLine start='^' keepend oneline end='$'
             syn match BuffergatorBufferNr '^\[.\{3\}\]' containedin=BuffergatorFileLine
-            
             let l:line_symbols = values(s:buffergator_buffer_line_symbols)
             execute "syn match BuffergatorSymbol '[" . join(l:line_symbols,"") . "]' containedin=BuffergatorFileLine"
-             
-
             for l:buffer_status_index in range(0, len(s:buffergator_buffer_line_symbols_order) - 1)
               let l:name = s:buffergator_buffer_line_symbols_order[l:buffer_status_index]
               let l:line_symbol = s:buffergator_buffer_line_symbols[l:name]
@@ -1068,26 +1085,19 @@ function! s:NewBufferCatalogViewer()
               let l:pattern .= '\s.\{-}/'
               let l:pattern_name = "Buffergator" . toupper(l:name[0]) . tolower(l:name[1:]) . "Entry"
               let l:element = [
-                \ "syn match", 
-                \ l:pattern_name, "'" . l:pattern . "'me=e-1", 
+                \ "syn match",
+                \ l:pattern_name, "'" . l:pattern . "'me=e-1",
                 \ "containedin=BuffergatorFileLine",
-                \ "contains=BuffergatorSymbol",
-                \ "nextgroup=BuffergatorPath"
+                \ "contains=BuffergatorSymbol"
                 \ ]
-
               let l:syntax_cmd = join(l:element," ")
-           
               execute l:syntax_cmd
             endfor
-
-            syn match BuffergatorPath '/.\+$' containedin=BuffergatorFileLine
-           
             highlight link BuffergatorSymbol Constant
-            highlight link BuffergatorAlternateEntry Function
-            highlight link BuffergatorModifiedEntry String
-            highlight link BuffergatorCurrentEntry Keyword
-            highlight link BuffergatorBufferNr LineNr 
-            highlight link BuffergatorPath Comment
+            " highlight link BuffergatorAlternateEntry Function
+            " highlight link BuffergatorModifiedEntry String
+            " highlight link BuffergatorCurrentEntry Keyword
+            highlight link BuffergatorBufferNr LineNr
             let b:did_syntax = 1
         endif
       endfunction
@@ -1103,6 +1113,7 @@ function! s:NewBufferCatalogViewer()
             noremap <buffer> <silent> cs          :call b:buffergator_catalog_viewer.cycle_sort_regime()<CR>
             noremap <buffer> <silent> cd          :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
             noremap <buffer> <silent> cp          :call b:buffergator_catalog_viewer.cycle_directory_path_display()<CR>
+            noremap <buffer> <silent> cw          :call b:buffergator_catalog_viewer.cycle_viewport_modes()<CR>
             noremap <buffer> <silent> r           :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
             noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close(1)<CR>
             noremap <buffer> <silent> d           :<C-U>call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
@@ -1209,9 +1220,9 @@ function! s:NewBufferCatalogViewer()
 
             let l:bufnum_str = s:_format_filled(l:bufinfo.bufnum, 3, 1, 0)
             let l:line = "[" . l:bufnum_str . "]"
-           
+
             let l:line .= s:_format_filled(self.line_symbols(l:bufinfo),4,-1,0)
-            
+
             if self.display_regime == "basename"
                 let l:line .= s:_format_align_left(l:bufinfo.basename, self.max_buffer_basename_len, " ")
                 let l:line .= "  "
@@ -1738,7 +1749,12 @@ augroup NONE
 " ==============================================================================
 
 function! s:OpenBuffergator()
-    call s:_tab_catalog_viewer.close(1)
+    call s:_catalog_viewer.close(0)
+    call s:_catalog_viewer.open()
+endfunction
+
+function! s:ReopenBuffergator()
+    call s:_catalog_viewer.close(1)
     call s:_catalog_viewer.open()
 endfunction
 
@@ -1746,7 +1762,7 @@ function! s:UpdateBuffergator(event, affected)
     if !(g:buffergator_autoupdate)
       return
     endif
-    
+
     let l:calling = bufnr("%")
     let l:self_call = 0
     let l:buffergators = s:_find_buffers_with_var("is_buffergator_buffer",1)
