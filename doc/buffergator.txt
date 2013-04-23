@@ -120,11 +120,13 @@ true; otherwise it will be kept open.
 s                   Open the currently-selected buffer (or, if [count] is
                     given, buffer with number [count]), in a new vertical
                     split.
+<C-V>               As above (compatibility with Ctrl-P/Command-T)
 i                   Open the currently-selected buffer (or, if [count] is
                     given, buffer with number [count]), in a new split.
+<C-S>               As above (compatibility with Ctrl-P/Command-T)
 t                   Open the currently-selected buffer (or, if [count] is
                     given, buffer with number [count]), in a new tab page.
-
+<C-T>               As above (compatibility with Ctrl-P/Command-T)
 
 -------------------------------------------------------------------------------
 Preview Selected Buffer~

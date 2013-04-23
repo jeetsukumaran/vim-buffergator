@@ -71,6 +71,9 @@ endif
 if !exists("g:buffergator_show_full_directory_path")
     let g:buffergator_show_full_directory_path = 1
 endif
+if !exists("g:buffergator_map_arrow_keys")
+    let g:buffergator_map_arrow_keys = 1
+endif
 " 1}}}
 
 " Script Data and Variables {{{1
@@ -1145,8 +1148,11 @@ function! s:NewBufferCatalogViewer()
             noremap <buffer> <silent> <CR>        :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
             noremap <buffer> <silent> o           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
             noremap <buffer> <silent> s           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "vert sb")<CR>
+            noremap <buffer> <silent> <C-v>       :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "vert sb")<CR>
             noremap <buffer> <silent> i           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "sb")<CR>
+            noremap <buffer> <silent> <C-s>       :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "sb")<CR>
             noremap <buffer> <silent> t           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "tab sb")<CR>
+            noremap <buffer> <silent> <C-t>       :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "tab sb")<CR>
 
             """"" Selection: show target and switch focus, preserving the catalog regardless of the autodismiss setting
             noremap <buffer> <silent> po          :<C-U>call b:buffergator_catalog_viewer.visit_target(1, 0, "")<CR>
@@ -1218,6 +1224,13 @@ function! s:NewBufferCatalogViewer()
 
         " other
         noremap <buffer> <silent> A           :call b:buffergator_catalog_viewer.toggle_zoom()<CR>
+
+        if g:buffergator_map_arrow_keys
+            noremap <UP>     <UP>
+            noremap <DOWN>   <DOWN>
+            noremap <LEFT>   <UP>
+            noremap <RIGHT>  <DOWN>
+        endif
 
     endfunction
 
