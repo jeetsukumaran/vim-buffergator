@@ -937,17 +937,23 @@ function! s:NewCatalogViewer(name, title)
     function! l:catalog_viewer.cycle_viewport_modes() dict
         let l:cur_mode = index(s:buffergator_viewport_split_modes_cycle_list, g:buffergator_viewport_split_policy)
         let l:cur_mode += 1
-        " if l:cur_mode == -1
-        "     let l:lcur_mode = 0
-        " else
-        "     let l:cur_mode += 1
-        " endif
         if l:cur_mode < 0 || l:cur_mode >= len(s:buffergator_viewport_split_modes_cycle_list)
             let g:buffergator_viewport_split_policy = s:buffergator_viewport_split_modes_cycle_list[0]
         else
             let g:buffergator_viewport_split_policy = s:buffergator_viewport_split_modes_cycle_list[l:cur_mode]
         endif
         call s:ReopenBuffergator()
+    endfunction
+
+    " Cycles autodismiss modes
+    function! l:catalog_viewer.cycle_autodismiss_modes() dict
+        if (g:buffergator_autodismiss_on_select)
+            let g:buffergator_autodismiss_on_select = 0
+        call s:_buffergator_messenger.send_info("will stay open on selection (autodismiss-on-select: OFF)")
+        else
+            let g:buffergator_autodismiss_on_select = 1
+        call s:_buffergator_messenger.send_info("will close on selection (autodismiss-on-select: ON)")
+        endif
     endfunction
 
     " Rebuilds catalog.
@@ -1126,6 +1132,8 @@ function! s:NewBufferCatalogViewer()
             noremap <buffer> <silent> cd          :call b:buffergator_catalog_viewer.cycle_display_regime()<CR>
             noremap <buffer> <silent> cp          :call b:buffergator_catalog_viewer.cycle_directory_path_display()<CR>
             noremap <buffer> <silent> cw          :call b:buffergator_catalog_viewer.cycle_viewport_modes()<CR>
+            noremap <buffer> <silent> cq          :call b:buffergator_catalog_viewer.cycle_autodismiss_modes()<CR>
+            noremap <buffer> <silent> cc          <NOP>
             noremap <buffer> <silent> r           :call b:buffergator_catalog_viewer.rebuild_catalog()<CR>
             noremap <buffer> <silent> q           :call b:buffergator_catalog_viewer.close(1)<CR>
             noremap <buffer> <silent> d           :<C-U>call b:buffergator_catalog_viewer.delete_target(0, 0)<CR>
