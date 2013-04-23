@@ -265,6 +265,16 @@ g:buffergator_split_size~
     If greater than 0, this will be the width of the Buffergator window in any
     vertical splitting mode, or its height in any horizontal splitting mode.
 
+g:buffergator_vsplit_size~
+    Default: 40
+    If greater than 0, this will be the width of the Buffergator window in
+    any vertical splitting mode.
+
+g:buffergator_hplit_size~
+    Default: 20
+    If greater than 0, this will be the height of the Buffergator window in
+    any horizontal splitting mode.
+
 g:buffergator_sort_regime~
     Default: "bufnum"
     Sets the default sort regime for buffer listing:

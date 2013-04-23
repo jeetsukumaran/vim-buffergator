@@ -47,8 +47,20 @@ endif
 if !exists("g:buffergator_autoexpand_on_split")
     let g:buffergator_autoexpand_on_split = 1
 endif
-if !exists("g:buffergator_split_size")
-    let g:buffergator_split_size = 40
+if exists("g:buffergator_split_size")
+    if !exists("g:buffergator_vsplit_size")
+        let g:buffergator_vsplit_size = g:buffergator_split_size
+    endif
+    if !exists("g:h_buffergator_hsplit_size")
+        let g:buffergator_hsplit_size = g:buffergator_split_size
+    endif
+else
+    if !exists("g:buffergator_vsplit_size")
+        let g:buffergator_vsplit_size = 40
+    endif
+    if !exists("g:h_buffergator_hsplit_size")
+        let g:buffergator_hsplit_size = 20
+    endif
 endif
 if !exists("g:buffergator_sort_regime")
     let g:buffergator_sort_regime = "bufnum"
@@ -584,11 +596,11 @@ function! s:NewCatalogViewer(name, title)
             let self.split_mode = s:_get_split_mode()
             call self.expand_screen()
             execute("silent keepalt keepjumps " . self.split_mode . " " . self.bufnum)
-            if g:buffergator_viewport_split_policy =~ '[RrLl]' && g:buffergator_split_size
-                execute("vertical resize " . g:buffergator_split_size)
+            if g:buffergator_viewport_split_policy =~ '[RrLl]' && g:buffergator_vsplit_size
+                execute("vertical resize " . g:buffergator_vsplit_size)
                 setlocal winfixwidth
-            elseif g:buffergator_viewport_split_policy =~ '[TtBb]' && g:buffergator_split_size
-                execute("resize " . g:buffergator_split_size)
+            elseif g:buffergator_viewport_split_policy =~ '[TtBb]' && g:buffergator_hsplit_size
+                execute("resize " . g:buffergator_hsplit_size)
                 setlocal winfixheight
             endif
         endif
@@ -696,17 +708,17 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     function! l:catalog_viewer.expand_screen() dict
-        if has("gui_running") && g:buffergator_autoexpand_on_split && g:buffergator_split_size
-            if g:buffergator_viewport_split_policy =~ '[RL]'
+        if has("gui_running") && g:buffergator_autoexpand_on_split
+            if g:buffergator_viewport_split_policy =~ '[RL]' && g:buffergator_vsplit_size
                 let self.pre_expand_columns = &columns
-                let &columns += g:buffergator_split_size
+                let &columns += g:buffergator_vsplit_size
                 let self.columns_expanded = &columns - self.pre_expand_columns
             else
                 let self.columns_expanded = 0
             endif
-            if g:buffergator_viewport_split_policy =~ '[TB]'
+            if g:buffergator_viewport_split_policy =~ '[TB]' && g:buffergator_hsplit_size
                 let self.pre_expand_lines = &lines
-                let &lines += g:buffergator_split_size
+                let &lines += g:buffergator_hsplit_size
                 let self.lines_expanded = &lines - self.pre_expand_lines
             else
                 let self.lines_expanded = 0
@@ -952,10 +964,10 @@ function! s:NewCatalogViewer(name, title)
         if self.is_zoomed
             " if s:_is_full_height_window(l:bfwn) && !s:_is_full_width_window(l:bfwn)
             if g:buffergator_viewport_split_policy =~ '[RrLl]'
-                if !g:buffergator_split_size
+                if !g:buffergator_vsplit_size
                     let l:new_size = &columns / 3
                 else
-                    let l:new_size = g:buffergator_split_size
+                    let l:new_size = g:buffergator_vsplit_size
                 endif
                 if l:new_size > 0
                     execute("vertical resize " . string(l:new_size))
@@ -963,10 +975,10 @@ function! s:NewCatalogViewer(name, title)
                 let self.is_zoomed = 0
             " elseif s:_is_full_width_window(l:bfwn) && !s:_is_full_height_window(l:bfwn)
             elseif g:buffergator_viewport_split_policy =~ '[TtBb]'
-                if !g:buffergator_split_size
+                if !g:buffergator_hsplit_size
                     let l:new_size = &lines / 3
                 else
-                    let l:new_size = g:buffergator_split_size
+                    let l:new_size = g:buffergator_hsplit_size
                 endif
                 if l:new_size > 0
                     execute("resize " . string(l:new_size))
