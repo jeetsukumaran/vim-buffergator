@@ -33,6 +33,13 @@ The buffer opening commands follow that of NERDTree. Examples:
     - You can use "t" to open the currently selected buffer in new tab ("42t"
       will do the same, but will select buffer number 42).
 
+To reduce strain on muscle-memory, the following Ctrl-P keymaps are also
+supported:
+
+   - <C-V> : open in new vertical split
+   - <C-S> : open in new horizontal split
+   - <C-T> : open in new tab
+
 Other key maps allow you to jump to a target buffer in an open
 window/split/tab page if it is already active there instead of creating a new
 window. Minimal management of buffers (wiping/dropping) are also provided.
