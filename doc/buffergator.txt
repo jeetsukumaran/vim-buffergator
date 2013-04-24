@@ -84,6 +84,20 @@ key mappings are defined:
 <Leader>T           Invokes ":BuffergatorTabsClose": close the tab page
                     catalog.
 
+[b                  Invokes ":BuffergatorMruCyclePrev": cycle to an older
+                    buffer in the most-recently used (MRU) buffer list.
+                    most-recently used buffer. If
+                    "g:buffergator_mru_cycle_loop" is set to 1 (default), then
+                    this will loop, i.e. returning to the initial buffer after
+                    reaching the oldest buffer.
+
+]b                  Invokes ":BuffergatorMruCycleNext": cycle to a newer
+                    buffer in the most-recently used (MRU) buffer list.
+                    most-recently used buffer. If
+                    "g:buffergator_mru_cycle_loop" is set to 1 (default), then
+                    this will loop, i.e. returning to the oldest buffer after
+                    reaching the newest buffer.
+
 ===============================================================================
                                                       *buffergator-buffer-keys*
 KEY MAPPINGS (BUFFER CATALOG)~
