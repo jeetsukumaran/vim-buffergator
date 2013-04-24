@@ -1228,8 +1228,6 @@ function! s:NewBufferCatalogViewer()
         if g:buffergator_remap_arrow_keys
             noremap <buffer> <UP>     <UP>
             noremap <buffer> <DOWN>   <DOWN>
-            noremap <buffer> <LEFT>   <UP>
-            noremap <buffer> <RIGHT>  <DOWN>
         endif
 
     endfunction
