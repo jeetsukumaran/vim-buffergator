@@ -1,3 +1,24 @@
+Summary
+=======
+
+- Use `<Leader>b` (typically: `\b`) to open a window listing all buffers. In this
+  window, you can use normal movement keys to select a buffer and then:
+
+    - <ENTER> to edit the selected buffer in the previous window
+    - <C-V> to edit the selected buffer in a new vertical split
+    - <C-S> to edit the selected buffer in a new horizontal split
+    - <C-T> to edit the selected buffer in a new tab page
+
+- Use `[b` (or <M-b>) and `]b` (or <M-S-b>) to flip through the most-recently
+  used buffer stack.
+
+Many other options are supported: (e.g. open in existing window/tab, or in the
+same window; preview buffer without leaving buffer listing; "pin" the buffer
+listing so that it is open all the time, etc. etc.)
+
+Details
+=======
+
 Buffergator is a plugin for listing, navigating between, and selecting buffers
 to edit. Upon invocation (using the command, ":BuffergatorOpen" or
 "BuffergatorToggle", or the provided key mapping, "<Leader>b"), a "catalog" of
@@ -40,10 +61,6 @@ supported:
    - <C-S> : open in new horizontal split
    - <C-T> : open in new tab
 
-In addition, in normal mode from any buffer, you can flip through the MRU
-(most-recently-used) buffer list without opening the buffer catalog by using
-the "[b" (or <M-b>) and "]b" (or <M-S-b>) keys.
-
 Other key maps allow you to jump to a target buffer in an open
 window/split/tab page if it is already active there instead of creating a new
 window. Minimal management of buffers (wiping/dropping) are also provided.
@@ -55,10 +72,13 @@ command ":BuffergatorTabsOpen" or the provided key mapping, "<Leader>t").
 The buffer listing can be sorted alphabetically by filename, by full filepath,
 by extension followed by filename, or by most-recently used (MRU).
 
-By default, Buffergator provides global key maps that invoke its main
-commands: "<Leader>b" to open and "<Leader>B" to close the buffer catalog, and
-"<Leader>t" to open and "<Leader>T" to close the tab page catalog. If you
-prefer to map other keys, or do not want any keys mapped at all, set
+By default, Buffergator provides global key maps that invoke its main commands:
+"<Leader>b" to open and "<Leader>B" to close the buffer catalog, and
+"<Leader>t" to open and "<Leader>T" to close the tab page catalog.  In
+addition, in normal mode from any buffer, you can flip through the MRU
+(most-recently-used) buffer list without opening the buffer catalog by using
+the "[b" (or <M-b>) and "]b" (or <M-S-b>) keys.  If you prefer to map other
+keys, or do not want any keys mapped at all, set
 "g:buffergator_suppress_keymaps" to 1 in your $VIMRUNTIME.
 
 [NOTE: If you have other plugins installed that have key maps that start with
