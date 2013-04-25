@@ -10,7 +10,7 @@ Summary
     - <C-T> to edit the selected buffer in a new tab page
 
 - Use `[b` (or <M-b>) and `]b` (or <M-S-b>) to flip through the most-recently
-  used buffer stack.
+  used buffer stack without opening the buffer listing "drawer".
 
 Many other options are supported: (e.g. open in existing window/tab, or in the
 same window; preview buffer without leaving buffer listing; "pin" the buffer
