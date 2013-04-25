@@ -1823,6 +1823,17 @@ augroup NONE
 " Functions Supporting User Commands {{{1
 " ==============================================================================
 
+function! s:BuffergatorEchoMruList(bang)
+    if empty(a:bang)
+        echo s:buffergator_mru
+    else
+        for l:idx in range(len(s:buffergator_mru))
+            let l:entry = s:buffergator_mru[l:idx]
+            echo l:idx+1 . ". [" . l:entry . "] " .bufname(l:entry)
+        endfor
+    endif
+endfunction
+
 function! s:BuffergatorCycleMru(dir)
     if len(s:buffergator_mru) < 2
         if g:buffergator_mru_cycle_loop
@@ -1948,6 +1959,7 @@ command!  BuffergatorTabsClose   :call <SID>CloseBuffergatorTabs()
 command!  BuffergatorUpdate      :call <SID>UpdateBuffergator('',-1)
 command!  BuffergatorMruCyclePrev :call <SID>BuffergatorCycleMru(-1)
 command!  BuffergatorMruCycleNext :call <SID>BuffergatorCycleMru(1)
+command!  -bang BuffergatorMruList     :call <SID>BuffergatorEchoMruList('<bang>')
 
 if !exists('g:buffergator_suppress_keymaps') || !g:buffergator_suppress_keymaps
     " nnoremap <silent> <Leader><Leader> :BuffergatorToggle<CR>
