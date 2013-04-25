@@ -40,6 +40,10 @@ supported:
    - <C-S> : open in new horizontal split
    - <C-T> : open in new tab
 
+In addition, in normal mode from any buffer, you can flip through the MRU
+(most-recently-used) buffer list without opening the buffer catalog by using
+the "[b" (or <M-b>) and "]b" (or <M-S-b>) keys.
+
 Other key maps allow you to jump to a target buffer in an open
 window/split/tab page if it is already active there instead of creating a new
 window. Minimal management of buffers (wiping/dropping) are also provided.
