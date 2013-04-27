@@ -77,6 +77,9 @@ endif
 if !exists("g:buffergator_mru_cycle_loop")
     let g:buffergator_mru_cycle_loop = 1
 endif
+if !exists("g:buffergator_mru_cycle_local_to_window")
+    let g:buffergator_mru_cycle_local_to_window = 1
+endif
 " 1}}}
 
 " Script Data and Variables {{{1
@@ -351,6 +354,18 @@ endfunction!
 
 " Moves (or adds) the given buffer number to the top of the list
 function! s:_update_mru(acmd_bufnr)
+    if len(s:buffergator_mru) < 2
+        if g:buffergator_mru_cycle_loop
+            for l:bni in range(bufnr("$"), 1, -1)
+                if buflisted(l:bni)
+                    call add(s:buffergator_mru, l:bni)
+                endif
+            endfor
+        endif
+    endif
+    if !exists("w:buffergator_mru")
+        let w:buffergator_mru = s:buffergator_mru[:]
+    endif
     if s:buffergator_track_mru
         let bnum = a:acmd_bufnr + 0
         if bnum == 0 || !buflisted(bnum)
@@ -358,12 +373,14 @@ function! s:_update_mru(acmd_bufnr)
         endif
         call filter(s:buffergator_mru, 'v:val !=# bnum')
         call insert(s:buffergator_mru, bnum, 0)
+        call filter(w:buffergator_mru, 'v:val !=# bnum')
+        call insert(w:buffergator_mru, bnum, 0)
     endif
 endfunction
 
 function! s:_find_mru_bufnr(dir)
-    let l:cur_buf_idx = index(s:buffergator_mru, bufnr("%"))
-    if len(s:buffergator_mru) < 2
+    let l:cur_buf_idx = index(w:buffergator_mru, bufnr("%"))
+    if len(w:buffergator_mru) < 2
         return bufnr("%")
     endif
     if l:cur_buf_idx < 0
@@ -377,12 +394,12 @@ function! s:_find_mru_bufnr(dir)
     endif
     if l:target_buf_idx < 0
         if g:buffergator_mru_cycle_loop
-            let l:target_buf_idx = len(s:buffergator_mru) - 1
+            let l:target_buf_idx = len(w:buffergator_mru) - 1
         else
             call s:_buffergator_messenger.send_info("already at most recent buffer")
             return -1
         endif
-    elseif l:target_buf_idx >= len(s:buffergator_mru)
+    elseif l:target_buf_idx >= len(w:buffergator_mru)
         if g:buffergator_mru_cycle_loop
             let l:target_buf_idx = 0
         else
@@ -390,9 +407,9 @@ function! s:_find_mru_bufnr(dir)
             return -1
         endif
     endif
-    let l:target_bufnr = s:buffergator_mru[l:target_buf_idx]
+    let l:target_bufnr = w:buffergator_mru[l:target_buf_idx]
     if !bufexists(l:target_bufnr)
-        call remove(s:buffergator_mru, l:target_buf_idx)
+        call remove(w:buffergator_mru, l:target_buf_idx)
         return s:_find_mru_bufnr(a:dir)
     else
         return l:target_bufnr
@@ -1824,30 +1841,46 @@ augroup NONE
 " ==============================================================================
 
 function! s:BuffergatorEchoMruList(bang)
-    if empty(a:bang)
-        echo s:buffergator_mru
+    if !exists("w:buffergator_mru")
+        let w:buffergator_mru = s:buffergator_mru[:]
+    endif
+    if g:buffergator_mru_cycle_local_to_window
+        let l:mru_cycle_list = w:buffergator_mru
     else
-        for l:idx in range(len(s:buffergator_mru))
-            let l:entry = s:buffergator_mru[l:idx]
+        let l:mru_cycle_list = s:buffergator_mru
+    endif
+    if empty(a:bang)
+        echo l:mru_cycle_list
+    else
+        for l:idx in range(len(l:mru_cycle_list))
+            let l:entry = l:mru_cycle_list[l:idx]
             echo l:idx+1 . ". [" . l:entry . "] " .bufname(l:entry)
         endfor
     endif
 endfunction
 
 function! s:BuffergatorCycleMru(dir)
-    if len(s:buffergator_mru) < 2
-        if g:buffergator_mru_cycle_loop
-            for l:bni in range(bufnr("$"), 1, -1)
-                if buflisted(l:bni)
-                    call add(s:buffergator_mru, l:bni)
-                endif
-            endfor
-            call s:_update_mru(bufnr("%"))
-        else
-            return
-        endif
+    " if len(s:buffergator_mru) < 2
+    "     if g:buffergator_mru_cycle_loop
+    "         for l:bni in range(bufnr("$"), 1, -1)
+    "             if buflisted(l:bni)
+    "                 call add(s:buffergator_mru, l:bni)
+    "             endif
+    "         endfor
+    "         call s:_update_mru(bufnr("%"))
+    "     else
+    "         return
+    "     endif
+    " endif
+    if !exists("w:buffergator_mru")
+        let w:buffergator_mru = s:buffergator_mru[:]
     endif
-    if len(s:buffergator_mru) < 2
+    if g:buffergator_mru_cycle_local_to_window
+        let l:mru_cycle_list = w:buffergator_mru
+    else
+        let l:mru_cycle_list = s:buffergator_mru
+    endif
+    if len(l:mru_cycle_list) < 2
         call s:_buffergator_messenger.send_info("only one buffer available")
         return
     endif
