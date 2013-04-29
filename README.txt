@@ -11,6 +11,9 @@ Summary
 
 - Use `[b` (or <M-b>) and `]b` (or <M-S-b>) to flip through the most-recently
   used buffer stack without opening the buffer listing "drawer".
+- Use `<Leader><LEFT>`, `<Leader><UP>`, `<Leader><RIGHT>`, `<Leader><DOWN>` to
+  split a new window left, up, right, or down, respectively, and edit the
+  previous MRU buffer there.
 
 Many other options are supported: (e.g. open in existing window/tab, or in the
 same window; preview buffer without leaving buffer listing; "pin" the buffer
