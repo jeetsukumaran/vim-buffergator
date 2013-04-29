@@ -1891,7 +1891,7 @@ function! s:BuffergatorCycleMru(dir, bufopencmd)
         else
             let l:bufopencmd = a:bufopencmd
         endif
-        call s:_buffergator_messenger.send_info("returning to: " . bufname(l:target_buf))
+        " call s:_buffergator_messenger.send_info("returning to: " . bufname(l:target_buf))
         let s:buffergator_track_mru = 0
         execute "silent keepalt keepjumps " . l:bufopencmd . " " . l:target_buf
         let s:buffergator_track_mru = 1
