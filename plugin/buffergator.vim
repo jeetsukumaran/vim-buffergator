@@ -20,10 +20,10 @@
 " Reload and Compatibility Guard {{{1
 " ============================================================================
 " Reload protection.
-if (exists('g:did_buffergator') && g:did_buffergator) || &cp || version < 700
-    finish
-endif
-let g:did_buffergator = 1
+" if (exists('g:did_buffergator') && g:did_buffergator) || &cp || version < 700
+"     finish
+" endif
+" let g:did_buffergator = 1
 
 " avoid line continuation issues (see ':help user_41.txt')
 let s:save_cpo = &cpo
@@ -1859,7 +1859,7 @@ function! s:BuffergatorEchoMruList(bang)
     endif
 endfunction
 
-function! s:BuffergatorCycleMru(dir)
+function! s:BuffergatorCycleMru(dir, bufopencmd)
     " if len(s:buffergator_mru) < 2
     "     if g:buffergator_mru_cycle_loop
     "         for l:bni in range(bufnr("$"), 1, -1)
@@ -1886,9 +1886,14 @@ function! s:BuffergatorCycleMru(dir)
     endif
     let l:target_buf = s:_find_mru_bufnr(a:dir)
     if l:target_buf > 0
+        if a:bufopencmd == ""
+            let l:bufopencmd = "buffer"
+        else
+            let l:bufopencmd = a:bufopencmd
+        endif
         call s:_buffergator_messenger.send_info("returning to: " . bufname(l:target_buf))
         let s:buffergator_track_mru = 0
-        execute "silent keepalt keepjumps buffer " . l:target_buf
+        execute "silent keepalt keepjumps " . l:bufopencmd . " " . l:target_buf
         let s:buffergator_track_mru = 1
     else
         " call s:_buffergator_messenger.send_info("found: " . l:target_buf . " : " . bufname(l:target_buf))
@@ -1983,16 +1988,16 @@ endfunction
 
 " Public Command and Key Maps {{{1
 " ==============================================================================
-command!  BuffergatorToggle      :call <SID>ToggleBuffergator()
-command!  BuffergatorClose       :call <SID>CloseBuffergator()
-command!  BuffergatorOpen        :call <SID>OpenBuffergator()
-command!  BuffergatorTabsToggle  :call <SID>ToggleBuffergatorTabs()
-command!  BuffergatorTabsOpen    :call <SID>OpenBuffergatorTabs()
-command!  BuffergatorTabsClose   :call <SID>CloseBuffergatorTabs()
-command!  BuffergatorUpdate      :call <SID>UpdateBuffergator('',-1)
-command!  BuffergatorMruCyclePrev :call <SID>BuffergatorCycleMru(-1)
-command!  BuffergatorMruCycleNext :call <SID>BuffergatorCycleMru(1)
-command!  -bang BuffergatorMruList     :call <SID>BuffergatorEchoMruList('<bang>')
+command! -nargs=0 BuffergatorToggle      :call <SID>ToggleBuffergator()
+command! -nargs=0 BuffergatorClose       :call <SID>CloseBuffergator()
+command! -nargs=0 BuffergatorOpen        :call <SID>OpenBuffergator()
+command! -nargs=0 BuffergatorTabsToggle  :call <SID>ToggleBuffergatorTabs()
+command! -nargs=0 BuffergatorTabsOpen    :call <SID>OpenBuffergatorTabs()
+command! -nargs=0 BuffergatorTabsClose   :call <SID>CloseBuffergatorTabs()
+command! -nargs=0 BuffergatorUpdate      :call <SID>UpdateBuffergator('',-1)
+command! -nargs=* BuffergatorMruCyclePrev :call <SID>BuffergatorCycleMru(-1, "<args>")
+command! -nargs=* BuffergatorMruCycleNext :call <SID>BuffergatorCycleMru(1, "<args>")
+command! -nargs=? -bang BuffergatorMruList     :call <SID>BuffergatorEchoMruList('<bang>')
 
 if !exists('g:buffergator_suppress_keymaps') || !g:buffergator_suppress_keymaps
     " nnoremap <silent> <Leader><Leader> :BuffergatorToggle<CR>
@@ -2003,6 +2008,14 @@ if !exists('g:buffergator_suppress_keymaps') || !g:buffergator_suppress_keymaps
     if !exists('g:buffergator_suppress_mru_switching') || !g:buffergator_suppress_mru_switching
         nnoremap <silent> <M-b> :BuffergatorMruCyclePrev<CR>
         nnoremap <silent> <M-S-b> :BuffergatorMruCycleNext<CR>
+        nnoremap <silent> <D-M-b><LEFT> :BuffergatorMruCyclePrev leftabove vert sbuffer<CR>
+        " nnoremap <silent> <D-M-LEFT> :BuffergatorMruCyclePrev leftabove vert sbuffer<CR>
+        nnoremap <silent> <D-M-b><UP> :BuffergatorMruCyclePrev leftabove sbuffer<CR>
+        " nnoremap <silent> <D-M-UP> :BuffergatorMruCyclePrev leftabove sbuffer<CR>
+        nnoremap <silent> <D-M-b><RIGHT> :BuffergatorMruCyclePrev rightbelow vert sbuffer<CR>
+        " nnoremap <silent> <D-M-RIGHT> :BuffergatorMruCyclePrev rightbelow vert sbuffer<CR>
+        nnoremap <silent> <D-M-b><DOWN> :BuffergatorMruCyclePrev rightbelow sbuffer<CR>
+        " nnoremap <silent> <D-M-DOWN> :BuffergatorMruCyclePrev rightbelow sbuffer<CR>
         nnoremap <silent> [b :BuffergatorMruCyclePrev<CR>
         nnoremap <silent> ]b :BuffergatorMruCycleNext<CR>
     endif
