@@ -2005,19 +2005,21 @@ if !exists('g:buffergator_suppress_keymaps') || !g:buffergator_suppress_keymaps
     nnoremap <silent> <Leader>B :BuffergatorClose<CR>
     nnoremap <silent> <Leader>t :BuffergatorTabsOpen<CR>
     nnoremap <silent> <Leader>T :BuffergatorTabsClose<CR>
-    if !exists('g:buffergator_suppress_mru_switching') || !g:buffergator_suppress_mru_switching
+    if !exists('g:buffergator_suppress_mru_switching_keymaps') || !g:buffergator_suppress_mru_switching_keymaps
         nnoremap <silent> <M-b> :BuffergatorMruCyclePrev<CR>
         nnoremap <silent> <M-S-b> :BuffergatorMruCycleNext<CR>
-        nnoremap <silent> <D-M-b><LEFT> :BuffergatorMruCyclePrev leftabove vert sbuffer<CR>
-        " nnoremap <silent> <D-M-LEFT> :BuffergatorMruCyclePrev leftabove vert sbuffer<CR>
-        nnoremap <silent> <D-M-b><UP> :BuffergatorMruCyclePrev leftabove sbuffer<CR>
-        " nnoremap <silent> <D-M-UP> :BuffergatorMruCyclePrev leftabove sbuffer<CR>
-        nnoremap <silent> <D-M-b><RIGHT> :BuffergatorMruCyclePrev rightbelow vert sbuffer<CR>
-        " nnoremap <silent> <D-M-RIGHT> :BuffergatorMruCyclePrev rightbelow vert sbuffer<CR>
-        nnoremap <silent> <D-M-b><DOWN> :BuffergatorMruCyclePrev rightbelow sbuffer<CR>
-        " nnoremap <silent> <D-M-DOWN> :BuffergatorMruCyclePrev rightbelow sbuffer<CR>
         nnoremap <silent> [b :BuffergatorMruCyclePrev<CR>
         nnoremap <silent> ]b :BuffergatorMruCycleNext<CR>
+    endif
+    if !exists('g:buffergator_suppress_mru_switch_into_splits_keymaps') || !g:buffergator_suppress_mru_switch_into_splits_keymaps
+        nnoremap <silent> <Leader><LEFT> :BuffergatorMruCyclePrev leftabove vert sbuffer<CR>
+        nnoremap <silent> <Leader><UP> :BuffergatorMruCyclePrev leftabove sbuffer<CR>
+        nnoremap <silent> <Leader><RIGHT> :BuffergatorMruCyclePrev rightbelow vert sbuffer<CR>
+        nnoremap <silent> <Leader><DOWN> :BuffergatorMruCyclePrev rightbelow sbuffer<CR>
+        nnoremap <silent> <Leader><S-LEFT> :BuffergatorMruCycleNext leftabove vert sbuffer<CR>
+        nnoremap <silent> <Leader><S-UP> :BuffergatorMruCycleNext leftabove sbuffer<CR>
+        nnoremap <silent> <Leader><S-RIGHT> :BuffergatorMruCycleNext rightbelow vert sbuffer<CR>
+        nnoremap <silent> <Leader><S-DOWN> :BuffergatorMruCycleNext rightbelow sbuffer<CR>
     endif
 endif
 
