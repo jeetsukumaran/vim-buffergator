@@ -30,6 +30,50 @@ let s:save_cpo = &cpo
 set cpo&vim
 " 1}}}
 
+" Global MRU Initialization {{{1
+" ==============================================================================
+" Moves (or adds) the given buffer number to the top of the list
+if !exists("g:buffergator_mru_cycle_loop")
+    let g:buffergator_mru_cycle_loop = 1
+endif
+let g:buffergator_track_mru = 1
+let g:buffergator_mru = []
+function! BuffergatorUpdateMRU(acmd_bufnr)
+    if len(g:buffergator_mru) < 2
+        if g:buffergator_mru_cycle_loop
+            for l:bni in range(bufnr("$"), 1, -1)
+                if buflisted(l:bni)
+                    call add(g:buffergator_mru, l:bni)
+                endif
+            endfor
+        endif
+    endif
+    if !exists("w:buffergator_mru")
+        let w:buffergator_mru = g:buffergator_mru[:]
+    endif
+    if g:buffergator_track_mru
+        let bnum = a:acmd_bufnr + 0
+        if bnum == 0 || !buflisted(bnum)
+            return
+        endif
+        call filter(g:buffergator_mru, 'v:val !=# bnum')
+        call insert(g:buffergator_mru, bnum, 0)
+        call filter(w:buffergator_mru, 'v:val !=# bnum')
+        call insert(w:buffergator_mru, bnum, 0)
+    endif
+endfunction
+
+" Autocommands that update the most recenly used buffers
+augroup BufferGatorMRU
+au!
+autocmd BufEnter * call BuffergatorUpdateMRU(expand('<abuf>'))
+autocmd BufRead * call BuffergatorUpdateMRU(expand('<abuf>'))
+autocmd BufNewFile * call BuffergatorUpdateMRU(expand('<abuf>'))
+autocmd BufWritePost * call BuffergatorUpdateMRU(expand('<abuf>'))
+augroup NONE
+
+" 1}}}
+
 " Public Command and Key Maps {{{1
 " ==============================================================================
 command! -nargs=0 BuffergatorToggle      :call buffergator#ToggleBuffergator()

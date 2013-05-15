@@ -68,9 +68,6 @@ endif
 if !exists("g:buffergator_remap_arrow_keys")
     let g:buffergator_remap_arrow_keys = 0
 endif
-if !exists("g:buffergator_mru_cycle_loop")
-    let g:buffergator_mru_cycle_loop = 1
-endif
 if !exists("g:buffergator_mru_cycle_local_to_window")
     let g:buffergator_mru_cycle_local_to_window = 1
 endif
@@ -153,13 +150,6 @@ let s:buffergator_catalog_display_regime_desc = {
             \ }
 let s:buffergator_default_display_regime = "basename"
 " 2}}}
-
-" MRU {{{2
-" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let s:buffergator_track_mru = 1
-let s:buffergator_mru = []
-" 2}}}
-" 1}}}
 
 " Utilities {{{1
 " ==============================================================================
@@ -346,32 +336,6 @@ function! s:_is_full_height_window(win_num)
     endif
 endfunction!
 
-" Moves (or adds) the given buffer number to the top of the list
-function! s:_update_mru(acmd_bufnr)
-    if len(s:buffergator_mru) < 2
-        if g:buffergator_mru_cycle_loop
-            for l:bni in range(bufnr("$"), 1, -1)
-                if buflisted(l:bni)
-                    call add(s:buffergator_mru, l:bni)
-                endif
-            endfor
-        endif
-    endif
-    if !exists("w:buffergator_mru")
-        let w:buffergator_mru = s:buffergator_mru[:]
-    endif
-    if s:buffergator_track_mru
-        let bnum = a:acmd_bufnr + 0
-        if bnum == 0 || !buflisted(bnum)
-            return
-        endif
-        call filter(s:buffergator_mru, 'v:val !=# bnum')
-        call insert(s:buffergator_mru, bnum, 0)
-        call filter(w:buffergator_mru, 'v:val !=# bnum')
-        call insert(w:buffergator_mru, bnum, 0)
-    endif
-endfunction
-
 function! s:_find_mru_bufnr(dir)
     let l:cur_buf_idx = index(w:buffergator_mru, bufnr("%"))
     if len(w:buffergator_mru) < 2
@@ -471,8 +435,8 @@ endfunction
 
 " comparison function used for sorting buffers catalog by mru
 function! s:_compare_dicts_by_mru(m1, m2)
-    let l:i1 = index(s:buffergator_mru, a:m1['bufnum'])
-    let l:i2 = index(s:buffergator_mru, a:m2['bufnum'])
+    let l:i1 = index(g:buffergator_mru, a:m1['bufnum'])
+    let l:i2 = index(g:buffergator_mru, a:m2['bufnum'])
     if l:i1 < l:i2
         return -1
     elseif l:i1 > l:i2
@@ -1807,28 +1771,21 @@ endfunction
 
 " Global Initialization {{{1
 " ==============================================================================
-if exists("s:_buffergator_messenger")
-    unlet s:_buffergator_messenger
-endif
-let s:_buffergator_messenger = s:NewMessenger("")
-let s:_catalog_viewer = s:NewBufferCatalogViewer()
-let s:_tab_catalog_viewer = s:NewTabCatalogViewer()
+function! buffergator#BuffergatorInitialize()
+    if exists("s:_buffergator_messenger")
+        unlet s:_buffergator_messenger
+    endif
+    let s:_buffergator_messenger = s:NewMessenger("")
+    let s:_catalog_viewer = s:NewBufferCatalogViewer()
+    let s:_tab_catalog_viewer = s:NewTabCatalogViewer()
 
-" Autocommands that update the most recenly used buffers
-augroup BufferGatorMRU
-  au!
-  autocmd BufEnter * call s:_update_mru(expand('<abuf>'))
-  autocmd BufRead * call s:_update_mru(expand('<abuf>'))
-  autocmd BufNewFile * call s:_update_mru(expand('<abuf>'))
-  autocmd BufWritePost * call s:_update_mru(expand('<abuf>'))
-augroup NONE
-
-augroup BufferGatorAuto
-  au!
-  autocmd BufDelete * call buffergator#UpdateBuffergator('delete',expand('<abuf>'))
-  autocmd BufEnter * call buffergator#UpdateBuffergator('enter',expand('<abuf>'))
-  autocmd BufWritePost * call buffergator#UpdateBuffergator('writepost',expand('<abuf>'))
-augroup NONE
+    augroup BufferGatorAuto
+    au!
+    autocmd BufDelete * call buffergator#UpdateBuffergator('delete',expand('<abuf>'))
+    autocmd BufEnter * call buffergator#UpdateBuffergator('enter',expand('<abuf>'))
+    autocmd BufWritePost * call buffergator#UpdateBuffergator('writepost',expand('<abuf>'))
+    augroup NONE
+endfunction
 " 1}}}
 
 " Functions Supporting User Commands {{{1
@@ -1836,12 +1793,12 @@ augroup NONE
 
 function! buffergator#BuffergatorEchoMruList(bang)
     if !exists("w:buffergator_mru")
-        let w:buffergator_mru = s:buffergator_mru[:]
+        let w:buffergator_mru = g:buffergator_mru[:]
     endif
     if g:buffergator_mru_cycle_local_to_window
         let l:mru_cycle_list = w:buffergator_mru
     else
-        let l:mru_cycle_list = s:buffergator_mru
+        let l:mru_cycle_list = g:buffergator_mru
     endif
     if empty(a:bang)
         echo l:mru_cycle_list
@@ -1855,12 +1812,12 @@ endfunction
 
 function! buffergator#BuffergatorCycleMru(dir, bufopencmd)
     if !exists("w:buffergator_mru")
-        let w:buffergator_mru = s:buffergator_mru[:]
+        let w:buffergator_mru = g:buffergator_mru[:]
     endif
     if g:buffergator_mru_cycle_local_to_window
         let l:mru_cycle_list = w:buffergator_mru
     else
-        let l:mru_cycle_list = s:buffergator_mru
+        let l:mru_cycle_list = g:buffergator_mru
     endif
     if len(l:mru_cycle_list) < 2
         call s:_buffergator_messenger.send_info("only one buffer available")
@@ -1873,9 +1830,9 @@ function! buffergator#BuffergatorCycleMru(dir, bufopencmd)
         else
             let l:bufopencmd = a:bufopencmd
         endif
-        let s:buffergator_track_mru = 0
+        let g:buffergator_track_mru = 0
         execute "silent keepalt keepjumps " . l:bufopencmd . " " . l:target_buf
-        let s:buffergator_track_mru = 1
+        let g:buffergator_track_mru = 1
     else
         call s:_buffergator_messenger.send_info("no previous/next existing buffers available")
     endif
