@@ -20,10 +20,10 @@
 " Reload and Compatibility Guard {{{1
 " ============================================================================
 " Reload protection.
-" if (exists('g:did_buffergator') && g:did_buffergator) || &cp || version < 700
-"     finish
-" endif
-" let g:did_buffergator = 1
+if (exists('g:did_buffergator') && g:did_buffergator) || &cp || version < 700
+    finish
+endif
+let g:did_buffergator = 1
 
 " avoid line continuation issues (see ':help user_41.txt')
 let s:save_cpo = &cpo
