@@ -42,7 +42,7 @@ function! BuffergatorUpdateMRU(acmd_bufnr)
     if len(g:buffergator_mru) < 2
         if g:buffergator_mru_cycle_loop
             for l:bni in range(bufnr("$"), 1, -1)
-                if buflisted(l:bni)
+                if buflisted(l:bni) && getbufvar(l:bni, "current_syntax") !~ ".*netrw.*"
                     call add(g:buffergator_mru, l:bni)
                 endif
             endfor
