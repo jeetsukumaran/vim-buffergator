@@ -1769,25 +1769,6 @@ function! BuffergatorTabsStatusLine()
 endfunction
 " 1}}}
 
-" Global Initialization {{{1
-" ==============================================================================
-function! buffergator#BuffergatorInitialize()
-    if exists("s:_buffergator_messenger")
-        unlet s:_buffergator_messenger
-    endif
-    let s:_buffergator_messenger = s:NewMessenger("")
-    let s:_catalog_viewer = s:NewBufferCatalogViewer()
-    let s:_tab_catalog_viewer = s:NewTabCatalogViewer()
-
-    augroup BufferGatorAuto
-    au!
-    autocmd BufDelete * call buffergator#UpdateBuffergator('delete',expand('<abuf>'))
-    autocmd BufEnter * call buffergator#UpdateBuffergator('enter',expand('<abuf>'))
-    autocmd BufWritePost * call buffergator#UpdateBuffergator('writepost',expand('<abuf>'))
-    augroup NONE
-endfunction
-" 1}}}
-
 " Functions Supporting User Commands {{{1
 " ==============================================================================
 
@@ -1921,6 +1902,22 @@ function! buffergator#ToggleBuffergatorTabs()
     call s:_catalog_viewer.close(1)
 endfunction
 
+" 1}}}
+
+" Global Initialization {{{1
+" ==============================================================================
+if exists("s:_buffergator_messenger")
+    unlet s:_buffergator_messenger
+endif
+let s:_buffergator_messenger = s:NewMessenger("")
+let s:_catalog_viewer = s:NewBufferCatalogViewer()
+let s:_tab_catalog_viewer = s:NewTabCatalogViewer()
+augroup BufferGatorAuto
+au!
+autocmd BufDelete * call buffergator#UpdateBuffergator('delete',expand('<abuf>'))
+autocmd BufEnter * call buffergator#UpdateBuffergator('enter',expand('<abuf>'))
+autocmd BufWritePost * call buffergator#UpdateBuffergator('writepost',expand('<abuf>'))
+augroup NONE
 " 1}}}
 
 " Restore State {{{1
