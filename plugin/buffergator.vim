@@ -39,10 +39,12 @@ endif
 let g:buffergator_track_mru = 1
 let g:buffergator_mru = []
 function! BuffergatorUpdateMRU(acmd_bufnr)
-    if len(g:buffergator_mru) < 2
+    if len(g:buffergator_mru) < 1 " maybe should be 2?
         if g:buffergator_mru_cycle_loop
+            let g:buffergator_mru = []
             for l:bni in range(bufnr("$"), 1, -1)
-                if buflisted(l:bni) && getbufvar(l:bni, "current_syntax") !~ ".*netrw.*"
+                if buflisted(l:bni)
+                \   && getbufvar(l:bni, "&filetype") != "netrw"
                     call add(g:buffergator_mru, l:bni)
                 endif
             endfor
@@ -53,7 +55,8 @@ function! BuffergatorUpdateMRU(acmd_bufnr)
     endif
     if g:buffergator_track_mru
         let bnum = a:acmd_bufnr + 0
-        if bnum == 0 || !buflisted(bnum)
+        " if bnum == 0 || !buflisted(bnum) || !(empty(getbufvar(bnum, "netrw_browser_active")))
+        if bnum == 0 || !buflisted(bnum) || getbufvar(bnum, "&filetype") == "netrw"
             return
         endif
         call filter(g:buffergator_mru, 'v:val !=# bnum')
@@ -64,11 +67,11 @@ function! BuffergatorUpdateMRU(acmd_bufnr)
 endfunction
 
 " Autocommands that update the most recenly used buffers
-augroup BufferGatorMRU
+augroup BuffergatorMRU
 au!
-autocmd BufEnter * call BuffergatorUpdateMRU(expand('<abuf>'))
-autocmd BufRead * call BuffergatorUpdateMRU(expand('<abuf>'))
-autocmd BufNewFile * call BuffergatorUpdateMRU(expand('<abuf>'))
+autocmd BufEnter     * call BuffergatorUpdateMRU(expand('<abuf>'))
+autocmd BufRead      * call BuffergatorUpdateMRU(expand('<abuf>'))
+autocmd BufNewFile   * call BuffergatorUpdateMRU(expand('<abuf>'))
 autocmd BufWritePost * call BuffergatorUpdateMRU(expand('<abuf>'))
 augroup NONE
 

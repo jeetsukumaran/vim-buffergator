@@ -338,7 +338,7 @@ endfunction!
 
 function! s:_find_mru_bufnr(dir)
     let l:cur_buf_idx = index(w:buffergator_mru, bufnr("%"))
-    if len(w:buffergator_mru) < 2
+    if len(w:buffergator_mru) < 1 " maybe should be 2?
         return bufnr("%")
     endif
     if l:cur_buf_idx < 0
@@ -366,7 +366,7 @@ function! s:_find_mru_bufnr(dir)
         endif
     endif
     let l:target_bufnr = w:buffergator_mru[l:target_buf_idx]
-    if !bufexists(l:target_bufnr)
+    if !bufexists(l:target_bufnr) || !buflisted(l:target_bufnr)
         call remove(w:buffergator_mru, l:target_buf_idx)
         return s:_find_mru_bufnr(a:dir)
     else
