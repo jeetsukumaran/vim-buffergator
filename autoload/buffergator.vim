@@ -366,7 +366,9 @@ function! s:_find_mru_bufnr(dir)
         endif
     endif
     let l:target_bufnr = w:buffergator_mru[l:target_buf_idx]
-    if !bufexists(l:target_bufnr) || !buflisted(l:target_bufnr)
+    if !bufexists(l:target_bufnr)
+                \ || !buflisted(l:target_bufnr)
+                \ || getbufvar(l:target_bufnr, "&filetype") == "netrw"
         call remove(w:buffergator_mru, l:target_buf_idx)
         return s:_find_mru_bufnr(a:dir)
     else
