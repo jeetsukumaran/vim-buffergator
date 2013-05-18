@@ -966,7 +966,7 @@ function! s:NewCatalogViewer(name, title)
         else
             let g:buffergator_viewport_split_policy = s:buffergator_viewport_split_modes_cycle_list[l:cur_mode]
         endif
-        call s:ReopenBuffergator()
+        call buffergator#ReopenBuffergator()
     endfunction
 
     " Cycles autodismiss modes
