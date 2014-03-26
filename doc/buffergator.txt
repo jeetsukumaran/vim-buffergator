@@ -277,6 +277,11 @@ g:buffergator_autoexpand_on_split~
     If true and running in GUI mode, then the application screen will be expanded
     to accommodate the Buffergator window.
 
+g:buffergator_autoupdate~
+    Default: 0
+    If true, then the Buffergator window will be updated when the buffer list
+    changes.
+
 g:buffergator_split_size~
     Default: 40
     If greater than 0, this will be the width of the Buffergator window in any
