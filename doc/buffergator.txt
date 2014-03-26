@@ -9,7 +9,7 @@ CONTENTS~
     3. Key Mappings (Global) .................. |buffergator-global-keys|
     4. Key Mappings (Buffer Catalog) .......... |buffergator-buffer-keys|
     5. Key Mappings (Tab Page Catalog) ........ |buffergator-tabpage-keys|
-    5. Options and Settings ................... |buffergator-options|
+    6. Options and Settings ................... |buffergator-options|
 
 ===============================================================================
                                                       *buffergator-introduction*
