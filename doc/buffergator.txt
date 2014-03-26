@@ -310,7 +310,7 @@ g:buffergator_sort_regime~
 
 g:buffergator_display_regime~
     Default: "basename"
-    Sets the default sort regime for buffer listing:
+    Sets the default display regime for buffer listing:
         "basename": display buffer basename first,
                     followed by directory [default]
         "filepath": display full buffer filepath
