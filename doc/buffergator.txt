@@ -111,6 +111,7 @@ Catalog Management~
 
 cs                  Cycle through sort regimes.
 cd                  Cycle through display regimes.
+cp                  Toggle showing full paths (only "basename" display regime)
 cw                  Cycle through window (viewport) split modes.
 cq                  Cycle through quit (autodismiss-on-select) policies.
 r                   Update (rebuild/refresh) index.
@@ -314,6 +315,12 @@ g:buffergator_display_regime~
                     followed by directory [default]
         "filepath": display full buffer filepath
         "bufname": display buffer name
+
+g:buffergator_show_full_directory_path~
+    Default: 1
+    If true, then show the full path of each buffer. Otherwise, show the
+    relative path.
+    Only relevant when the display regime is "basename".
 
 g:buffergator_suppress_keymaps~
     Default: 0
