@@ -287,7 +287,7 @@ g:buffergator_vsplit_size~
     If greater than 0, this will be the width of the Buffergator window in
     any vertical splitting mode.
 
-g:buffergator_hplit_size~
+g:buffergator_hsplit_size~
     Default: 20
     If greater than 0, this will be the height of the Buffergator window in
     any horizontal splitting mode.
