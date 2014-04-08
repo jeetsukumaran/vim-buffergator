@@ -70,14 +70,14 @@ window. Minimal management of buffers (wiping/dropping) are also provided.
 
 Buffergator also provides a way to list tab pages and buffers associated with
 windows in tab pages (the "tab page catalog", which can be invoked using the
-command ":BuffergatorTabsOpen" or the provided key mapping, "<Leader>t").
+command ":BuffergatorTabsOpen" or the provided key mapping, "<Leader>to").
 
 The buffer listing can be sorted alphabetically by filename, by full filepath,
 by extension followed by filename, or by most-recently used (MRU).
 
 By default, Buffergator provides global key maps that invoke its main commands:
 "<Leader>b" to open and "<Leader>B" to close the buffer catalog, and
-"<Leader>t" to open and "<Leader>T" to close the tab page catalog.  In
+"<Leader>to" to open and "<Leader>tc" to close the tab page catalog.  In
 addition, in normal mode from any buffer, you can flip through the MRU
 (most-recently-used) buffer list without opening the buffer catalog by using
 the "[b" (or <M-b>) and "]b" (or <M-S-b>) keys.  If you prefer to map other
