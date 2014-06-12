@@ -1838,9 +1838,8 @@ endfunction
 
 function! buffergator#UpdateBuffergator(event, affected)
     if !(g:buffergator_autoupdate)
-      return
+        return
     endif
-
     let l:calling = bufnr("%")
     let l:self_call = 0
     let l:buffergators = s:_find_buffers_with_var("is_buffergator_buffer",1)
@@ -1850,34 +1849,39 @@ function! buffergator#UpdateBuffergator(event, affected)
     " buffer is actually deleted. - preemptively remove the buffer from
     " the list if this is a delete event
     if a:event == "delete"
-      call filter(s:_catalog_viewer.buffers_catalog,'v:val["bufnum"] != ' . a:affected)
+        call filter(s:_catalog_viewer.buffers_catalog,'v:val["bufnum"] != ' . a:affected)
     endif
 
     for l:gator in l:buffergators
-      if bufwinnr(l:gator) > 0
-        if l:calling != l:gator
-          execute bufwinnr(l:gator) . "wincmd w"
-        else
-          let l:self_call = 1
-        endif
+        if bufwinnr(l:gator) > 0
+            if l:calling != l:gator
+                execute bufwinnr(l:gator) . "wincmd w"
+            else
+                let l:self_call = 1
+            endif
 
-        " do not execute for tab view catalogs
-        if has_key(b:buffergator_catalog_viewer, "tab_catalog")
-          continue
-        endif
+            " do not execute for tab view catalogs
+            if has_key(b:buffergator_catalog_viewer, "tab_catalog")
+                continue
+            endif
 
-        call s:_catalog_viewer.render_buffer()
+            call s:_catalog_viewer.render_buffer()
 
-        if !l:self_call
-          call s:_catalog_viewer.highlight_current_line()
+            if !l:self_call
+                call s:_catalog_viewer.highlight_current_line()
+            endif
         endif
-      endif
     endfor
-
     if exists("b:is_buffergator_buffer") && !l:self_call
-      execute "wincmd p"
+        try
+            execute "wincmd p"
+        catch //
+        endtry
     elseif a:event == 'delete' && !l:self_call
-      execute "wincmd ^"
+        try
+            execute "wincmd ^"
+        catch //
+        endtry
     endif
 endfunction
 
