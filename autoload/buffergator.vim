@@ -1354,7 +1354,7 @@ function! s:NewBufferCatalogViewer()
             return 0
         endif
         let l:cur_tab_num = tabpagenr()
-        if !a:keep_catalog
+        if (self.split_mode != "buffer" || !empty(a:split_cmd)) && !a:keep_catalog
             call self.close(0)
         endif
         call self.visit_buffer(l:jump_to_bufnum, a:split_cmd)
