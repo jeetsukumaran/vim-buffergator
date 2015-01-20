@@ -101,8 +101,13 @@ if !exists('g:buffergator_suppress_keymaps') || !g:buffergator_suppress_keymaps
     if !exists('g:buffergator_suppress_mru_switching_keymaps') || !g:buffergator_suppress_mru_switching_keymaps
         nnoremap <silent> <M-b> :BuffergatorMruCyclePrev<CR>
         nnoremap <silent> <M-S-b> :BuffergatorMruCycleNext<CR>
-        nnoremap <silent> [b :BuffergatorMruCyclePrev<CR>
-        nnoremap <silent> ]b :BuffergatorMruCycleNext<CR>
+        if !exists('g:buffergator_keep_old_mru_switching_keymaps') || !g:buffergator_keep_old_mru_switching_keymaps
+            nnoremap <silent> gb :BuffergatorMruCyclePrev<CR>
+            nnoremap <silent> gB :BuffergatorMruCycleNext<CR>
+        else
+            nnoremap <silent> [b :BuffergatorMruCyclePrev<CR>
+            nnoremap <silent> ]b :BuffergatorMruCycleNext<CR>
+        endif
     endif
     if !exists('g:buffergator_suppress_mru_switch_into_splits_keymaps') || !g:buffergator_suppress_mru_switch_into_splits_keymaps
         nnoremap <silent> <Leader><LEFT> :BuffergatorMruCyclePrev leftabove vert sbuffer<CR>

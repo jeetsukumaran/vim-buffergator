@@ -9,7 +9,7 @@ Summary
     - <C-S> to edit the selected buffer in a new horizontal split
     - <C-T> to edit the selected buffer in a new tab page
 
-- Use `[b` (or <M-b>) and `]b` (or <M-S-b>) to flip through the most-recently
+- Use `gb` (or <M-b>) and `gB` (or <M-S-b>) to flip through the most-recently
   used buffer stack without opening the buffer listing "drawer".
 - Use `<Leader><LEFT>`, `<Leader><UP>`, `<Leader><RIGHT>`, `<Leader><DOWN>` to
   split a new window left, up, right, or down, respectively, and edit the
