@@ -199,23 +199,23 @@ buffer.
 
 eo                  If currently-selected buffer (or, if [count] is
                     given, buffer with number [count]), is showing in an existing
-                    viewport on this or any other tab page, go it it;
+                    viewport on this or any other tab page, go to it;
                     otherwise show it in the previous window.
 es                  If currently-selected buffer (or, if [count] is
                     given, buffer with number [count]), is showing in an existing
-                    viewport on this or any other tab page, go it it;
+                    viewport on this or any other tab page, go to it;
                     otherwise show it in a new vertical split.
 ei                  If currently-selected buffer (or, if [count] is
                     given, buffer with number [count]), is showing in an existing
-                    viewport on this or any other tab page, go it it;
+                    viewport on this or any other tab page, go to it;
                     otherwise show it in a new horizontal split.
 et                  If currently-selected buffer (or, if [count] is
                     given, buffer with number [count]), is showing in an existing
-                    viewport on this or any other tab page, go it it;
+                    viewport on this or any other tab page, go to it;
                     otherwise show it in a new tab page.
 E                   If currently-selected buffer (or, if [count] is
                     given, buffer with number [count]), is showing in an existing
-                    viewport on this or any other tab page, go it it;
+                    viewport on this or any other tab page, go to it;
                     otherwise do nothing.
 
 -------------------------------------------------------------------------------
