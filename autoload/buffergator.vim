@@ -151,6 +151,13 @@ let s:buffergator_catalog_display_regime_desc = {
 let s:buffergator_default_display_regime = "basename"
 " 2}}}
 
+
+" Window Open States {{{2
+" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+let s:is_buffergator_tabs_open = 0
+let s:is_buffergator_buffers_open = 0
+" 2}}}
+
 " Utilities {{{1
 " ==============================================================================
 
@@ -1822,16 +1829,13 @@ function! buffergator#BuffergatorCycleMru(dir, bufopencmd)
 endfunction
 
 function! buffergator#OpenBuffergator()
-    call s:_catalog_viewer.close(0)
-    call s:_catalog_viewer.open()
-endfunction
-
-function! buffergator#OpenBuffergator()
+    let s:is_buffergator_buffers_open = 1
     call s:_catalog_viewer.close(0)
     call s:_catalog_viewer.open()
 endfunction
 
 function! buffergator#ReopenBuffergator()
+    let s:is_buffergator_buffers_open = 1
     call s:_catalog_viewer.close(1)
     call s:_catalog_viewer.open()
 endfunction
@@ -1885,27 +1889,41 @@ function! buffergator#UpdateBuffergator(event, affected)
     endif
 endfunction
 
-function! buffergator#OpenBuffergatorTabs()
-    call s:_catalog_viewer.close(1)
-    call s:_tab_catalog_viewer.open(1)
-endfunction
-
 function! buffergator#CloseBuffergator()
+    let s:is_buffergator_buffers_open = 0
     call s:_catalog_viewer.close(1)
-    call s:_tab_catalog_viewer.close(1)
 endfunction
 
 function! buffergator#ToggleBuffergator()
-    call s:_tab_catalog_viewer.close(1)
-    call s:_catalog_viewer.toggle()
+    if s:is_buffergator_buffers_open
+        call buffergator#CloseBuffergator()
+    else
+        if s:is_buffergator_tabs_open
+            call buffergator#CloseBuffergatorTabs()
+        endif
+        call buffergator#OpenBuffergator()
+    endif
+endfunction
+
+function! buffergator#OpenBuffergatorTabs()
+    let s:is_buffergator_tabs_open = 1
+    call s:_tab_catalog_viewer.open()
 endfunction
 
 function! buffergator#CloseBuffergatorTabs()
+    let s:is_buffergator_tabs_open = 0
     call s:_tab_catalog_viewer.close(1)
 endfunction
 
 function! buffergator#ToggleBuffergatorTabs()
-    call s:_catalog_viewer.close(1)
+    if s:is_buffergator_tabs_open
+        call buffergator#CloseBuffergatorTabs()
+    else
+        if s:is_buffergator_buffers_open
+            call buffergator#CloseBuffergator()
+        endif
+        call buffergator#OpenBuffergatorTabs()
+    endif
 endfunction
 
 " 1}}}

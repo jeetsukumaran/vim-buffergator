@@ -91,7 +91,8 @@ command! -nargs=* BuffergatorMruCycleNext :call buffergator#BuffergatorCycleMru(
 command! -nargs=? -bang BuffergatorMruList     :call buffergator#BuffergatorEchoMruList('<bang>')
 
 if !exists('g:buffergator_suppress_keymaps') || !g:buffergator_suppress_keymaps
-    " nnoremap <silent> <Leader><Leader> :BuffergatorToggle<CR>
+    " nnoremap <silent> z; :BuffergatorToggle<CR>
+    " nnoremap <silent> z: :BuffergatorTabsToggle<CR>
     nnoremap <silent> <Leader>b :BuffergatorOpen<CR>
     nnoremap <silent> <Leader>B :BuffergatorClose<CR>
     nnoremap <silent> <Leader>t :BuffergatorTabsOpen<CR>
