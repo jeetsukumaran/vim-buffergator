@@ -228,49 +228,49 @@ endfunction
 function! s:NewMessenger(name)
 
     " allocate a new pseudo-object
-    let l:messenger = {}
-    let l:messenger["name"] = a:name
+    let messenger = {}
+    let messenger["name"] = a:name
     if empty(a:name)
-        let l:messenger["title"] = "buffergator"
+        let messenger["title"] = "buffergator"
     else
-        let l:messenger["title"] = "buffergator (" . l:messenger["name"] . ")"
+        let messenger["title"] = "buffergator (" . messenger["name"] . ")"
     endif
 
-    function! l:messenger.format_message(leader, msg) dict
+    function! messenger.format_message(leader, msg) dict
         return self.title . ": " . a:leader.a:msg
     endfunction
 
-    function! l:messenger.format_exception( msg) dict
+    function! messenger.format_exception( msg) dict
         return a:msg
     endfunction
 
-    function! l:messenger.send_error(msg) dict
+    function! messenger.send_error(msg) dict
         redraw
         echohl ErrorMsg
         echomsg self.format_message("[ERROR] ", a:msg)
         echohl None
     endfunction
 
-    function! l:messenger.send_warning(msg) dict
+    function! messenger.send_warning(msg) dict
         redraw
         echohl WarningMsg
         echomsg self.format_message("[WARNING] ", a:msg)
         echohl None
     endfunction
 
-    function! l:messenger.send_status(msg) dict
+    function! messenger.send_status(msg) dict
         redraw
         echohl None
         echomsg self.format_message("", a:msg)
     endfunction
 
-    function! l:messenger.send_info(msg) dict
+    function! messenger.send_info(msg) dict
         redraw
         echohl None
         echo self.format_message("", a:msg)
     endfunction
 
-    return l:messenger
+    return messenger
 
 endfunction
 " 2}}}
@@ -465,26 +465,26 @@ endfunction
 function! s:NewCatalogViewer(name, title)
 
     " initialize
-    let l:catalog_viewer = {}
-    let l:catalog_viewer["bufname"] = a:name
-    let l:catalog_viewer["title"] = a:title
+    let catalog_viewer = {}
+    let catalog_viewer["bufname"] = a:name
+    let catalog_viewer["title"] = a:title
     let l:buffergator_bufs = s:_find_buffers_with_var("is_buffergator_buffer", 1)
     if len(l:buffergator_bufs) > 0
-        let l:catalog_viewer["bufnum"] = l:buffergator_bufs[0]
+        let catalog_viewer["bufnum"] = l:buffergator_bufs[0]
     endif
-    let l:catalog_viewer["jump_map"] = {}
-    let l:catalog_viewer["split_mode"] = s:_get_split_mode()
-    let l:catalog_viewer["sort_regime"] = g:buffergator_sort_regime
-    let l:catalog_viewer["display_regime"] = g:buffergator_display_regime
-    let l:catalog_viewer["is_zoomed"] = 0
-    let l:catalog_viewer["columns_expanded"] = 0
-    let l:catalog_viewer["lines_expanded"] = 0
-    let l:catalog_viewer["max_buffer_basename_len"] = 30
+    let catalog_viewer["jump_map"] = {}
+    let catalog_viewer["split_mode"] = s:_get_split_mode()
+    let catalog_viewer["sort_regime"] = g:buffergator_sort_regime
+    let catalog_viewer["display_regime"] = g:buffergator_display_regime
+    let catalog_viewer["is_zoomed"] = 0
+    let catalog_viewer["columns_expanded"] = 0
+    let catalog_viewer["lines_expanded"] = 0
+    let catalog_viewer["max_buffer_basename_len"] = 30
 
     " Initialize object state.
-    let l:catalog_viewer["bufnum"] = -1
+    let catalog_viewer["bufnum"] = -1
 
-    function! l:catalog_viewer.line_symbols(bufinfo) dict
+    function! catalog_viewer.line_symbols(bufinfo) dict
       let l:line_symbols = ""
       " so we can control the order they are shown in
       let l:noted_status = s:buffergator_buffer_line_symbols_order
@@ -498,7 +498,7 @@ function! s:NewCatalogViewer(name, title)
       return l:line_symbols
     endfunction
 
-    function! l:catalog_viewer.list_buffers() dict
+    function! catalog_viewer.list_buffers() dict
         let bcat = []
         redir => buffers_output
         execute('silent ls')
@@ -585,7 +585,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Opens viewer if closed, closes viewer if open.
-    function! l:catalog_viewer.toggle() dict
+    function! catalog_viewer.toggle() dict
         " get buffer number of the catalog view buffer, creating it if neccessary
         if self.bufnum < 0 || !bufexists(self.bufnum)
             call self.open()
@@ -600,7 +600,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Creates a new buffer, renders and opens it.
-    function! l:catalog_viewer.create_buffer() dict
+    function! catalog_viewer.create_buffer() dict
         " get a new buf reference
         let self.bufnum = bufnr(self.bufname, 1)
         " get a viewport onto it
@@ -614,7 +614,7 @@ function! s:NewCatalogViewer(name, title)
     " Opens a viewport on the buffer according, creating it if neccessary
     " according to the spawn mode. Valid buffer number must already have been
     " obtained before this is called.
-    function! l:catalog_viewer.activate_viewport() dict
+    function! catalog_viewer.activate_viewport() dict
         let l:bfwn = bufwinnr(self.bufnum)
         if l:bfwn == winnr()
             " viewport wth buffer already active and current
@@ -638,7 +638,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Sets up buffer environment.
-    function! l:catalog_viewer.initialize_buffer() dict
+    function! catalog_viewer.initialize_buffer() dict
         call self.claim_buffer()
         call self.setup_buffer_opts()
         call self.setup_buffer_syntax()
@@ -649,7 +649,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " 'Claims' a buffer by setting it to point at self.
-    function! l:catalog_viewer.claim_buffer() dict
+    function! catalog_viewer.claim_buffer() dict
         call setbufvar("%", "is_buffergator_buffer", 1)
         call setbufvar("%", "buffergator_catalog_viewer", self)
         call setbufvar("%", "buffergator_last_render_time", 0)
@@ -657,7 +657,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " 'Unclaims' a buffer by stripping all buffergator vars
-    function! l:catalog_viewer.unclaim_buffer() dict
+    function! catalog_viewer.unclaim_buffer() dict
         for l:var in ["is_buffergator_buffer",
                     \ "buffergator_catalog_viewer",
                     \ "buffergator_last_render_time",
@@ -670,7 +670,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Sets buffer options.
-    function! l:catalog_viewer.setup_buffer_opts() dict
+    function! catalog_viewer.setup_buffer_opts() dict
         setlocal buftype=nofile
         setlocal noswapfile
         setlocal nowrap
@@ -685,7 +685,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Sets buffer commands.
-    function! l:catalog_viewer.setup_buffer_commands() dict
+    function! catalog_viewer.setup_buffer_commands() dict
         " command! -bang -nargs=* Bdfilter :call b:buffergator_catalog_viewer.set_filter('<bang>', <q-args>)
         augroup BuffergatorCatalogViewer
             au!
@@ -693,7 +693,7 @@ function! s:NewCatalogViewer(name, title)
         augroup END
     endfunction
 
-    function! l:catalog_viewer.disable_editing_keymaps() dict
+    function! catalog_viewer.disable_editing_keymaps() dict
         """" Disabling of unused modification keys
         for key in [".", "p", "P", "C", "x", "X", "r", "R", "i", "I", "a", "A", "D", "S", "U"]
             try
@@ -704,7 +704,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Sets buffer folding.
-    function! l:catalog_viewer.setup_buffer_folding() dict
+    function! catalog_viewer.setup_buffer_folding() dict
         " if has("folding")
         "     "setlocal foldcolumn=3
         "     setlocal foldmethod=syntax
@@ -717,7 +717,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Close and quit the viewer.
-    function! l:catalog_viewer.close(restore_prev_window) dict
+    function! catalog_viewer.close(restore_prev_window) dict
         if self.bufnum < 0 || !bufexists(self.bufnum)
             return
         endif
@@ -738,7 +738,7 @@ function! s:NewCatalogViewer(name, title)
         execute("bwipe " . self.bufnum)
     endfunction
 
-    function! l:catalog_viewer.expand_screen() dict
+    function! catalog_viewer.expand_screen() dict
         if has("gui_running") && g:buffergator_autoexpand_on_split
             if g:buffergator_viewport_split_policy =~ '[RL]' && g:buffergator_vsplit_size
                 let self.pre_expand_columns = &columns
@@ -757,7 +757,7 @@ function! s:NewCatalogViewer(name, title)
         endif
     endfunction
 
-    function! l:catalog_viewer.contract_screen() dict
+    function! catalog_viewer.contract_screen() dict
         if self.columns_expanded
                     \ && &columns - self.columns_expanded > 20
             let new_size  = &columns - self.columns_expanded
@@ -776,7 +776,7 @@ function! s:NewCatalogViewer(name, title)
         endif
     endfunction
 
-    function! l:catalog_viewer.highlight_current_line()
+    function! catalog_viewer.highlight_current_line()
         if self.current_buffer_index
           execute ":" . self.current_buffer_index
           if self.current_buffer_index < line('w0')
@@ -788,14 +788,14 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Clears the buffer contents.
-    function! l:catalog_viewer.clear_buffer() dict
+    function! catalog_viewer.clear_buffer() dict
         call cursor(1, 1)
         exec 'silent! normal! "_dG'
     endfunction
 
     " from NERD_Tree, via VTreeExplorer: determine the number of windows open
     " to this buffer number.
-    function! l:catalog_viewer.num_viewports_on_buffer(bnum) dict
+    function! catalog_viewer.num_viewports_on_buffer(bnum) dict
         let cnt = 0
         let winnum = 1
         while 1
@@ -812,7 +812,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " from NERD_Tree: find the window number of the first normal window
-    function! l:catalog_viewer.first_usable_viewport() dict
+    function! catalog_viewer.first_usable_viewport() dict
         let i = 1
         while i <= winnr("$")
             let bnum = winbufnr(i)
@@ -829,7 +829,7 @@ function! s:NewCatalogViewer(name, title)
 
     " from NERD_Tree: returns 0 if opening a file from the tree in the given
     " window requires it to be split, 1 otherwise
-    function! l:catalog_viewer.is_usable_viewport(winnumber) dict
+    function! catalog_viewer.is_usable_viewport(winnumber) dict
         "gotta split if theres only one window (i.e. the NERD tree)
         if winnr("$") ==# 1
             return 0
@@ -852,7 +852,7 @@ function! s:NewCatalogViewer(name, title)
 
     " Acquires a viewport to show the source buffer. Returns the split command
     " to use when switching to the buffer.
-    function! l:catalog_viewer.acquire_viewport(split_cmd)
+    function! catalog_viewer.acquire_viewport(split_cmd)
         if self.split_mode == "buffer" && empty(a:split_cmd)
             " buffergator used original buffer's viewport,
             " so the the buffergator viewport is the viewport to use
@@ -884,7 +884,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Finds next occurrence of specified pattern.
-    function! l:catalog_viewer.goto_pattern(pattern, direction) dict range
+    function! catalog_viewer.goto_pattern(pattern, direction) dict range
         if a:direction == "b" || a:direction == "p"
             let l:flags = "b"
             " call cursor(line(".")-1, 0)
@@ -919,7 +919,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Cycles sort regime.
-    function! l:catalog_viewer.cycle_sort_regime() dict
+    function! catalog_viewer.cycle_sort_regime() dict
         let l:cur_regime = index(s:buffergator_catalog_sort_regimes, self.sort_regime)
         let l:cur_regime += 1
         if l:cur_regime < 0 || l:cur_regime >= len(s:buffergator_catalog_sort_regimes)
@@ -933,7 +933,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Cycles full/relative paths
-    function! l:catalog_viewer.cycle_directory_path_display() dict
+    function! catalog_viewer.cycle_directory_path_display() dict
         if self.display_regime != "basename"
             call s:_buffergator_messenger.send_info("cycling full/relative directory paths only makes sense when using the 'basename' display regime")
             return
@@ -950,7 +950,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Cycles display regime.
-    function! l:catalog_viewer.cycle_display_regime() dict
+    function! catalog_viewer.cycle_display_regime() dict
         let l:cur_regime = index(s:buffergator_catalog_display_regimes, self.display_regime)
         let l:cur_regime += 1
         if l:cur_regime < 0 || l:cur_regime >= len(s:buffergator_catalog_display_regimes)
@@ -965,7 +965,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Cycles window regime.
-    function! l:catalog_viewer.cycle_viewport_modes() dict
+    function! catalog_viewer.cycle_viewport_modes() dict
         let l:cur_mode = index(s:buffergator_viewport_split_modes_cycle_list, g:buffergator_viewport_split_policy)
         let l:cur_mode += 1
         if l:cur_mode < 0 || l:cur_mode >= len(s:buffergator_viewport_split_modes_cycle_list)
@@ -977,7 +977,7 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Cycles autodismiss modes
-    function! l:catalog_viewer.cycle_autodismiss_modes() dict
+    function! catalog_viewer.cycle_autodismiss_modes() dict
         if (g:buffergator_autodismiss_on_select)
             let g:buffergator_autodismiss_on_select = 0
         call s:_buffergator_messenger.send_info("will stay open on selection (autodismiss-on-select: OFF)")
@@ -988,12 +988,12 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " Rebuilds catalog.
-    function! l:catalog_viewer.rebuild_catalog() dict
+    function! catalog_viewer.rebuild_catalog() dict
         call self.open(1)
     endfunction
 
     " Zooms/unzooms window.
-    function! l:catalog_viewer.toggle_zoom() dict
+    function! catalog_viewer.toggle_zoom() dict
         let l:bfwn = bufwinnr(self.bufnum)
         if l:bfwn < 0
             return
@@ -1040,28 +1040,28 @@ function! s:NewCatalogViewer(name, title)
     endfunction
 
     " functions to be implemented by derived classes
-    function! l:catalog_viewer.update_buffers_info() dict
+    function! catalog_viewer.update_buffers_info() dict
     endfunction
 
-    function! l:catalog_viewer.open(...) dict
+    function! catalog_viewer.open(...) dict
     endfunction
 
-    function! l:catalog_viewer.setup_buffer_syntax() dict
+    function! catalog_viewer.setup_buffer_syntax() dict
     endfunction
 
-    function! l:catalog_viewer.setup_buffer_keymaps() dict
+    function! catalog_viewer.setup_buffer_keymaps() dict
     endfunction
 
-    function! l:catalog_viewer.render_buffer() dict
+    function! catalog_viewer.render_buffer() dict
     endfunction
 
-    function! l:catalog_viewer.setup_buffer_statusline() dict
+    function! catalog_viewer.setup_buffer_statusline() dict
     endfunction
 
-    function! l:catalog_viewer.append_line(text, jump_to_bufnum) dict
+    function! catalog_viewer.append_line(text, jump_to_bufnum) dict
     endfunction
 
-    return l:catalog_viewer
+    return catalog_viewer
 
 endfunction
 
@@ -1072,13 +1072,13 @@ endfunction
 function! s:NewBufferCatalogViewer()
 
     " initialize
-    let l:catalog_viewer = s:NewCatalogViewer("[[buffergator-buffers]]", "buffergator")
-    let l:catalog_viewer["calling_bufnum"] = -1
-    let l:catalog_viewer["buffers_catalog"] = {}
-    let l:catalog_viewer["current_buffer_index"] = -1
+    let catalog_viewer = s:NewCatalogViewer("[[buffergator-buffers]]", "buffergator")
+    let catalog_viewer["calling_bufnum"] = -1
+    let catalog_viewer["buffers_catalog"] = {}
+    let catalog_viewer["current_buffer_index"] = -1
 
     " Populates the buffer list
-    function! l:catalog_viewer.update_buffers_info() dict
+    function! catalog_viewer.update_buffers_info() dict
         let self.buffers_catalog = self.list_buffers()
         return self.buffers_catalog
     endfunction
@@ -1087,7 +1087,7 @@ function! s:NewBufferCatalogViewer()
     " First argument, if given, should be false if the buffers info is *not*
     " to be repopulated; defaults to 1
     " Second argument, if given, should be number of calling window.
-    function! l:catalog_viewer.open(...) dict
+    function! catalog_viewer.open(...) dict
         " populate data
         if (a:0 == 0 || a:1 > 0)
             call self.update_buffers_info()
@@ -1118,7 +1118,7 @@ function! s:NewBufferCatalogViewer()
 
 
     " Sets buffer syntax.
-    function! l:catalog_viewer.setup_buffer_syntax() dict
+    function! catalog_viewer.setup_buffer_syntax() dict
         if has("syntax") && (!exists('b:did_syntax') || !b:did_syntax)
             syntax clear
             syn region BuffergatorFileLine start='^' keepend oneline end='$'
@@ -1152,7 +1152,7 @@ function! s:NewBufferCatalogViewer()
       endfunction
 
     " Sets buffer key maps.
-    function! l:catalog_viewer.setup_buffer_keymaps() dict
+    function! catalog_viewer.setup_buffer_keymaps() dict
 
         call self.disable_editing_keymaps()
 
@@ -1261,7 +1261,7 @@ function! s:NewBufferCatalogViewer()
     endfunction
 
     " Populates the buffer with the catalog index.
-    function! l:catalog_viewer.render_buffer() dict
+    function! catalog_viewer.render_buffer() dict
         setlocal modifiable
         call self.claim_buffer()
         call self.clear_buffer()
@@ -1310,7 +1310,7 @@ function! s:NewBufferCatalogViewer()
     " visible there. If not, then it looks for the first window with the
     " buffer showing and visits it there. If no windows are showing the
     " buffer, ... ?
-    function! l:catalog_viewer.visit_buffer(bufnum, split_cmd) dict
+    function! catalog_viewer.visit_buffer(bufnum, split_cmd) dict
         " acquire window
         let l:split_cmd = self.acquire_viewport(a:split_cmd)
         " switch to buffer in acquired window
@@ -1328,7 +1328,7 @@ function! s:NewBufferCatalogViewer()
         let &switchbuf=l:old_switch_buf
     endfunction
 
-    function! l:catalog_viewer.get_target_bufnum(cmd_count) dict
+    function! catalog_viewer.get_target_bufnum(cmd_count) dict
         if a:cmd_count == 0
             let l:cur_line = line(".")
             if !has_key(l:self.jump_map, l:cur_line)
@@ -1355,7 +1355,7 @@ function! s:NewBufferCatalogViewer()
     endfunction
 
     " Go to the selected buffer.
-    function! l:catalog_viewer.visit_target(keep_catalog, refocus_catalog, split_cmd) dict range
+    function! catalog_viewer.visit_target(keep_catalog, refocus_catalog, split_cmd) dict range
         let l:jump_to_bufnum = self.get_target_bufnum(v:count)
         if l:jump_to_bufnum == -1
             return 0
@@ -1374,7 +1374,7 @@ function! s:NewBufferCatalogViewer()
 
     " Go to the selected buffer, preferentially using a window that already is
     " showing it; if not, create a window using split_cmd
-    function! l:catalog_viewer.visit_open_target(unconditional, keep_catalog, split_cmd) dict range
+    function! catalog_viewer.visit_open_target(unconditional, keep_catalog, split_cmd) dict range
         let l:jump_to_bufnum = self.get_target_bufnum(v:count)
         if l:jump_to_bufnum == -1
             return 0
@@ -1405,7 +1405,7 @@ function! s:NewBufferCatalogViewer()
         endif
     endfunction
 
-    function! l:catalog_viewer.delete_target(wipe, force) dict range
+    function! catalog_viewer.delete_target(wipe, force) dict range
         let l:bufnum_to_delete = self.get_target_bufnum(v:count)
         if l:bufnum_to_delete == -1
             return 0
@@ -1522,7 +1522,7 @@ function! s:NewBufferCatalogViewer()
     endfunction
 
     " Finds next line with occurrence of a rendered index
-    function! l:catalog_viewer.goto_index_entry(direction, visit_target, refocus_catalog) dict range
+    function! catalog_viewer.goto_index_entry(direction, visit_target, refocus_catalog) dict range
         if v:count > 0
             let l:target_bufnum = v:count
             if bufnr(l:target_bufnum) == -1
@@ -1551,12 +1551,12 @@ function! s:NewBufferCatalogViewer()
     endfunction
 
     " Sets buffer status line.
-    function! l:catalog_viewer.setup_buffer_statusline() dict
+    function! catalog_viewer.setup_buffer_statusline() dict
         setlocal statusline=%{BuffergatorBuffersStatusLine()}
     endfunction
 
     " Appends a line to the buffer and registers it in the line log.
-    function! l:catalog_viewer.append_line(text, jump_to_bufnum) dict
+    function! catalog_viewer.append_line(text, jump_to_bufnum) dict
         let l:line_map = {
                     \ "target" : [a:jump_to_bufnum],
                     \ }
@@ -1568,7 +1568,7 @@ function! s:NewBufferCatalogViewer()
     endfunction
 
     " return object
-    return l:catalog_viewer
+    return catalog_viewer
 
 
 endfunction
@@ -1579,13 +1579,13 @@ endfunction
 function! s:NewTabCatalogViewer()
 
     " initialize
-    let l:catalog_viewer = s:NewCatalogViewer("[[buffergator-tabs]]", "buffergator")
-    let l:catalog_viewer["tab_catalog"] = []
+    let catalog_viewer = s:NewCatalogViewer("[[buffergator-tabs]]", "buffergator")
+    let catalog_viewer["tab_catalog"] = []
 
     " Opens the buffer for viewing, creating it if needed.
     " First argument, if given, should be false if the buffers info is *not*
     " to be repopulated; defaults to 1
-    function! l:catalog_viewer.open(...) dict
+    function! catalog_viewer.open(...) dict
         " populate data
         if (a:0 == 0 || a:1 > 0)
             call self.update_buffers_info()
@@ -1603,7 +1603,7 @@ function! s:NewTabCatalogViewer()
     endfunction
 
     " Populates the buffer list
-    function! l:catalog_viewer.update_buffers_info() dict
+    function! catalog_viewer.update_buffers_info() dict
         let self.tab_catalog = []
         for tabnum in range(1, tabpagenr('$'))
             call add(self.tab_catalog, tabpagebuflist(tabnum))
@@ -1612,7 +1612,7 @@ function! s:NewTabCatalogViewer()
     endfunction
 
     " Populates the buffer with the catalog index.
-    function! l:catalog_viewer.render_buffer() dict
+    function! catalog_viewer.render_buffer() dict
         setlocal modifiable
         let l:cur_tab_num = tabpagenr()
         call self.claim_buffer()
@@ -1661,7 +1661,7 @@ function! s:NewTabCatalogViewer()
         " call self.goto_index_entry("n", 0, 1)
     endfunction
 
-    function! l:catalog_viewer.setup_buffer_syntax() dict
+    function! catalog_viewer.setup_buffer_syntax() dict
         if has("syntax") && !(exists('b:did_syntax'))
             syn match BuffergatorTabPageLine '^TAB PAGE \d\+\:$'
             " syn match BuffergatorTabPageLineStart '^==== Tab Page \[' nextgroup=BuffergatorTabPageNumber
@@ -1688,7 +1688,7 @@ function! s:NewTabCatalogViewer()
         endif
     endfunction
 
-    function! l:catalog_viewer.setup_buffer_keymaps() dict
+    function! catalog_viewer.setup_buffer_keymaps() dict
 
         call self.disable_editing_keymaps()
 
@@ -1709,7 +1709,7 @@ function! s:NewTabCatalogViewer()
     endfunction
 
     " Appends a line to the buffer and registers it in the line log.
-    function! l:catalog_viewer.append_line(text, jump_to_tabnum, jump_to_winnum) dict
+    function! catalog_viewer.append_line(text, jump_to_tabnum, jump_to_winnum) dict
         let l:line_map = {
                     \ "target" : [a:jump_to_tabnum, a:jump_to_winnum],
                     \ }
@@ -1720,7 +1720,7 @@ function! s:NewTabCatalogViewer()
         call append(line("$")-1, a:text)
     endfunction
 
-    function! l:catalog_viewer.goto_index_entry(direction) dict
+    function! catalog_viewer.goto_index_entry(direction) dict
         let l:ok = self.goto_pattern("^T", a:direction)
         execute("normal! zz")
         " if l:ok && a:visit_target
@@ -1728,13 +1728,13 @@ function! s:NewTabCatalogViewer()
         " endif
     endfunction
 
-    function! l:catalog_viewer.goto_win_entry(direction) dict
+    function! catalog_viewer.goto_win_entry(direction) dict
         let l:ok = self.goto_pattern('^\[', a:direction)
         execute("normal! zz")
     endfunction
 
     " Go to the selected buffer.
-    function! l:catalog_viewer.visit_target() dict
+    function! catalog_viewer.visit_target() dict
         let l:cur_line = line(".")
         if !has_key(l:self.jump_map, l:cur_line)
             call s:_buffergator_messenger.send_info("Not a valid navigation line")
@@ -1747,12 +1747,12 @@ function! s:NewTabCatalogViewer()
         " call s:_buffergator_messenger.send_info(expand(bufname(l:jump_to_bufnum)))
     endfunction
 
-    function! l:catalog_viewer.setup_buffer_statusline() dict
+    function! catalog_viewer.setup_buffer_statusline() dict
         setlocal statusline=%{BuffergatorTabsStatusLine()}
     endfunction
 
     " return object
-    return l:catalog_viewer
+    return catalog_viewer
 
 endfunction
 " 1}}}
