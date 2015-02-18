@@ -45,14 +45,14 @@ if exists("g:buffergator_split_size")
     if !exists("g:buffergator_vsplit_size")
         let g:buffergator_vsplit_size = g:buffergator_split_size
     endif
-    if !exists("g:h_buffergator_hsplit_size")
+    if !exists("g:buffergator_hsplit_size")
         let g:buffergator_hsplit_size = g:buffergator_split_size
     endif
 else
     if !exists("g:buffergator_vsplit_size")
         let g:buffergator_vsplit_size = 40
     endif
-    if !exists("g:h_buffergator_hsplit_size")
+    if !exists("g:buffergator_hsplit_size")
         let g:buffergator_hsplit_size = 20
     endif
 endif
