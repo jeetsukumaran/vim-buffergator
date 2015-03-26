@@ -679,6 +679,7 @@ function! s:NewCatalogViewer(name, title)
         setlocal nolist
         setlocal noinsertmode
         setlocal nonumber
+        setlocal norelativenumber
         setlocal cursorline
         setlocal nospell
         setlocal matchpairs=""
