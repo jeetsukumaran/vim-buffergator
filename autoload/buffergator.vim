@@ -737,6 +737,7 @@ function! s:NewCatalogViewer(name, title)
             endif
         endif
         execute("bwipe " . self.bufnum)
+        let s:is_buffergator_buffers_open = 0
     endfunction
 
     function! catalog_viewer.expand_screen() dict
@@ -1891,7 +1892,7 @@ function! buffergator#UpdateBuffergator(event, affected)
 endfunction
 
 function! buffergator#CloseBuffergator()
-    let s:is_buffergator_buffers_open = 0
+    "let s:is_buffergator_buffers_open = 0
     call s:_catalog_viewer.close(1)
 endfunction
 
