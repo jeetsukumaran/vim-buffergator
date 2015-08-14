@@ -267,6 +267,7 @@ g:buffergator_viewport_split_policy~
         "R"   : vertical right (full screen height)
         "T"   : horizontal top (full screen width)
         "B"   : horizontal bottom (full screen width)
+        "n/N" : No split, uses existing window
 
 g:buffergator_autodismiss_on_select~
     Default: 1
