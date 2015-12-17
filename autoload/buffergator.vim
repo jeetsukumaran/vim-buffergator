@@ -142,9 +142,10 @@ let s:buffergator_default_catalog_sort_regime = "bufnum"
 
 " Catalog Display Regimes {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let s:buffergator_catalog_display_regimes = ['basename', 'filepath', 'bufname']
+let s:buffergator_catalog_display_regimes = ['basename', 'parentdir', 'filepath', 'bufname']
 let s:buffergator_catalog_display_regime_desc = {
             \ 'basename' : ["basename", "basename (followed by directory)"],
+            \ 'parentdir': ["parentdir", "basename (followed by first parent directory)"],
             \ 'filepath' : ["filepath", "full filepath"],
             \ 'bufname'  : ["bufname", "buffer name"],
             \ }
@@ -1288,6 +1289,10 @@ function! s:NewBufferCatalogViewer()
                 let l:line .= s:_format_align_left(l:bufinfo.basename, self.max_buffer_basename_len, " ")
                 let l:line .= "  "
                 let l:line .= l:bufinfo.parentdir
+            elseif self.display_regime == "parentdir"
+                let l:line .= s:_format_align_left(l:bufinfo.basename, self.max_buffer_basename_len, " ")
+                let l:line .= "  "
+                let l:line .= fnamemodify(l:bufinfo.parentdir, ':p:h:t')
             elseif self.display_regime == "filepath"
                 let l:line .= l:bufinfo.filepath
             elseif self.display_regime == "bufname"
@@ -1642,6 +1647,9 @@ function! s:NewTabCatalogViewer()
                 if self.display_regime == "basename"
                     let l:subline .= s:_format_align_left(fnamemodify(l:tabbufname, ":t"), 30, " ")
                     let l:subline .= fnamemodify(l:tabbufname, ":p:h")
+                elseif self.display_regime == "parentdir"
+                    let l:subline .= s:_format_align_left(fnamemodify(l:tabbufname, ":t"), 30, " ")
+                    let l:subline .= fnamemodify(l:tabbufname, ":p:h:t")
                 elseif self.display_regime == "filepath"
                     let l:subline .= fnamemodify(l:tabbufname, ":p")
                 elseif self.display_regime == "bufname"
