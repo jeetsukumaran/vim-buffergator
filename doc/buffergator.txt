@@ -316,6 +316,7 @@ g:buffergator_display_regime~
                     followed by directory [default]
         "filepath": display full buffer filepath
         "bufname": display buffer name
+        "parentdir": display first level parent dirname
 
 g:buffergator_show_full_directory_path~
     Default: 1
