@@ -684,6 +684,7 @@ function! s:NewCatalogViewer(name, title)
         setlocal cursorline
         setlocal nospell
         setlocal matchpairs=""
+        setlocal filetype=buffergator
     endfunction
 
     " Sets buffer commands.
