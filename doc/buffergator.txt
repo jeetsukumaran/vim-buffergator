@@ -334,4 +334,10 @@ g:buffergator_mru_cycle_local_to_window~
     If true, then the most recently used list will include only buffers
     within the window.  Otherwise, it will incude all buffers.
 
+g:buffergator_blacklist~
+    Default: []
+    Sets a list of blacklisted buffer names that you don't want to
+    pop up in the Buffergator catalog. Doesn't need to be a full match.
+    Example: ["term:\/\/"]
+
  vim:tw=78:ts=8:ft=help:norl:

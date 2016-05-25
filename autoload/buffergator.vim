@@ -71,6 +71,9 @@ endif
 if !exists("g:buffergator_mru_cycle_local_to_window")
     let g:buffergator_mru_cycle_local_to_window = 1
 endif
+if !exists("g:buffergator_blacklist")
+    let g:buffergator_blacklist = []
+endif
 " 1}}}
 
 " Script Data and Variables {{{1
@@ -507,6 +510,16 @@ function! s:NewCatalogViewer(name, title)
         let self.max_buffer_basename_len = 0
         let l:buffers_output_rows = split(l:buffers_output, "\n")
         for l:buffers_output_row in l:buffers_output_rows
+            let l:blacklist_match = 0
+            for l:blacklisted_name in g:buffergator_blacklist
+              if !empty(matchstr(l:buffers_output_row, l:blacklisted_name))
+                let l:blacklist_match = 1
+                continue
+              end
+            endfor
+            if l:blacklist_match
+              continue
+            endif
             let l:parts = matchlist(l:buffers_output_row, '^\s*\(\d\+\)\(.....\) "\(.*\)"')
             let l:info = {}
             let l:info["bufnum"] = l:parts[1] + 0
