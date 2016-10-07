@@ -71,6 +71,12 @@ endif
 if !exists("g:buffergator_mru_cycle_local_to_window")
     let g:buffergator_mru_cycle_local_to_window = 1
 endif
+if !exists("g:buffergator_tab_statusline")
+    let g:buffergator_tab_statusline = 1
+endif
+if !exists("g:buffergator_window_statusline")
+    let g:buffergator_window_statusline = 1
+endif
 " 1}}}
 
 " Script Data and Variables {{{1
@@ -1560,7 +1566,9 @@ function! s:NewBufferCatalogViewer()
 
     " Sets buffer status line.
     function! catalog_viewer.setup_buffer_statusline() dict
-        setlocal statusline=%{BuffergatorBuffersStatusLine()}
+        if g:buffergator_window_statusline
+            setlocal statusline=%{BuffergatorBuffersStatusLine()}
+        endif
     endfunction
 
     " Appends a line to the buffer and registers it in the line log.
@@ -1759,7 +1767,9 @@ function! s:NewTabCatalogViewer()
     endfunction
 
     function! catalog_viewer.setup_buffer_statusline() dict
-        setlocal statusline=%{BuffergatorTabsStatusLine()}
+        if g:buffergator_tab_statusline
+            setlocal statusline=%{BuffergatorTabsStatusLine()}
+        endif
     endfunction
 
     " return object
