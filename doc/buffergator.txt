@@ -329,6 +329,16 @@ g:buffergator_suppress_keymaps~
     If true, then Buffergator will not automatically map "<Leader>b" to
     open the Buffergator catalog and "<Leader>B" to close it.
 
+g:buffergator_tab_statusline~
+    Default: 1
+    If true, then Buffergator will not modify the statusline for the tab
+    buffer catalog.
+
+g:buffergator_window_statusline~
+    Default: 1
+    If true, then Buffergator will not modify the statusline for the window
+    buffer catalog.
+
 g:buffergator_mru_cycle_local_to_window~
     Default: 1
     If true, then the most recently used list will include only buffers
