@@ -73,32 +73,62 @@ KEY MAPPINGS (GLOBAL)~
 Unless "g:buffergator_suppress_keymaps" is set to 1, then the following
 key mappings are defined:
 
-<Leader>b           Invokes ":BuffergatorOpen": open the buffer catalog, or go
-                    to it if it is already open.
+<Leader>b                 Invokes ":BuffergatorOpen": open the buffer catalog,
+                          or go to it if it is already open.
 
-<Leader>B           Invokes ":BuffergatorClose": close the buffer catalog.
+<Leader>B                 Invokes ":BuffergatorClose": close the buffer catalog.
 
-<Leader>to          Invokes ":BuffergatorTabsOpen": open the tab page catalog,
-                    or go to it if it is already open.
+<Leader>t, <Leader>to     Invokes ":BuffergatorTabsOpen": open the tab page
+                          catalog, or go to it if it is already open.
 
-<Leader>tc          Invokes ":BuffergatorTabsClose": close the tab page
-                    catalog.
+<Leader>T, <Leader>tc     Invokes ":BuffergatorTabsClose": close the tab page
+                          catalog.
 
-[b, <M-B>           Invokes ":BuffergatorMruCyclePrev": cycle to an older
-                    buffer in the most-recently used (MRU) buffer list.
-                    most-recently used buffer. If
-                    "g:buffergator_mru_cycle_loop" is set to 1 (default), then
-                    this will loop, i.e. returning to the initial buffer after
-                    reaching the oldest buffer.
+[b, <M-B>                 Invokes ":BuffergatorMruCyclePrev": cycle to an
+                          older buffer in the most-recently used (MRU) buffer
+                          list.  most-recently used buffer. If
+                          "g:buffergator_mru_cycle_loop" is set to 1
+                          (default), then this will loop, i.e. returning to
+                          the initial buffer after reaching the oldest buffer.
 
-]b, <M-S-B>         Invokes ":BuffergatorMruCycleNext": cycle to a newer
-                    buffer in the most-recently used (MRU) buffer list.
-                    most-recently used buffer. If
-                    "g:buffergator_mru_cycle_loop" is set to 1 (default), then
-                    this will loop, i.e. returning to the oldest buffer after
-                    reaching the newest buffer.
+]b, <M-S-B>               Invokes ":BuffergatorMruCycleNext": cycle to a newer
+                          buffer in the most-recently used (MRU) buffer list.
+                          most-recently used buffer. If
+                          "g:buffergator_mru_cycle_loop" is set to 1
+                          (default), then this will loop, i.e. returning to
+                          the oldest buffer after reaching the newest buffer.
 
-===============================================================================
+Unless either "g:buffergator_suppress_keymaps" or
+"g:buffergator_suppress_mru_switching_keymaps" is set to 1, then the following
+key mappings are defined:
+
+<M-b>   Invokes ":BuffergatorMruCyclePrev"
+<M-S-b> Invokes ":BuffergatorMruCyclePrev"
+gb      Invokes ":BuffergatorMruCyclePrev" unless
+        g:buffergator_keep_old_mru_switching_keymaps is set to 1
+gB      Invokes ":BuffergatorMruCyclePrev" unless
+        g:buffergator_keep_old_mru_switching_keymaps is set to 1
+[b      Invokes ":BuffergatorMruCyclePrev" if
+        g:buffergator_keep_old_mru_switching_keymaps is set to 1
+]b      Invokes ":BuffergatorMruCyclePrev" if
+        g:buffergator_keep_old_mru_switching_keymaps is set to 1
+
+Unless either "g:buffergator_suppress_keymaps" or
+"g:buffergator_suppress_mru_switch_into_splits_keymaps" is set to 1, the
+following key mappings are defined:
+
+<Leader><LEFT>    Invokes ":BuffergatorMruCyclePrev leftabove vert
+                  sbuffer<CR>"
+<Leader><UP>      Invokes ":BuffergatorMruCyclePrev leftabove sbuffer<CR>"
+<Leader><RIGHT>   Invokes ":BuffergatorMruCyclePrev rightbelow vert sbuffer<CR>"
+<Leader><DOWN>    Invokes ":BuffergatorMruCyclePrev rightbelow sbuffer<CR>"
+<Leader><S-LEFT>  Invokes ":BuffergatorMruCycleNext leftabove vert
+                  sbuffer<CR>"
+<Leader><S-UP>    Invokes ":BuffergatorMruCycleNext leftabove sbuffer<CR>"
+<Leader><S-RIGHT> Invokes ":BuffergatorMruCycleNext rightbelow vert sbuffer<CR>"
+<Leader><S-DOWN>  Invokes ":BuffergatorMruCycleNext rightbelow sbuffer<CR>"
+
+==============================================================================
                                                       *buffergator-buffer-keys*
 KEY MAPPINGS (BUFFER CATALOG)~
 
