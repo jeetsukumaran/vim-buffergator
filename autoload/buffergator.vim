@@ -1185,6 +1185,7 @@ function! s:NewBufferCatalogViewer()
             """"" Selection: show target and switch focus
             noremap <buffer> <silent> <CR>        :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
             noremap <buffer> <silent> o           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
+            noremap <buffer> <silent> <LeftMouse> :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "")<CR>
             noremap <buffer> <silent> s           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "vert sb")<CR>
             noremap <buffer> <silent> <C-v>       :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "vert sb")<CR>
             noremap <buffer> <silent> i           :<C-U>call b:buffergator_catalog_viewer.visit_target(!g:buffergator_autodismiss_on_select, 0, "sb")<CR>
@@ -1867,6 +1868,8 @@ function! buffergator#UpdateBuffergator(event, affected)
     endif
     let l:calling = bufnr("%")
     let l:self_call = 0
+    let l:curr_winnr = winnr()
+    let l:prev_winnr = winnr("#")
     let l:buffergators = s:_find_buffers_with_var("is_buffergator_buffer",1)
     call s:_catalog_viewer.update_buffers_info()
 
@@ -1899,12 +1902,14 @@ function! buffergator#UpdateBuffergator(event, affected)
     endfor
     if exists("b:is_buffergator_buffer") && !l:self_call
         try
-            execute "wincmd p"
+            execute l:prev_winnr . "wincmd w"
+            execute l:curr_winnr . "wincmd w"
         catch //
         endtry
     elseif a:event == 'delete' && !l:self_call
         try
-            execute "wincmd ^"
+            execute l:prev_winnr . "wincmd w"
+            execute l:curr_winnr . "wincmd w"
         catch //
         endtry
     endif
