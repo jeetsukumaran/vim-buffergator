@@ -350,6 +350,9 @@ function! s:_is_full_height_window(win_num)
     endif
 endfunction!
 
+let g:buffergator__has_cycled = 0
+let g:buffergator__buf_prev = 0
+
 function! s:_find_mru_bufnr(dir)
     let l:cur_buf_idx = index(w:buffergator_mru, bufnr("%"))
     if len(w:buffergator_mru) < 1 " maybe should be 2?
@@ -359,9 +362,31 @@ function! s:_find_mru_bufnr(dir)
         let l:target_buf_idx = 0
     else
         if a:dir < 0
-            let l:target_buf_idx = l:cur_buf_idx + 1 " deeper in list = older
+            if g:buffergator_mru_cycle_loop_last_two
+                if !g:buffergator__has_cycled
+                    let l:target_buf_idx = l:cur_buf_idx + 1 " deeper in list = older
+                    let g:buffergator__buf_prev = l:cur_buf_idx
+                    let g:buffergator__has_cycled = 1
+                else
+                    let l:target_buf_idx = g:buffergator__buf_prev
+                    let g:buffergator__buf_prev = l:cur_buf_idx
+                endif
+            else
+                let l:target_buf_idx = l:cur_buf_idx + 1 " deeper in list = older
+            endif
         else
-            let l:target_buf_idx = l:cur_buf_idx - 1 " up list = newer
+            if g:buffergator_mru_cycle_loop_last_two
+                if !g:buffergator__has_cycled
+                    let l:target_buf_idx = l:cur_buf_idx - 1 " up list = newer
+                    let g:buffergator__buf_prev = l:cur_buf_idx
+                    let g:buffergator__has_cycled = 1
+                else
+                    let l:target_buf_idx = g:buffergator__buf_prev
+                    let g:buffergator__buf_prev = l:cur_buf_idx
+                endif
+            else
+                let l:target_buf_idx = l:cur_buf_idx - 1 " up list = newer
+            endif
         endif
     endif
     if l:target_buf_idx < 0
