@@ -36,6 +36,9 @@ set cpo&vim
 if !exists("g:buffergator_mru_cycle_loop")
     let g:buffergator_mru_cycle_loop = 1
 endif
+if !exists("g:buffergator_mru_cycle_loop_last_two")
+    let g:buffergator_mru_cycle_loop_last_two = 0
+endif
 let g:buffergator_track_mru = 1
 let g:buffergator_mru = []
 function! BuffergatorUpdateMRU(acmd_bufnr)

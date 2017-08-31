@@ -91,12 +91,20 @@ key mappings are defined:
                           (default), then this will loop, i.e. returning to
                           the initial buffer after reaching the oldest buffer.
 
+                          If "g:buffergator_mru_cycle_loop_last_two" is set to
+                          1, then only the last two accessed buffers will be
+                          cycled.
+
 ]b, <M-S-B>               Invokes ":BuffergatorMruCycleNext": cycle to a newer
                           buffer in the most-recently used (MRU) buffer list.
                           most-recently used buffer. If
                           "g:buffergator_mru_cycle_loop" is set to 1
                           (default), then this will loop, i.e. returning to
                           the oldest buffer after reaching the newest buffer.
+
+                          If "g:buffergator_mru_cycle_loop_last_two" is set to
+                          1, then only the last two accessed buffers will be
+                          cycled.
 
 Unless either "g:buffergator_suppress_keymaps" or
 "g:buffergator_suppress_mru_switching_keymaps" is set to 1, then the following
