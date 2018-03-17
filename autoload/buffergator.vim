@@ -350,9 +350,9 @@ function! s:_is_full_height_window(win_num)
     endif
 endfunction!
 
-function! s:_find_mru_bufnr(dir)
-    let l:cur_buf_idx = index(w:buffergator_mru, bufnr("%"))
-    if len(w:buffergator_mru) < 1 " maybe should be 2?
+function! s:_find_mru_bufnr(dir, buffergator_mru)
+    let l:cur_buf_idx = index(a:buffergator_mru, bufnr("%"))
+    if len(a:buffergator_mru) < 1 " maybe should be 2?
         return bufnr("%")
     endif
     if l:cur_buf_idx < 0
@@ -366,12 +366,12 @@ function! s:_find_mru_bufnr(dir)
     endif
     if l:target_buf_idx < 0
         if g:buffergator_mru_cycle_loop
-            let l:target_buf_idx = len(w:buffergator_mru) - 1
+            let l:target_buf_idx = len(a:buffergator_mru) - 1
         else
             call s:_buffergator_messenger.send_info("already at most recent buffer")
             return -1
         endif
-    elseif l:target_buf_idx >= len(w:buffergator_mru)
+    elseif l:target_buf_idx >= len(a:buffergator_mru)
         if g:buffergator_mru_cycle_loop
             let l:target_buf_idx = 0
         else
@@ -379,12 +379,12 @@ function! s:_find_mru_bufnr(dir)
             return -1
         endif
     endif
-    let l:target_bufnr = w:buffergator_mru[l:target_buf_idx]
+    let l:target_bufnr = a:buffergator_mru[l:target_buf_idx]
     if !bufexists(l:target_bufnr)
                 \ || !buflisted(l:target_bufnr)
                 \ || getbufvar(l:target_bufnr, "&filetype") == "netrw"
-        call remove(w:buffergator_mru, l:target_buf_idx)
-        return s:_find_mru_bufnr(a:dir)
+        call remove(a:buffergator_mru, l:target_buf_idx)
+        return s:_find_mru_bufnr(a:dir, a:buffergator_mru)
     else
         return l:target_bufnr
     endif
@@ -1835,7 +1835,7 @@ function! buffergator#BuffergatorCycleMru(dir, bufopencmd)
         call s:_buffergator_messenger.send_info("only one buffer available")
         return
     endif
-    let l:target_buf = s:_find_mru_bufnr(a:dir)
+    let l:target_buf = s:_find_mru_bufnr(a:dir, l:mru_cycle_list)
     if l:target_buf > 0
         if a:bufopencmd == ""
             let l:bufopencmd = "buffer"
