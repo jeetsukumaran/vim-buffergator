@@ -105,6 +105,8 @@ if !exists('g:buffergator_suppress_keymaps') || !g:buffergator_suppress_keymaps
         if !exists('g:buffergator_keep_old_mru_switching_keymaps') || !g:buffergator_keep_old_mru_switching_keymaps
             nnoremap <silent> gb :BuffergatorMruCyclePrev<CR>
             nnoremap <silent> gB :BuffergatorMruCycleNext<CR>
+            nnoremap <silent> [b :bp<CR>
+            nnoremap <silent> ]b :bn<CR>
         else
             nnoremap <silent> [b :BuffergatorMruCyclePrev<CR>
             nnoremap <silent> ]b :BuffergatorMruCycleNext<CR>

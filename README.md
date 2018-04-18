@@ -80,7 +80,8 @@ By default, Buffergator provides global key maps that invoke its main commands:
 `<Leader>to` to open and `<Leader>tc` to close the tab page catalog.  In
 addition, in normal mode from any buffer, you can flip through the MRU
 (most-recently-used) buffer list without opening the buffer catalog by using
-the `[b` (or `<M-b>`) and `]b` (or `<M-S-b>`) keys.  If you prefer to map other
+the `gb` (or `<M-b>`) and `gB` (or `<M-S-b>`) keys, or flip through the buffers
+in buffer (number) order by using `[b` and `]b`.  If you prefer to map other
 keys, or do not want any keys mapped at all, set
 `g:buffergator_suppress_keymaps` to 1 in your $VIMRUNTIME.
 

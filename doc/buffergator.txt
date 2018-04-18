@@ -84,19 +84,26 @@ key mappings are defined:
 <Leader>T, <Leader>tc     Invokes ":BuffergatorTabsClose": close the tab page
                           catalog.
 
-[b, <M-B>                 Invokes ":BuffergatorMruCyclePrev": cycle to an
+gb, <M-B>                 Invokes ":BuffergatorMruCyclePrev": cycle to an
                           older buffer in the most-recently used (MRU) buffer
                           list.  most-recently used buffer. If
                           "g:buffergator_mru_cycle_loop" is set to 1
                           (default), then this will loop, i.e. returning to
                           the initial buffer after reaching the oldest buffer.
 
-]b, <M-S-B>               Invokes ":BuffergatorMruCycleNext": cycle to a newer
+gB, <M-S-B>               Invokes ":BuffergatorMruCycleNext": cycle to a newer
                           buffer in the most-recently used (MRU) buffer list.
                           most-recently used buffer. If
                           "g:buffergator_mru_cycle_loop" is set to 1
                           (default), then this will loop, i.e. returning to
                           the oldest buffer after reaching the newest buffer.
+
+]b                        By default, cycles to next buffer by index/number. If
+                          g:buffergator_keep_old_mru_switching_keymaps is set
+                          to 1, then invokes ":BuffergatorMruCycleNext"
+[b                        By default, cycles to preceding buffer by index/number. If
+                          g:buffergator_keep_old_mru_switching_keymaps is set
+                          to 1, then invokes ":BuffergatorMruCyclePrev"
 
 Unless either "g:buffergator_suppress_keymaps" or
 "g:buffergator_suppress_mru_switching_keymaps" is set to 1, then the following
@@ -108,10 +115,12 @@ gb      Invokes ":BuffergatorMruCyclePrev" unless
         g:buffergator_keep_old_mru_switching_keymaps is set to 1
 gB      Invokes ":BuffergatorMruCyclePrev" unless
         g:buffergator_keep_old_mru_switching_keymaps is set to 1
-[b      Invokes ":BuffergatorMruCyclePrev" if
-        g:buffergator_keep_old_mru_switching_keymaps is set to 1
-]b      Invokes ":BuffergatorMruCyclePrev" if
-        g:buffergator_keep_old_mru_switching_keymaps is set to 1
+]b      By default, cycles to next buffer by index/number. If
+        g:buffergator_keep_old_mru_switching_keymaps is set to 1, then invokes
+        ":BuffergatorMruCycleNext"
+[b      By default, cycles to preceding buffer by index/number. If
+        g:buffergator_keep_old_mru_switching_keymaps is set to 1, then invokes
+        ":BuffergatorMruCyclePrev"
 
 Unless either "g:buffergator_suppress_keymaps" or
 "g:buffergator_suppress_mru_switch_into_splits_keymaps" is set to 1, the
