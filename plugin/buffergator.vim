@@ -100,8 +100,10 @@ if !exists('g:buffergator_suppress_keymaps') || !g:buffergator_suppress_keymaps
     nnoremap <silent> <Leader>tc :BuffergatorTabsClose<CR>
     nnoremap <silent> <Leader>T :BuffergatorTabsClose<CR>
     if !exists('g:buffergator_suppress_mru_switching_keymaps') || !g:buffergator_suppress_mru_switching_keymaps
-        nnoremap <silent> <M-b> :BuffergatorMruCyclePrev<CR>
-        nnoremap <silent> <M-S-b> :BuffergatorMruCycleNext<CR>
+        if !get(g:, "buffergator_disable_altb_keymaps", 1)
+            nnoremap <silent> <M-b> :BuffergatorMruCyclePrev<CR>
+            nnoremap <silent> <M-S-b> :BuffergatorMruCycleNext<CR>
+        endif
         if !exists('g:buffergator_keep_old_mru_switching_keymaps') || !g:buffergator_keep_old_mru_switching_keymaps
             nnoremap <silent> gb :BuffergatorMruCyclePrev<CR>
             nnoremap <silent> gB :BuffergatorMruCycleNext<CR>
